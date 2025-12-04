@@ -189,17 +189,7 @@ const handleContainerMouseMove = (e: MouseEvent) => {
   position: relative;
   display: inline-block;
   letter-spacing: 4px;
-  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
-  animation: neon-pulse 3s infinite ease-in-out;
-}
-
-@keyframes neon-pulse {
-  0%, 100% {
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(0, 255, 0, 0.1);
-  }
-  50% {
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px var(--neon-green), 0 0 80px var(--neon-green);
-  }
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
 }
 
 .subtitle {
@@ -392,7 +382,6 @@ const handleContainerMouseMove = (e: MouseEvent) => {
   opacity: 1;
 }
 
-/* Animations */
 @media (max-width: 768px) {
   .section-title { font-size: 2.5rem; }
   .holo-card { transform: none !important; } /* Disable tilt on mobile */
