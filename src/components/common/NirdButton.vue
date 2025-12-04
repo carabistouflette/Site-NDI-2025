@@ -1,19 +1,7 @@
 <template>
-  <n-button
-    :type="type"
-    :size="size"
-    :disabled="disabled"
-    :loading="loading"
-    :circle="circle"
-    :round="round"
-    :text="text"
-    :tag="tag as any"
-    :render-icon="renderIcon"
-    :color="computedColor"
-    :text-color="computedTextColor"
-    :class="buttonClass"
-    @click="handleClick"
-  >
+  <n-button :type="type" :size="size" :disabled="disabled" :loading="loading" :circle="circle" :round="round"
+    :text="text" :tag="tag as any" :render-icon="renderIcon" :color="computedColor" :text-color="computedTextColor"
+    :class="buttonClass" @click="handleClick">
     <slot />
   </n-button>
 </template>
@@ -55,19 +43,20 @@ const emit = defineEmits<{
 
 const computedColor = computed(() => {
   if (props.color) return props.color
-  
-  // Utiliser les dégradés NIRD selon la variante
+
+  // Utiliser des couleurs hexadécimales directes pour Naive UI au lieu des dégradés
+  // Naive UI ne peut pas interpréter les variables CSS de dégradé dans sa propriété color
   switch (props.variant) {
     case 'digital':
-      return 'var(--gradient-digital)'
+      return '#0066FF' // Bleu Électrique
     case 'inclusive':
-      return 'var(--gradient-inclusive)'
+      return '#6B46C1' // Violet
     case 'responsible':
-      return 'var(--gradient-responsible)'
+      return '#FF6B6B' // Rose Corail
     case 'sustainable':
-      return 'var(--gradient-sustainable)'
+      return '#F6AD55' // Jaune Doré
     case 'unified':
-      return 'var(--gradient-unified)'
+      return '#0066FF' // Bleu Électrique par défaut
     default:
       return undefined
   }
@@ -75,7 +64,7 @@ const computedColor = computed(() => {
 
 const computedTextColor = computed(() => {
   if (props.textColor) return props.textColor
-  
+
   // Texte blanc pour les boutons avec dégradé
   if (props.variant) return '#FFFFFF'
   return undefined
