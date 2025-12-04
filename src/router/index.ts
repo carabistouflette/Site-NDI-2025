@@ -21,11 +21,11 @@ const router = createRouter({
       }
     },
     {
-      path: '/about',
-      name: 'about',
-      component: HomeView,
+      path: '/association',
+      name: 'association',
+      component: () => import('@/views/AssociationView.vue'),
       meta: {
-        title: 'À propos - Nuit de l\'Informatique 2025'
+        title: 'L\'Association NIRD - Nuit de l\'Informatique 2025'
       }
     },
     {
