@@ -2,109 +2,120 @@
   <section class="game-preview">
     <div class="game-preview__container">
       <div class="game-preview__header">
-        <h2 class="game-preview__title animate-fade-in">Découvrez nos jeux interactifs</h2>
+        <n-h2 class="game-preview__title animate-fade-in">Découvrez nos jeux interactifs</n-h2>
         <p class="game-preview__subtitle animate-slide-up">
           Plongez dans une expérience immersive unique avec nos jeux éducatifs
           conçus pour explorer les facettes d'un numérique inclusif, responsable et durable
         </p>
       </div>
       
-      <div class="game-preview__grid">
-        <GradientCard
-          v-for="game in games"
-          :key="game.id"
-          :variant="game.variant"
-          class="game-preview__card animate-card"
-          :class="`game-preview__card--${game.variant}`"
-          hoverable
-          @mouseenter="onCardHover(game.id, true)"
-          @mouseleave="onCardHover(game.id, false)"
-        >
-          <template #header>
-            <div class="game-preview__card-header">
-              <div class="game-preview__icon" :class="`game-preview__icon--${game.variant}`">
-                <component :is="game.icon" />
-              </div>
-              <div class="game-preview__title-section">
-                <h3>{{ game.title }}</h3>
-                <div class="game-preview__difficulty">
-                  <span
-                    v-for="level in game.difficulty"
-                    :key="level"
-                    class="difficulty-star"
-                    :class="`difficulty-star--${game.variant}`"
-                  >
-                    ★
-                  </span>
+      <n-grid x-gap="32" y-gap="32" cols="1 640:2 1024:4" item-responsive responsive="screen" class="game-preview__grid">
+        <n-gi v-for="game in games" :key="game.id">
+          <GradientCard
+            :variant="game.variant"
+            class="game-preview__card animate-card"
+            :class="`game-preview__card--${game.variant}`"
+            hoverable
+            @mouseenter="onCardHover(game.id, true)"
+            @mouseleave="onCardHover(game.id, false)"
+          >
+            <template #header>
+              <div class="game-preview__card-header">
+                <div class="game-preview__icon" :class="`game-preview__icon--${game.variant}`">
+                  <n-icon size="24">
+                    <component :is="game.icon" />
+                  </n-icon>
                 </div>
-              </div>
-            </div>
-          </template>
-          
-          <div class="game-preview__content">
-            <div class="game-preview__visual">
-              <div class="game-preview__preview-image" :class="`preview-image--${game.variant}`">
-                <div class="preview-content">
-                  <span class="preview-emoji">{{ game.emoji }}</span>
-                  <div class="preview-overlay">
-                    <span class="preview-text">Aperçu du jeu</span>
+                <div class="game-preview__title-section">
+                  <h3>{{ game.title }}</h3>
+                  <div class="game-preview__difficulty">
+                    <n-icon
+                      v-for="level in game.difficulty"
+                      :key="level"
+                      size="14"
+                      class="difficulty-star"
+                      :class="`difficulty-star--${game.variant}`"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+                      </svg>
+                    </n-icon>
                   </div>
                 </div>
               </div>
-            </div>
+            </template>
             
-            <p class="game-preview__description">{{ game.description }}</p>
-            
-            <div class="game-preview__features">
-              <div
-                v-for="feature in game.features"
-                :key="feature"
-                class="game-preview__feature"
-              >
-                <span class="feature-icon">✓</span>
-                <span>{{ feature }}</span>
+            <div class="game-preview__content">
+              <div class="game-preview__visual">
+                <div class="game-preview__preview-image" :class="`preview-image--${game.variant}`">
+                  <div class="preview-content">
+                    <span class="preview-emoji">{{ game.emoji }}</span>
+                    <div class="preview-overlay">
+                      <span class="preview-text">Aperçu du jeu</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <p class="game-preview__description">{{ game.description }}</p>
+              
+              <div class="game-preview__features">
+                <div
+                  v-for="feature in game.features"
+                  :key="feature"
+                  class="game-preview__feature"
+                >
+                  <n-icon size="14" class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </n-icon>
+                  <span>{{ feature }}</span>
+                </div>
+              </div>
+              
+              <div class="game-preview__tags">
+                <span
+                  v-for="tag in game.tags"
+                  :key="tag"
+                  class="game-preview__tag animate-tag"
+                  :class="`game-preview__tag--${game.variant}`"
+                >
+                  {{ tag }}
+                </span>
               </div>
             </div>
             
-            <div class="game-preview__tags">
-              <span
-                v-for="tag in game.tags"
-                :key="tag"
-                class="game-preview__tag animate-tag"
-                :class="`game-preview__tag--${game.variant}`"
-              >
-                {{ tag }}
-              </span>
-            </div>
-          </div>
-          
-          <template #action>
-            <div class="game-preview__actions">
-              <NirdButton
-                :variant="game.variant"
-                size="small"
-                class="game-preview__play-btn"
-                @click="playGame(game.id)"
-              >
-                <span class="btn-content">
-                  <span>Jouer</span>
-                  <svg class="btn-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                    <path d="M5 12L19 12M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </span>
-              </NirdButton>
-              <button
-                class="game-preview__info-btn"
-                @click="showGameInfo(game.id)"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
-                </svg>
-              </button>
-            </div>
-          </template>
-        </GradientCard>
-      </div>
+            <template #action>
+              <div class="game-preview__actions">
+                <NirdButton
+                  :variant="game.variant"
+                  size="small"
+                  class="game-preview__play-btn"
+                  @click="playGame(game.id)"
+                >
+                  <span class="btn-content">
+                    <span>Jouer</span>
+                    <n-icon size="16" class="btn-icon">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12L19 12M19 12L12 5M19 12L12 19"/>
+                      </svg>
+                    </n-icon>
+                  </span>
+                </NirdButton>
+                <button
+                  class="game-preview__info-btn"
+                  @click="showGameInfo(game.id)"
+                >
+                  <n-icon size="20">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                    </svg>
+                  </n-icon>
+                </button>
+              </div>
+            </template>
+          </GradientCard>
+        </n-gi>
+      </n-grid>
       
       <div class="game-preview__footer">
         <NirdButton
@@ -115,9 +126,11 @@
         >
           <span class="btn-content">
             <span>Voir tous les jeux</span>
-            <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
-              <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
+            <n-icon size="20" class="btn-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12H19M19 12L12 5M19 12L12 19"/>
+              </svg>
+            </n-icon>
           </span>
         </NirdButton>
       </div>
@@ -128,6 +141,7 @@
 <script setup lang="ts">
 import { h, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { NGrid, NGi, NH2, NIcon } from 'naive-ui'
 import GradientCard from '@/components/common/GradientCard.vue'
 import NirdButton from '@/components/common/NirdButton.vue'
 
@@ -223,640 +237,16 @@ const onCardHover = (gameId: string, isHovering: boolean) => {
 }
 
 const playGame = (gameId: string) => {
-  // Redirection vers la page du jeu (placeholder pour l'instant)
+  // Redirection vers la page du jeu (placeholder pour l\'instant)
   router.push(`/games/${gameId}`)
 }
 
 const showGameInfo = (gameId: string) => {
-  // Afficher les informations détaillées du jeu (placeholder pour l'instant)
+  // Afficher les informations détaillées du jeu (placeholder pour l\'instant)
   console.log(`Show info for game: ${gameId}`)
 }
 </script>
 
 <style scoped>
-.game-preview {
-  padding: 4rem 0;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  position: relative;
-  overflow: hidden;
-}
-
-.game-preview::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--gradient-unified);
-  opacity: 0.3;
-}
-
-.game-preview__container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-.game-preview__header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.game-preview__title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--nird-anthracite);
-  margin: 0 0 1rem 0;
-  background: var(--gradient-unified);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  background-size: 200% auto;
-  animation: gradient-shift 3s ease infinite;
-}
-
-.game-preview__subtitle {
-  font-size: 1.25rem;
-  color: #6c757d;
-  max-width: 700px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-
-.game-preview__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
-}
-
-.game-preview__card {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.game-preview__card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-}
-
-.game-preview__card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--gradient-unified);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.game-preview__card:hover::before {
-  opacity: 1;
-}
-
-.game-preview__card--digital:hover::before {
-  background: var(--gradient-digital);
-}
-
-.game-preview__card--inclusive:hover::before {
-  background: var(--gradient-inclusive);
-}
-
-.game-preview__card--responsible:hover::before {
-  background: var(--gradient-responsible);
-}
-
-.game-preview__card--sustainable:hover::before {
-  background: var(--gradient-sustainable);
-}
-
-.game-preview__card-header {
-  display: flex;
-  align-items: flex-start;
-  gap: 1rem;
-}
-
-.game-preview__icon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  flex-shrink: 0;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-.game-preview__card:hover .game-preview__icon {
-  transform: scale(1.1) rotate(5deg);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-.game-preview__icon--digital {
-  background: var(--gradient-digital);
-}
-
-.game-preview__icon--inclusive {
-  background: var(--gradient-inclusive);
-}
-
-.game-preview__icon--responsible {
-  background: var(--gradient-responsible);
-}
-
-.game-preview__icon--sustainable {
-  background: var(--gradient-sustainable);
-}
-
-.game-preview__title-section {
-  flex: 1;
-}
-
-.game-preview__title-section h3 {
-  margin: 0 0 0.5rem 0;
-  color: var(--nird-anthracite);
-  font-size: 1.25rem;
-  font-weight: 600;
-  transition: color 0.3s ease;
-}
-
-.game-preview__card:hover .game-preview__title-section h3 {
-  color: #2d3748;
-}
-
-.game-preview__difficulty {
-  display: flex;
-  gap: 0.25rem;
-}
-
-.difficulty-star {
-  font-size: 0.875rem;
-  color: #ddd;
-  transition: color 0.3s ease;
-}
-
-.difficulty-star--digital {
-  color: var(--nird-blue-electric);
-}
-
-.difficulty-star--inclusive {
-  color: var(--nird-violet);
-}
-
-.difficulty-star--responsible {
-  color: var(--nird-coral);
-}
-
-.difficulty-star--sustainable {
-  color: var(--nird-golden);
-}
-
-.game-preview__content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.game-preview__visual {
-  margin: -1rem -1rem 0 -1rem;
-  position: relative;
-  overflow: hidden;
-  border-radius: 8px;
-}
-
-.game-preview__preview-image {
-  height: 180px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.preview-image--digital {
-  background: linear-gradient(135deg, rgba(0, 102, 255, 0.1) 0%, rgba(0, 82, 204, 0.1) 100%);
-}
-
-.preview-image--inclusive {
-  background: linear-gradient(135deg, rgba(107, 70, 193, 0.1) 0%, rgba(213, 63, 140, 0.1) 100%);
-}
-
-.preview-image--responsible {
-  background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 160, 122, 0.1) 100%);
-}
-
-.preview-image--sustainable {
-  background: linear-gradient(135deg, rgba(246, 173, 85, 0.1) 0%, rgba(237, 137, 54, 0.1) 100%);
-}
-
-.game-preview__card:hover .game-preview__preview-image {
-  transform: scale(1.02);
-}
-
-.preview-content {
-  position: relative;
-  text-align: center;
-  transition: all 0.3s ease;
-}
-
-.preview-emoji {
-  font-size: 3rem;
-  display: block;
-  margin-bottom: 0.5rem;
-  animation: float 3s ease-in-out infinite;
-}
-
-.preview-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  border-radius: 8px;
-}
-
-.game-preview__card:hover .preview-overlay {
-  opacity: 1;
-}
-
-.preview-text {
-  color: white;
-  font-weight: 500;
-  font-size: 1.125rem;
-}
-
-.game-preview__description {
-  color: var(--nird-anthracite);
-  line-height: 1.6;
-  margin: 0;
-  flex: 1;
-  font-size: 0.95rem;
-}
-
-.game-preview__features {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.game-preview__feature {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--nird-anthracite);
-  font-size: 0.875rem;
-  transition: transform 0.3s ease;
-}
-
-.game-preview__feature:hover {
-  transform: translateX(5px);
-}
-
-.feature-icon {
-  color: var(--nird-blue-electric);
-  font-weight: bold;
-  flex-shrink: 0;
-}
-
-.game-preview__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.game-preview__tag {
-  padding: 0.375rem 0.875rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  color: white;
-  transition: all 0.3s ease;
-  opacity: 0;
-  animation: tag-appear 0.5s ease forwards;
-}
-
-.game-preview__tag:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.game-preview__tag--digital {
-  background: var(--gradient-digital);
-}
-
-.game-preview__tag--inclusive {
-  background: var(--gradient-inclusive);
-}
-
-.game-preview__tag--responsible {
-  background: var(--gradient-responsible);
-}
-
-.game-preview__tag--sustainable {
-  background: var(--gradient-sustainable);
-}
-
-.game-preview__actions {
-  display: flex;
-  gap: 0.75rem;
-  align-items: center;
-}
-
-.game-preview__play-btn {
-  flex: 1;
-  position: relative;
-  overflow: hidden;
-}
-
-.game-preview__play-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.game-preview__play-btn:hover::before {
-  left: 100%;
-}
-
-.btn-content {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-}
-
-.btn-icon {
-  transition: transform 0.3s ease;
-}
-
-.game-preview__play-btn:hover .btn-icon {
-  transform: translateX(4px);
-}
-
-.game-preview__info-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  border: 2px solid #e2e8f0;
-  background: white;
-  color: #6c757d;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.game-preview__info-btn:hover {
-  border-color: var(--nird-blue-electric);
-  color: var(--nird-blue-electric);
-  transform: scale(1.1);
-  box-shadow: 0 4px 8px rgba(0, 102, 255, 0.2);
-}
-
-.game-preview__footer {
-  text-align: center;
-}
-
-.game-preview__see-all-btn {
-  position: relative;
-  overflow: hidden;
-}
-
-.game-preview__see-all-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
-}
-
-.game-preview__see-all-btn:hover::before {
-  left: 100%;
-}
-
-/* Animations */
-@keyframes gradient-shift {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
-@keyframes float {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes card-appear {
-  from {
-    opacity: 0;
-    transform: translateY(50px) scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes tag-appear {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.8s ease forwards;
-}
-
-.animate-slide-up {
-  opacity: 0;
-  animation: slide-up 0.8s ease forwards;
-  animation-delay: 0.2s;
-}
-
-.animate-card {
-  opacity: 0;
-  animation: card-appear 0.6s ease forwards;
-}
-
-.animate-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.animate-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.animate-card:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.animate-card:nth-child(4) {
-  animation-delay: 0.4s;
-}
-
-.animate-tag:nth-child(1) {
-  animation-delay: 0.5s;
-}
-
-.animate-tag:nth-child(2) {
-  animation-delay: 0.6s;
-}
-
-.animate-tag:nth-child(3) {
-  animation-delay: 0.7s;
-}
-
-@media (max-width: 1024px) {
-  .game-preview__grid {
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  .game-preview__preview-image {
-    height: 160px;
-  }
-  
-  .preview-emoji {
-    font-size: 2.5rem;
-  }
-}
-
-@media (max-width: 768px) {
-  .game-preview {
-    padding: 3rem 0;
-  }
-  
-  .game-preview__title {
-    font-size: 2rem;
-  }
-  
-  .game-preview__subtitle {
-    font-size: 1.125rem;
-  }
-  
-  .game-preview__grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-  
-  .game-preview__card-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-  }
-  
-  .game-preview__icon {
-    width: 48px;
-    height: 48px;
-  }
-  
-  .game-preview__preview-image {
-    height: 140px;
-  }
-  
-  .preview-emoji {
-    font-size: 2rem;
-  }
-  
-  .game-preview__features {
-    gap: 0.5rem;
-  }
-  
-  .game-preview__feature {
-    font-size: 0.8rem;
-  }
-  
-  .game-preview__actions {
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .game-preview__info-btn {
-    width: 100%;
-    height: 40px;
-    border-radius: 8px;
-  }
-}
-
-@media (max-width: 768px) {
-  .game-preview {
-    padding: 3rem 0;
-  }
-  
-  .game-preview__title {
-    font-size: 2rem;
-  }
-  
-  .game-preview__subtitle {
-    font-size: 1.125rem;
-  }
-  
-  .game-preview__grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-}
+@import '@/assets/styles/components/game-preview.css';
 </style>
