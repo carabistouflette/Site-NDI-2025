@@ -184,18 +184,18 @@ class Particle {
   baseX: number
   baseY: number
   color: string
-  alpha: number = 0.5 // Higher base alpha
-  connected: boolean = false
+  alpha: number = 0.5 
+  // connected property removed
 
   constructor(w: number, h: number) {
     this.x = Math.random() * w
     this.y = Math.random() * h
     this.baseX = this.x
     this.baseY = this.y
-    // Higher initial velocity for more activity
-    this.vx = (Math.random() - 0.5) * 2 
-    this.vy = (Math.random() - 0.5) * 2
-    this.size = Math.random() * 3 + 2 // Larger particles (2-5px)
+    // Constant steady movement
+    this.vx = (Math.random() - 0.5) * 1.5 
+    this.vy = (Math.random() - 0.5) * 1.5
+    this.size = Math.random() * 3 + 2 
     this.color = '255, 255, 255'
   }
 
@@ -221,39 +221,19 @@ class Particle {
       this.color = isHoveringCore ? '255, 255, 255' : '0, 102, 255'
 
     } else if (mode === 1) {
-      // Inclusion Mode
-      const attractionRadius = 350
-      const maxAttractionForce = 0.08 // Stronger attraction
-
-      const dx = mouseX - this.x
-      const dy = mouseY - this.y
-      const distance = Math.sqrt(dx * dx + dy * dy)
-
-      let attractionStrength = 0
-      if (distance < attractionRadius) {
-        attractionStrength = 1 - (distance / attractionRadius)
-        this.connected = true
-      } else {
-        this.connected = false
-      }
-
-      // Apply mouse attraction (Direct position modification)
-      if (this.connected) {
-        this.x += dx * attractionStrength * maxAttractionForce
-        this.y += dy * attractionStrength * maxAttractionForce
-      }
+      // Inclusion Mode: Free Floating Network (No Mouse Attraction)
       
-      // Always apply drift (Velocity based)
-      this.x += this.vx * 0.5 // More drift
-      this.y += this.vy * 0.5
+      // Natural drift
+      this.x += this.vx 
+      this.y += this.vy 
 
       // Screen bounce
       if (this.x < 0 || this.x > width) this.vx *= -1;
       if (this.y < 0 || this.y > height) this.vy *= -1;
 
-      // Base alpha higher + boost on connect
-      this.alpha = 0.5 + (attractionStrength * 0.5); 
-      this.color = '217, 70, 239'
+      // Stable appearance
+      this.alpha = 0.6
+      this.color = '217, 70, 239' // Purple
 
     } else if (mode === 2) {
       // ... (Responsibility logic unchanged) ...
@@ -340,27 +320,23 @@ const animate = () => {
   // Draw connections and apply REPULSION in Inclusion mode
   if (currentSection.value === 1) {
     particles.forEach((p1, i) => {
-      if (p1.connected) {
-        particles.slice(i + 1).forEach(p2 => {
-          // Connection Lines
-          if (p2.connected) { 
-            const dx = p1.x - p2.x
-            const dy = p1.y - p2.y
-            const dist = Math.sqrt(dx * dx + dy * dy)
-            const connectionThreshold = 200 
-            
-            if (dist < connectionThreshold && ctx) {
-              const alpha = 0.6 * (1 - dist / connectionThreshold)
-              ctx.beginPath()
-              ctx.strokeStyle = `rgba(217, 70, 239, ${alpha})`
-              ctx.lineWidth = 1 + (1 - dist / connectionThreshold) * 2
-              ctx.moveTo(p1.x, p1.y)
-              ctx.lineTo(p2.x, p2.y)
-              ctx.stroke()
-            }
-          }
-        })
-      }
+      // Check against all subsequent particles for connections
+      particles.slice(i + 1).forEach(p2 => {
+        const dx = p1.x - p2.x
+        const dy = p1.y - p2.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        const connectionThreshold = 150 // Slightly tighter threshold for cleaner look without mouse
+        
+        if (dist < connectionThreshold && ctx) {
+          const alpha = 0.5 * (1 - dist / connectionThreshold)
+          ctx.beginPath()
+          ctx.strokeStyle = `rgba(217, 70, 239, ${alpha})`
+          ctx.lineWidth = 1.5
+          ctx.moveTo(p1.x, p1.y)
+          ctx.lineTo(p2.x, p2.y)
+          ctx.stroke()
+        }
+      })
 
       // SEPARATION FORCE (Prevent Clumping) - Check against ALL particles nearby
       particles.forEach((p2, j) => {
@@ -368,12 +344,12 @@ const animate = () => {
         const dx = p1.x - p2.x
         const dy = p1.y - p2.y
         const dist = Math.sqrt(dx * dx + dy * dy)
-        const minDistance = 40 // Minimum space between particles
+        const minDistance = 50 // Increased separation distance
 
         if (dist < minDistance && dist > 0) {
-          const force = (minDistance - dist) / minDistance // Stronger force when closer
-          const repulsionX = (dx / dist) * force * 2 // Push apart strength
-          const repulsionY = (dy / dist) * force * 2
+          const force = (minDistance - dist) / minDistance 
+          const repulsionX = (dx / dist) * force * 1.5 
+          const repulsionY = (dy / dist) * force * 1.5
           
           p1.x += repulsionX
           p1.y += repulsionY
