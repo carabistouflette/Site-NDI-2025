@@ -22,6 +22,12 @@ const velocityY = ref(2); // Speed Y
 const sliderWidth = 256; // w-64 = 16rem = 256px
 const sliderHeight = 48; // h-12 = 3rem = 48px
 
+// Rotation State
+const rotation = ref(0);
+const rotationVelocity = ref(1);
+const lastRotationTime = ref(0);
+const lastSpeedChangeTime = ref(0);
+
 // Update fake cursor position on global mouse move
 const updateFakeCursor = (e: MouseEvent) => {
   // Invert coordinates: (Width - x, Height - y)
@@ -98,11 +104,29 @@ const endDrag = () => {
 };
 
 const startFloatingLoop = () => {
-  const animate = () => {
+  const animate = (currentTime: DOMHighResTimeStamp) => {
     if (hasStarted.value) {
         // Move the slider
         sliderX.value += velocityX.value;
         sliderY.value += velocityY.value;
+
+        // Apply Rotation
+        rotation.value += rotationVelocity.value;
+
+        // 3. Randomly change rotation behavior
+        if (currentTime - lastRotationTime.value > (Math.random() * 2000 + 1000)) {
+             // New random speed between -5 and 5 degrees per frame
+             rotationVelocity.value = (Math.random() - 0.5) * 10; 
+             lastRotationTime.value = currentTime;
+        }
+
+        // 4. Randomly change translation speed (New Chaos)
+        if (currentTime - lastSpeedChangeTime.value > (Math.random() * 1500 + 500)) {
+             // Random speed X and Y between -8 and 8
+             velocityX.value = (Math.random() - 0.5) * 16; 
+             velocityY.value = (Math.random() - 0.5) * 16;
+             lastSpeedChangeTime.value = currentTime;
+        }
 
         // Bounce Logic
         const maxX = window.innerWidth - (sliderRef.value?.clientWidth || sliderWidth);
@@ -217,7 +241,7 @@ const toggleMute = () => {
         ref="sliderRef"
         class="fixed top-0 left-0 h-12 w-64 bg-gray-800 rounded-md border-2 border-mercredi-purple overflow-hidden cursor-none shadow-2xl z-50"
         :style="{
-            transform: `translate(${sliderX}px, ${sliderY}px)`
+            transform: `translate(${sliderX}px, ${sliderY}px) rotate(${rotation}deg)`
         }"
       >
         <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] pointer-events-none"></div>
