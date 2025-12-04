@@ -1,14 +1,14 @@
 <template>
   <section class="hero" ref="heroRef">
     <canvas ref="canvasRef" class="hero__canvas"></canvas>
-    
+
     <div class="hero__mist"></div>
-    
+
     <div class="hero__content">
       <div class="hero__text">
         <!-- Le titre NIRD de base, sans aucun effet -->
         <h1 class="nird-title">NIRD</h1>
-        
+
         <p class="subtitle">Numérique <span class="neon">Inclusif</span> Responsable Durable</p>
         <p class="description">
           Construisons ensemble un avenir numérique éthique.
@@ -33,7 +33,6 @@ const MOUSE_RADIUS = 120
 const REPELL_FORCE = 15
 const RETURN_SPEED = 0.05
 const FRICTION = 0.90
-const EMOJI_SIZE = 24
 
 // Emojis
 const emojis = ['🌱', '🌿', '🌳', '♻️', '🌍', '💧', '💻', '💾', '🌐', '⚡', '👾']
@@ -61,7 +60,7 @@ class Particle {
     this.vx = 0
     this.vy = 0
     this.size = Math.random() * 10 + 14
-    this.emoji = isSnake ? SNAKE_EMOJI : emojis[Math.floor(Math.random() * emojis.length)]
+    this.emoji = isSnake ? SNAKE_EMOJI : (emojis[Math.floor(Math.random() * emojis.length)] || SNAKE_EMOJI)
     this.opacity = Math.random() * 0.5 + 0.3
     this.density = (Math.random() * 30) + 1
   }
@@ -70,7 +69,7 @@ class Particle {
     const dx = mouse.x - this.x
     const dy = mouse.y - this.y
     const distance = Math.sqrt(dx * dx + dy * dy)
-    
+
     if (distance < MOUSE_RADIUS) {
       const force = (MOUSE_RADIUS - distance) / MOUSE_RADIUS
       const directionX = (dx / distance) * force * REPELL_FORCE * -1
@@ -192,9 +191,9 @@ onUnmounted(() => {
   height: 100%;
   z-index: 2;
   background: radial-gradient(circle at center, transparent 0%, #000000 95%),
-              linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, transparent 20%, transparent 80%, #000000 100%);
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, transparent 20%, transparent 80%, #000000 100%);
   pointer-events: none;
-  box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9);
 }
 
 .hero__content {
@@ -212,7 +211,8 @@ onUnmounted(() => {
   line-height: 1;
   margin: 0;
   letter-spacing: -5px;
-  color: white; /* Texte blanc pur */
+  color: white;
+  /* Texte blanc pur */
   /* Tous les effets sont supprimés */
 }
 
@@ -240,7 +240,12 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .nird-title { font-size: 5rem; }
-  .subtitle { font-size: 1rem; }
+  .nird-title {
+    font-size: 5rem;
+  }
+
+  .subtitle {
+    font-size: 1rem;
+  }
 }
 </style>
