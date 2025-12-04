@@ -30,20 +30,20 @@
         <div class="app-footer__section">
           <h3 class="app-footer__title">Navigation</h3>
           <ul class="app-footer__links">
-            <li><RouterLink to="/">Accueil</RouterLink></li>
+            <li><RouterLink to="/#accueil">Accueil</RouterLink></li>
             <li><RouterLink to="/games">Jeux</RouterLink></li>
-            <li><RouterLink to="/about">À propos</RouterLink></li>
-            <li><RouterLink to="/contact">Contact</RouterLink></li>
+            <li><RouterLink to="/#evenement">L'événement</RouterLink></li>
+            <li><RouterLink to="/#contact">Contact</RouterLink></li>
           </ul>
         </div>
         
         <div class="app-footer__section">
           <h3 class="app-footer__title">L'événement</h3>
           <ul class="app-footer__links">
-            <li><a href="#programme">Programme</a></li>
-            <li><a href="#lieu">Lieu</a></li>
-            <li><a href="#inscription">Inscription</a></li>
-            <li><a href="#partenaires">Partenaires</a></li>
+            <li><RouterLink to="/#evenement">Programme</RouterLink></li>
+            <li><RouterLink to="/#evenement">Lieu</RouterLink></li>
+            <li><RouterLink to="/#contact">Inscription</RouterLink></li>
+            <li><RouterLink to="/#evenement">Partenaires</RouterLink></li>
           </ul>
         </div>
         

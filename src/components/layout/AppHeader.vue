@@ -62,7 +62,7 @@ const activeRoute = computed(() => {
 
 const menuOptions = [
   {
-    label: () => h(RouterLink, { to: '/' }, { default: () => 'Accueil' }),
+    label: () => h(RouterLink, { to: '/#accueil' }, { default: () => 'Accueil' }),
     key: 'home'
   },
   {
@@ -74,30 +74,32 @@ const menuOptions = [
     key: 'about',
     children: [
       {
-        label: () => h(RouterLink, { to: '/about' }, { default: () => 'L\'association NIRD' }),
-        key: 'association'
+        label: () => h(RouterLink, { to: '/#evenement' }, { default: () => 'L\'événement' }),
+        key: 'event'
       },
       {
-        label: 'La Nuit de l\'Informatique',
-        key: 'event'
+        label: () => h(RouterLink, { to: '/about' }, { default: () => 'L\'association NIRD' }),
+        key: 'association'
       }
     ]
   },
   {
-    label: () => h(RouterLink, { to: '/contact' }, { default: () => 'Contact' }),
+    label: () => h(RouterLink, { to: '/#contact' }, { default: () => 'Contact' }),
     key: 'contact'
   }
 ]
 
 const handleMenuClick = (key: string) => {
   if (key === 'home') {
-    router.push('/')
+    router.push('/#accueil')
   } else if (key === 'games') {
     router.push('/games')
+  } else if (key === 'event') {
+    router.push('/#evenement')
   } else if (key === 'association') {
     router.push('/about')
   } else if (key === 'contact') {
-    router.push('/contact')
+    router.push('/#contact')
   }
   isMobileMenuOpen.value = false
 }
