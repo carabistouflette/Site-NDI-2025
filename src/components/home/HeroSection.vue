@@ -6,7 +6,7 @@
     
     <div class="hero__content">
       <div class="hero__text">
-        <!-- Le titre NIRD de base, avec une lueur néon simple -->
+        <!-- Le titre NIRD de base, sans aucun effet -->
         <h1 class="nird-title">NIRD</h1>
         
         <p class="subtitle">Numérique <span class="neon">Inclusif</span> Responsable Durable</p>
@@ -205,18 +205,15 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* NOUVEAU STYLE DE TITRE : NIRD de base */
+/* STYLE DE TITRE : NIRD juste avec la font et couleur blanche */
 .nird-title {
   font-size: 8rem;
   font-weight: 900;
   line-height: 1;
   margin: 0;
   letter-spacing: -5px;
-  color: white; /* Texte blanc */
-  text-shadow: 0 0 10px var(--neon-green), /* Lueur interne */
-               0 0 20px var(--neon-green), /* Lueur plus large */
-               0 0 30px var(--neon-green); /* Lueur encore plus large */
-  filter: drop-shadow(0 0 15px var(--neon-green)); /* Lueur douce externe */
+  color: white; /* Texte blanc pur */
+  /* Tous les effets sont supprimés */
 }
 
 .subtitle {
