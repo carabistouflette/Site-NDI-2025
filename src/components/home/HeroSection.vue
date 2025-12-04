@@ -6,8 +6,8 @@
     
     <div class="hero__content">
       <div class="hero__text">
-        <!-- Le texte avec l'effet néon flow -->
-        <h1 class="neon-flow" data-text="NIRD">NIRD</h1>
+        <!-- Le titre NIRD de base, avec une lueur néon simple -->
+        <h1 class="nird-title">NIRD</h1>
         
         <p class="subtitle">Numérique <span class="neon">Inclusif</span> Responsable Durable</p>
         <p class="description">
@@ -205,37 +205,18 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-/* EFFET NEON FLOW - SOBRE ET ELEGANT */
-.neon-flow {
+/* NOUVEAU STYLE DE TITRE : NIRD de base */
+.nird-title {
   font-size: 8rem;
   font-weight: 900;
   line-height: 1;
   margin: 0;
   letter-spacing: -5px;
-  color: transparent; /* Texte vide */
-  
-  /* Contour fin vert sombre */
-  -webkit-text-stroke: 2px rgba(57, 255, 20, 0.3);
-  
-  /* Gradient qui passe dedans */
-  background: linear-gradient(
-    90deg,
-    rgba(57, 255, 20, 0) 0%,
-    rgba(57, 255, 20, 0) 40%,
-    rgba(57, 255, 20, 1) 50%, /* Point lumineux intense */
-    rgba(57, 255, 20, 0) 60%,
-    rgba(57, 255, 20, 0) 100%
-  );
-  background-size: 200% auto;
-  background-clip: text;
-  -webkit-background-clip: text;
-  
-  animation: neon-flow-anim 4s linear infinite;
-}
-
-@keyframes neon-flow-anim {
-  0% { background-position: 200% center; }
-  100% { background-position: -200% center; }
+  color: white; /* Texte blanc */
+  text-shadow: 0 0 10px var(--neon-green), /* Lueur interne */
+               0 0 20px var(--neon-green), /* Lueur plus large */
+               0 0 30px var(--neon-green); /* Lueur encore plus large */
+  filter: drop-shadow(0 0 15px var(--neon-green)); /* Lueur douce externe */
 }
 
 .subtitle {
@@ -262,7 +243,7 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .neon-flow { font-size: 5rem; }
+  .nird-title { font-size: 5rem; }
   .subtitle { font-size: 1rem; }
 }
 </style>
