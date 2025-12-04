@@ -33,7 +33,7 @@
             <li><RouterLink to="/">Accueil</RouterLink></li>
             <li><RouterLink to="/games">Jeux</RouterLink></li>
             <li><RouterLink to="/about">Association</RouterLink></li>
-            <li><RouterLink to="/#join-us">Nous rejoindre</RouterLink></li>
+            <li><RouterLink to="/#nird">Démarche NIRD</RouterLink></li>
           </ul>
         </div>
         

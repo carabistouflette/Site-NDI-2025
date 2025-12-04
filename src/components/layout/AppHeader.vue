@@ -74,8 +74,8 @@ const menuOptions = [
     key: 'about'
   },
   {
-    label: () => h(RouterLink, { to: '/#join-us' }, { default: () => 'Nous rejoindre' }),
-    key: 'contact'
+    label: () => h(RouterLink, { to: '/#nird' }, { default: () => 'Démarche NIRD' }),
+    key: 'nird'
   }
 ]
 
@@ -86,8 +86,8 @@ const handleMenuClick = (key: string) => {
     router.push('/games')
   } else if (key === 'about') {
     router.push('/about')
-  } else if (key === 'contact') {
-    router.push('/#join-us')
+  } else if (key === 'nird') {
+    router.push('/#nird')
   }
   isMobileMenuOpen.value = false
 }

@@ -8,7 +8,7 @@
       <n-layout-content>
         <HeroSection />
         <GamePreview />
-        <JoinUs />
+        <NirdPresentation />
       </n-layout-content>
       
       <n-layout-footer>
@@ -23,7 +23,7 @@ import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import HeroSection from '@/components/home/HeroSection.vue'
 import GamePreview from '@/components/home/GamePreview.vue'
-import JoinUs from '@/components/home/JoinUs.vue'
+import NirdPresentation from '@/components/home/NirdPresentation.vue'
 </script>
 
 <style scoped>
