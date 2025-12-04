@@ -402,15 +402,15 @@
 
 /* Animation Classes */
 .animate-fade-in { animation: fade-in 0.8s ease forwards; }
-.animate-slide-up { opacity: 0; animation: slide-up 0.8s ease forwards; animation-delay: 0.2s; }
-.animate-card { opacity: 0; animation: card-appear 0.6s ease forwards; }
+.animate-slide-up { /* opacity: 0; */ animation: slide-up 0.8s ease forwards; animation-delay: 0.2s; }
+.animate-card { /* opacity: 0; */ animation: card-appear 0.6s ease forwards; }
 
 .animate-card:nth-child(1) { animation-delay: 0.1s; }
 .animate-card:nth-child(2) { animation-delay: 0.2s; }
 .animate-card:nth-child(3) { animation-delay: 0.3s; }
 .animate-card:nth-child(4) { animation-delay: 0.4s; }
 
-.animate-tag { opacity: 0; animation: tag-appear 0.5s ease forwards; }
+.animate-tag { /* opacity: 0; */ animation: tag-appear 0.5s ease forwards; }
 .animate-tag:nth-child(1) { animation-delay: 0.5s; }
 .animate-tag:nth-child(2) { animation-delay: 0.6s; }
 .animate-tag:nth-child(3) { animation-delay: 0.7s; }

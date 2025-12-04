@@ -275,7 +275,7 @@
 }
 
 .animate-fade-in { animation: fade-in 0.8s ease forwards; }
-.animate-slide-up { opacity: 0; animation: slide-up 0.8s ease forwards; animation-delay: 0.2s; }
+.animate-slide-up { /* opacity: 0; */ animation: slide-up 0.8s ease forwards; animation-delay: 0.2s; }
 
 /* Responsive */
 @media (max-width: 1024px) {

@@ -81,14 +81,14 @@
   font-size: 1.25rem;
   color: var(--nird-anthracite);
   line-height: 1.6;
-  opacity: 0;
+  /* opacity: 0; */
   animation: fade-in-up 0.8s ease forwards;
   animation-delay: 0.3s;
 }
 
 /* Highlights */
 .hero-section__highlights {
-  opacity: 0;
+  /* opacity: 0; */
   animation: fade-in-up 0.8s ease forwards;
   animation-delay: 0.5s;
 }
@@ -125,7 +125,7 @@
 
 /* Buttons */
 .hero-section__actions {
-  opacity: 0;
+  /* opacity: 0; */
   animation: fade-in-up 0.8s ease forwards;
   animation-delay: 0.6s;
   margin-top: 2rem;
@@ -311,7 +311,7 @@
 }
 
 .animate-slide-up {
-  opacity: 0;
+  /* opacity: 0; */
   animation: fade-in-up 0.8s ease forwards;
 }
 
