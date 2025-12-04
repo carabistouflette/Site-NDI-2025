@@ -6,7 +6,7 @@
 
     <div class="container">
       <div class="header-glitch">
-        <h2 class="section-title" data-text="ZONES D'INTERACTION">ZONES D'INTERACTION</h2>
+        <h2 class="section-title">ZONES D'INTERACTION</h2>
         <p class="subtitle">Initialisation des protocoles ludiques...</p>
       </div>
       
@@ -189,26 +189,17 @@ const handleContainerMouseMove = (e: MouseEvent) => {
   position: relative;
   display: inline-block;
   letter-spacing: 4px;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+  animation: neon-pulse 3s infinite ease-in-out;
 }
 
-.section-title::before {
-  content: attr(data-text);
-  position: absolute;
-  left: -2px;
-  text-shadow: 1px 0 #ff00c1;
-  top: 0;
-  overflow: hidden;
-  animation: glitch-1 2s infinite linear alternate-reverse;
-}
-
-.section-title::after {
-  content: attr(data-text);
-  position: absolute;
-  left: 2px;
-  text-shadow: -1px 0 #00fff9;
-  top: 0;
-  overflow: hidden;
-  animation: glitch-2 3s infinite linear alternate-reverse;
+@keyframes neon-pulse {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3), 0 0 20px rgba(0, 255, 0, 0.1);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5), 0 0 40px var(--neon-green), 0 0 80px var(--neon-green);
+  }
 }
 
 .subtitle {
@@ -402,20 +393,6 @@ const handleContainerMouseMove = (e: MouseEvent) => {
 }
 
 /* Animations */
-@keyframes glitch-1 {
-  0% { clip: rect(20px, 900px, 56px, 0); }
-  20% { clip: rect(60px, 900px, 10px, 0); }
-  40% { clip: rect(10px, 900px, 80px, 0); }
-  100% { clip: rect(90px, 900px, 30px, 0); }
-}
-
-@keyframes glitch-2 {
-  0% { clip: rect(80px, 900px, 10px, 0); }
-  20% { clip: rect(30px, 900px, 90px, 0); }
-  40% { clip: rect(50px, 900px, 20px, 0); }
-  100% { clip: rect(10px, 900px, 60px, 0); }
-}
-
 @media (max-width: 768px) {
   .section-title { font-size: 2.5rem; }
   .holo-card { transform: none !important; } /* Disable tilt on mobile */

@@ -287,40 +287,31 @@ h1 {
 /* Nouveau style d'effet de vent */
 .wind-effect {
   position: relative;
-  overflow: hidden; /* Important pour cacher les débordements de l'animation */
-  display: inline-block; /* Pour que overflow hidden fonctionne */
+  display: inline-block;
+  color: white; /* Texte blanc de base */
+  /* Masque l'overflow pour que le "vent" ne dépasse pas du texte */
+  background: linear-gradient(
+    110deg, 
+    #ffffff 0%, 
+    #ffffff 40%, 
+    var(--neon-green) 50%, 
+    #ffffff 60%, 
+    #ffffff 100%
+  );
+  background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
-  color: transparent; /* Masque le texte original */
-  background-image: linear-gradient(90deg, white 0%, white 50%, white 100%);
-  transition: background-position 0.2s ease-out; /* Pour un mouvement de fond fluide */
+  -webkit-text-fill-color: transparent;
+  animation: shine-wind 5s linear infinite;
 }
 
-.wind-effect::before {
-  content: "NIRD"; /* Duplique le texte pour l'animation */
-  position: absolute;
-  top: 0;
-  left: -100%; /* Commence en dehors de l'écran */
-  width: 300%; /* Largeur suffisante pour couvrir et donner un effet de passage */
-  height: 100%;
-  background: linear-gradient(90deg, transparent 0%, var(--neon-green) 50%, transparent 100%);
-  background-size: 30% 100%; /* Contrôle la taille de l'effet de vent */
-  background-repeat: no-repeat;
-  background-position: 0% 50%;
-  animation: wind-pass 4s infinite ease-in-out;
-  mix-blend-mode: screen; /* Pour un effet de lumière plus subtil */
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  pointer-events: none;
-}
-
-@keyframes wind-pass {
-  0% { left: -150%; opacity: 0; }
-  10% { left: -50%; opacity: 1; }
-  50% { left: 100%; opacity: 1; }
-  60% { left: 150%; opacity: 0; }
-  100% { left: -150%; opacity: 0; }
+@keyframes shine-wind {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
 }
 
 @media (max-width: 768px) {
