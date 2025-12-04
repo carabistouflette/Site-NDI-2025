@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import videoUrl from '@/assets/mercredi_addams.mp4';
 
 const videoRef = ref<HTMLVideoElement | null>(null);
@@ -29,6 +29,27 @@ const rotation = ref(0);
 const rotationVelocity = ref(1);
 const lastRotationTime = ref(0);
 const lastSpeedChangeTime = ref(0);
+
+const darknessStyle = computed(() => {
+  // 1. Dynamic Flashlight (The Hand)
+  const flashlight = `radial-gradient(circle 2000px at ${fakeCursorX.value}px ${fakeCursorY.value}px, transparent 0%, black 20%)`;
+
+  // 2. Static Lights (UI Elements)
+  const titleLight = `radial-gradient(ellipse 400px 100px at 50% 3%, transparent 0%, transparent 40%, black 80%)`;
+  const videoLight = `radial-gradient(ellipse 300px 35% at 50% 45%, transparent 0%, transparent 50%, black 90%)`;
+  const muteButtonLight = `radial-gradient(circle 150px at 50% 85%, transparent 0%, transparent 30%, black 70%)`;
+  const footerLight = `radial-gradient(ellipse 350px 50px at 50% 97%, transparent 0%, transparent 30%, black 60%)`;
+
+  const combinedMask = `${flashlight}, ${titleLight}, ${videoLight}, ${muteButtonLight}, ${footerLight}`;
+
+  return {
+    backgroundColor: 'rgba(0,0,0,0.98)',
+    maskImage: combinedMask,
+    webkitMaskImage: combinedMask,
+    maskComposite: 'intersect',
+    webkitMaskComposite: 'source-in'
+  };
+});
 
 // Update fake cursor position on global mouse move
 const updateFakeCursor = (e: MouseEvent) => {
@@ -195,17 +216,11 @@ const toggleMute = () => {
     <div
       v-if="hasStarted"
       class="fixed inset-0 pointer-events-none z-[9000]"
-      :style="{
-        backgroundColor: 'rgba(0,0,0,0.98)',
-        maskImage: `radial-gradient(circle 2000px at ${fakeCursorX}px ${fakeCursorY}px, transparent 0%, black 20%), radial-gradient(ellipse 600px 90% at 50% 50%, transparent 0%, transparent 60%, black 80%)`,
-        webkitMaskImage: `radial-gradient(circle 2000px at ${fakeCursorX}px ${fakeCursorY}px, transparent 0%, black 20%), radial-gradient(ellipse 600px 90% at 50% 50%, transparent 0%, transparent 60%, black 80%)`,
-        maskComposite: 'intersect',
-        webkitMaskComposite: 'source-in'
-      }"
+      :style="darknessStyle"
     ></div>
 
     <!-- FAKE CURSOR -->
-    <div 
+    <div
       class="fixed pointer-events-none z-[20000] text-4xl filter drop-shadow-lg transition-none will-change-transform"
       :style="{
         left: '0px',
@@ -219,7 +234,7 @@ const toggleMute = () => {
     <h1 class="text-3xl font-bold mb-4 text-primary-color uppercase tracking-widest z-10">Attrapez le Volume</h1>
 
     <!-- Start Overlay -->
-    <div v-if="!hasStarted" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black bg-opacity-90 backdrop-blur-sm">
+    <div v-if="!hasStarted" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/90 backdrop-blur-sm">
       <button
         ref="startButtonRef"
         @click="startExperience"
@@ -241,7 +256,7 @@ const toggleMute = () => {
         class="h-[60vh] w-auto object-contain pointer-events-none block"
         :volume="volume"
       ></video>
-      <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center pointer-events-none" v-if="videoRef && videoRef.muted">
+      <div class="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none" v-if="videoRef && videoRef.muted">
         <p class="text-white text-xl animate-pulse">MUTED</p>
       </div>
     </div>
