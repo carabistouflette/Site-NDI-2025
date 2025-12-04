@@ -3,28 +3,32 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import videoUrl from '@/assets/mercredi_addams.mp4';
 
 const videoRef = ref<HTMLVideoElement | null>(null);
-const volume = ref(0.5);
-const sliderPosition = ref(50);
+const volume = ref(0.5); 
+const sliderPosition = ref(50); 
 const isDragging = ref(false);
 const animationFrameId = ref<number | null>(null);
-const lastUpdateTime = ref(0);
 const hasStarted = ref(false);
-const sliderRef = ref<HTMLElement | null>(null); // Ref for the slider track
+const sliderRef = ref<HTMLElement | null>(null); 
 
 // Fake Cursor State
 const fakeCursorX = ref(0);
 const fakeCursorY = ref(0);
 
-const animationSpeed = 0.05;
-const animationMagnitude = 10;
+// Floating Slider State
+const sliderX = ref(100); // Initial X position
+const sliderY = ref(100); // Initial Y position
+const velocityX = ref(2); // Speed X
+const velocityY = ref(2); // Speed Y
+const sliderWidth = 256; // w-64 = 16rem = 256px
+const sliderHeight = 48; // h-12 = 3rem = 48px
 
 // Update fake cursor position on global mouse move
 const updateFakeCursor = (e: MouseEvent) => {
   // Invert coordinates: (Width - x, Height - y)
   fakeCursorX.value = window.innerWidth - e.clientX;
   fakeCursorY.value = window.innerHeight - e.clientY;
-
-  // If dragging, the slider follows the FAKE cursor's X
+  
+  // If dragging, we update the volume based on the fake cursor's position relative to the MOVING slider
   if (isDragging.value) {
     updateSliderFromFakeX(fakeCursorX.value);
   }
@@ -34,9 +38,9 @@ const updateSliderFromFakeX = (x: number) => {
   if (!sliderRef.value) return;
 
   const rect = sliderRef.value.getBoundingClientRect();
-  // Calculate position relative to the slider track using the FAKE X
+  // Calculate position relative to the moving slider track
   const newPosition = ((x - rect.left) / rect.width) * 100;
-
+  
   sliderPosition.value = Math.max(0, Math.min(100, newPosition));
   updateVolume(sliderPosition.value / 100);
 }
@@ -47,19 +51,19 @@ const startExperience = () => {
     videoRef.value.volume = volume.value;
     videoRef.value.muted = false;
     videoRef.value.play().catch(e => console.error("Play failed:", e));
-    startPossessedMovement();
+    startFloatingLoop();
   }
 };
 
 const updateVolume = (newVolume: number) => {
-  volume.value = Math.max(0, Math.min(1, newVolume));
+  volume.value = Math.max(0, Math.min(1, newVolume)); 
   if (videoRef.value) {
     videoRef.value.volume = volume.value;
     if (hasStarted.value) videoRef.value.muted = false;
   }
 };
 
-// HIT TESTING: Check if the FAKE cursor is over the slider when the REAL mouse clicks
+// HIT TESTING
 const handleGlobalMouseDown = (e: MouseEvent) => {
   if (!hasStarted.value || !sliderRef.value) return;
 
@@ -67,9 +71,8 @@ const handleGlobalMouseDown = (e: MouseEvent) => {
   const x = fakeCursorX.value;
   const y = fakeCursorY.value;
 
-  // Check collision between Fake Cursor (Point) and Slider (Rect)
-  // We add a bit of padding (margin) to make it easier to grab
-  const padding = 20;
+  // Check collision with the floating slider
+  const padding = 20; // Forgiveness padding
   if (
     x >= rect.left - padding &&
     x <= rect.right + padding &&
@@ -82,16 +85,9 @@ const handleGlobalMouseDown = (e: MouseEvent) => {
 
 const startDrag = () => {
   isDragging.value = true;
-
   document.addEventListener('mouseup', endDrag);
   document.addEventListener('touchend', endDrag);
-
-  if (animationFrameId.value) {
-    cancelAnimationFrame(animationFrameId.value);
-    animationFrameId.value = null;
-  }
-
-  // Immediate update
+  // We DO NOT stop the animation loop. The slider keeps moving while you drag!
   updateSliderFromFakeX(fakeCursorX.value);
 };
 
@@ -99,41 +95,51 @@ const endDrag = () => {
   isDragging.value = false;
   document.removeEventListener('mouseup', endDrag);
   document.removeEventListener('touchend', endDrag);
-  setTimeout(startPossessedMovement, 1000);
 };
 
-const startPossessedMovement = () => {
-  const animateSlider = (currentTime: DOMHighResTimeStamp) => {
-    if (!lastUpdateTime.value) lastUpdateTime.value = currentTime;
-    lastUpdateTime.value = currentTime;
+const startFloatingLoop = () => {
+  const animate = () => {
+    if (hasStarted.value) {
+        // Move the slider
+        sliderX.value += velocityX.value;
+        sliderY.value += velocityY.value;
 
-    if (!isDragging.value && hasStarted.value && videoRef.value && !videoRef.value.paused) {
-      const wiggle = Math.sin(currentTime * animationSpeed) * animationMagnitude;
-      let newPosition = 50 + wiggle;
-      newPosition = Math.max(0, Math.min(100, newPosition));
+        // Bounce Logic
+        const maxX = window.innerWidth - (sliderRef.value?.clientWidth || sliderWidth);
+        const maxY = window.innerHeight - (sliderRef.value?.clientHeight || sliderHeight);
 
-      sliderPosition.value = newPosition;
-      updateVolume(sliderPosition.value / 100);
+        if (sliderX.value <= 0 || sliderX.value >= maxX) {
+            velocityX.value *= -1;
+            // Clamp to prevent sticking
+            sliderX.value = Math.max(0, Math.min(sliderX.value, maxX));
+        }
+        if (sliderY.value <= 0 || sliderY.value >= maxY) {
+            velocityY.value *= -1;
+             sliderY.value = Math.max(0, Math.min(sliderY.value, maxY));
+        }
+
+        // If dragging, update volume because the slider moved under the cursor!
+        if (isDragging.value) {
+            updateSliderFromFakeX(fakeCursorX.value);
+        }
     }
-    animationFrameId.value = requestAnimationFrame(animateSlider);
+    animationFrameId.value = requestAnimationFrame(animate);
   };
-  if (!animationFrameId.value) {
-      animationFrameId.value = requestAnimationFrame(animateSlider);
-  }
+  animationFrameId.value = requestAnimationFrame(animate);
 };
 
 onMounted(() => {
-  // Track mouse globally for the fake cursor
   window.addEventListener('mousemove', updateFakeCursor);
-  // Track clicks globally for Hit Testing
   window.addEventListener('mousedown', handleGlobalMouseDown);
+  
+  // Randomize start direction
+  velocityX.value = (Math.random() > 0.5 ? 1 : -1) * 3; // Speed 3
+  velocityY.value = (Math.random() > 0.5 ? 1 : -1) * 3;
 
   if (videoRef.value) {
     videoRef.value.volume = volume.value;
-    videoRef.value.muted = true;
-    videoRef.value.play().catch(e => console.error("Autoplay failed:", e));
+    videoRef.value.muted = true; 
   }
-  startPossessedMovement();
 });
 
 onUnmounted(() => {
@@ -152,34 +158,34 @@ const toggleMute = () => {
 </script>
 
 <template>
-  <!-- Main Container: Full viewport, hidden overflow to stop scrollbars -->
   <div class="fixed inset-0 flex flex-col items-center justify-between bg-gray-900 text-white p-4 overflow-hidden select-none">
-
-    <!-- FAKE CURSOR: Pointer events none to let clicks pass through to window/elements underneath (if mapped) -->
-    <div
+    
+    <!-- FAKE CURSOR -->
+    <div 
       class="fixed pointer-events-none z-[9999] text-4xl filter drop-shadow-lg transition-none will-change-transform"
-      :style="{
-        left: '0px',
+      :style="{ 
+        left: '0px', 
         top: '0px',
-        transform: `translate(${fakeCursorX}px, ${fakeCursorY}px)`
+        transform: `translate(${fakeCursorX}px, ${fakeCursorY}px)` 
       }"
     >
       🖐️
     </div>
 
-    <h1 class="text-3xl font-bold mb-4 text-mercredi-purple uppercase tracking-widest z-10">Contrôles Inversés</h1>
-
+    <h1 class="text-3xl font-bold mb-4 text-mercredi-purple uppercase tracking-widest z-10">Attrapez le Volume</h1>
+    
     <!-- Start Overlay -->
     <div v-if="!hasStarted" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 backdrop-blur-sm cursor-auto">
-      <button
+      <button 
         @click="startExperience"
         class="px-8 py-4 bg-mercredi-purple text-white text-xl font-bold rounded border-2 border-white hover:bg-white hover:text-black transition-colors duration-300 animate-bounce"
       >
-        CLIQUER POUR SOUFFRIR
+        COMMENCER LA CHASSE
       </button>
     </div>
 
-    <div class="relative flex-grow flex items-center justify-center w-full max-w-lg mb-8 bg-black rounded-lg overflow-hidden shadow-lg border-2 border-mercredi-purple max-h-[50vh] z-10">
+    <!-- Video Container -->
+    <div class="relative flex-grow flex items-center justify-center w-full max-w-3xl mb-8 rounded-lg overflow-hidden shadow-lg border-0 border-mercredi-purple max-h-[70vh] z-10">
       <video
         ref="videoRef"
         :src="videoUrl"
@@ -196,35 +202,44 @@ const toggleMute = () => {
     </div>
 
     <div class="w-full max-w-md flex items-center justify-center space-x-6 mb-8 z-10">
-      <!-- Mute Button: Note - You still have to hit this with the INVISIBLE REAL MOUSE.
-           To make it 'Fake Cursor' clickable, we'd need similar hit testing.
-           Let's leave it as a 'Trap' for now: You see the hand over it, but it doesn't click. -->
+      <!-- Mute Button (Fixed position) -->
       <button
         @click="toggleMute"
-        class="w-16 h-16 flex items-center justify-center rounded-full bg-red-800 border-2 border-gray-600 hover:border-mercredi-purple transition-all duration-200 cursor-none"
+        class="w-16 h-16 flex items-center justify-center rounded-full bg-gray-800 border-2 border-gray-600 hover:border-mercredi-purple transition-all duration-200 cursor-none z-20"
       >
         <span class="text-2xl pointer-events-none">{{ videoRef?.muted ? '🤐' : '🔊' }}</span>
       </button>
-
-      <!-- Possessed Slider Container -->
-      <div
+    </div>
+    
+    <!-- FLOATING SLIDER -->
+    <!-- Moved out of the flow, using fixed positioning controlled by JS -->
+    <div
         ref="sliderRef"
-        class="relative flex-grow h-12 bg--800 rounded-md volume-track border border-gray-600 overflow-hidden cursor-none"
+        class="fixed top-0 left-0 h-12 w-64 bg-gray-800 rounded-md border-2 border-mercredi-purple overflow-hidden cursor-none shadow-2xl z-50"
+        :style="{
+            transform: `translate(${sliderX}px, ${sliderY}px)`
+        }"
       >
         <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] pointer-events-none"></div>
+        <!-- Volume Level -->
         <div
-          class="absolute h-full bg-gradient-to-r from-red-900 to-mercredi-purple pointer-events-none"
+          class="absolute h-full bg-gradient-to-r from-red-900 to-mercredi-purple pointer-events-none transition-none"
           :style="{ width: `${sliderPosition}%` }"
         ></div>
+        <!-- Knob -->
         <div
           class="absolute w-4 h-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)] transform -translate-x-1/2 pointer-events-none"
           :style="{ left: `${sliderPosition}%` }"
         ></div>
-      </div>
+        
+        <!-- Text on slider -->
+        <div class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white mix-blend-difference pointer-events-none">
+            VOLUME
+        </div>
     </div>
-
+    
     <div class="text-center z-10 pointer-events-none">
-         <p class="text-gray-500 text-sm">Le curseur est un mensonge. Alignez la main pour attraper le son.</p>
+         <p class="text-gray-500 text-sm">Attrapez la barre... si vous pouvez.</p>
     </div>
 
   </div>
@@ -234,13 +249,14 @@ const toggleMute = () => {
 /* GLOBAL CURSOR HIDING */
 html, body, #app {
   cursor: none !important;
-  overflow: hidden; /* Prevent scrollbars messing up coords */
+  overflow: hidden; 
   width: 100vw;
   height: 100vh;
   margin: 0;
   padding: 0;
 }
 
+/* Crimson Theme */
 .text-mercredi-purple { color: #8B0000; }
 .border-mercredi-purple { border-color: #8B0000; }
 .bg-mercredi-purple { background-color: #8B0000; }
