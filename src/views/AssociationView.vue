@@ -183,8 +183,8 @@ class Particle {
   size: number
   baseX: number
   baseY: number
-  color: string // Stores RGB string, e.g., '255, 255, 255'
-  alpha: number = 0.3 // Stores individual particle alpha
+  color: string
+  alpha: number = 0.5 // Higher base alpha
   connected: boolean = false
 
   constructor(w: number, h: number) {
@@ -192,48 +192,38 @@ class Particle {
     this.y = Math.random() * h
     this.baseX = this.x
     this.baseY = this.y
-    this.vx = (Math.random() - 0.5) * 0.8 // Slower initial speed for subtle drift
-    this.vy = (Math.random() - 0.5) * 0.8
-    this.size = Math.random() * 2 + 1 // Slightly smaller particles
-    this.color = '255, 255, 255' // Default to white RGB
+    // Higher initial velocity for more activity
+    this.vx = (Math.random() - 0.5) * 2 
+    this.vy = (Math.random() - 0.5) * 2
+    this.size = Math.random() * 3 + 2 // Larger particles (2-5px)
+    this.color = '255, 255, 255'
   }
 
   update(mode: number, mouseX: number, mouseY: number, width: number, height: number, isHoveringCore: boolean) {
-    if (isEcoMode.value) {
-      // In eco mode, particles stop moving or disappear
-      return
-    }
+    if (isEcoMode.value) return
 
     if (mode === 0) {
-      // Mode 0: Orbit (Hero)
+      // ... (Hero logic unchanged) ...
       const centerX = width / 2
       const centerY = height / 2
-      
       let dx = this.x - centerX
       let dy = this.y - centerY
       let radius = Math.sqrt(dx * dx + dy * dy)
       let angle = Math.atan2(dy, dx)
-      
-      const targetRadius = 200 + (Math.sin(this.baseX * 0.01 + this.baseY * 0.01) * 50); // Add some variation
-      
-      // Tend towards targetRadius
+      const targetRadius = 200 + (Math.sin(this.baseX * 0.01 + this.baseY * 0.01) * 50);
       if (radius < targetRadius - 10) radius += 0.5
       if (radius > targetRadius + 10) radius -= 0.5
-
       const speed = isHoveringCore ? 0.05 : 0.005
-      angle += speed * (radius > 0 ? 500/radius : 0) // Speed inverse to radius
-      
+      angle += speed * (radius > 0 ? 500/radius : 0)
       this.x = centerX + Math.cos(angle) * radius
       this.y = centerY + Math.sin(angle) * radius
-      
       this.alpha = isHoveringCore ? 0.8 : 0.3
-      this.color = isHoveringCore ? '255, 255, 255' : '0, 102, 255' // White when hovered, blue otherwise
-      
+      this.color = isHoveringCore ? '255, 255, 255' : '0, 102, 255'
+
     } else if (mode === 1) {
-      // Inclusion: Attracted to mouse, form connections
-      const attractionRadius = 300 // Increased attraction radius
-      const maxAttractionForce = 0.05 // How strongly they move towards mouse
-      // const maxRepulsionForce = 0.005; // For other particles (not implemented yet)
+      // Inclusion Mode
+      const attractionRadius = 350
+      const maxAttractionForce = 0.08 // Stronger attraction
 
       const dx = mouseX - this.x
       const dy = mouseY - this.y
@@ -247,41 +237,40 @@ class Particle {
         this.connected = false
       }
 
-      // Apply mouse attraction
-      this.x += dx * attractionStrength * maxAttractionForce
-      this.y += dy * attractionStrength * maxAttractionForce
+      // Apply mouse attraction (Direct position modification)
+      if (this.connected) {
+        this.x += dx * attractionStrength * maxAttractionForce
+        this.y += dy * attractionStrength * maxAttractionForce
+      }
       
-      // Natural drift and slight randomness (jitter)
-      this.x += this.vx * 0.1 // Slower inherent drift
-      this.y += this.vy * 0.1
-      this.x += (Math.random() - 0.5) * 0.5 // Jitter
-      this.y += (Math.random() - 0.5) * 0.5
+      // Always apply drift (Velocity based)
+      this.x += this.vx * 0.5 // More drift
+      this.y += this.vy * 0.5
 
-      // Push particles back into bounds with a 'bounce'
+      // Screen bounce
       if (this.x < 0 || this.x > width) this.vx *= -1;
       if (this.y < 0 || this.y > height) this.vy *= -1;
 
-      // Update alpha based on proximity to mouse for dynamic glow
-      this.alpha = 0.3 + (attractionStrength * 0.7); // 0.3 to 1.0 alpha
-      this.color = '217, 70, 239' // Purple for inclusion
-      
+      // Base alpha higher + boost on connect
+      this.alpha = 0.5 + (attractionStrength * 0.5); 
+      this.color = '217, 70, 239'
+
     } else if (mode === 2) {
-      // Digital Rain logic (Responsibility)
-      this.y += 3 + this.size / 2 // Faster rain, size influences speed
-      this.x += (Math.random() - 0.5) * 0.5 // Slight horizontal sway
-      if (this.y > height + this.size) this.y = -this.size // Reset above screen
+      // ... (Responsibility logic unchanged) ...
+      this.y += 3 + this.size / 2
+      this.x += (Math.random() - 0.5) * 0.5
+      if (this.y > height + this.size) this.y = -this.size
       this.alpha = 0.6
-      this.color = '34, 197, 94' // Matrix Greenish
-      
+      this.color = '34, 197, 94'
+
     } else if (mode === 3) {
-      // Slow drift (Durable) - almost static
-      this.x += this.vx * 0.05 // Very slow movement
+      // ... (Sustainable logic unchanged) ...
+      this.x += this.vx * 0.05
       this.y += this.vy * 0.05
       this.alpha = 0.2
-      this.color = '255, 255, 255' // White/Grey for calm
+      this.color = '255, 255, 255'
     }
 
-    // Screen wrap for modes other than 1 and 2 where bounce is handled.
     if (mode !== 1 && mode !== 2) {
       if (this.x < 0) this.x = width
       if (this.x > width) this.x = 0
@@ -289,7 +278,7 @@ class Particle {
       if (this.y > height) this.y = 0
     }
   }
-
+  // ... draw method stays same ...
   draw() {
     if (!ctx || isEcoMode.value) return
     ctx.beginPath()
@@ -348,22 +337,23 @@ const animate = () => {
     p.draw()
   })
 
-  // Draw connections in Inclusion mode
+  // Draw connections and apply REPULSION in Inclusion mode
   if (currentSection.value === 1) {
     particles.forEach((p1, i) => {
-      // Only draw connections if both particles are "connected" (near mouse)
       if (p1.connected) {
         particles.slice(i + 1).forEach(p2 => {
-          if (p2.connected) { // Only connect to other connected particles
+          // Connection Lines
+          if (p2.connected) { 
             const dx = p1.x - p2.x
             const dy = p1.y - p2.y
             const dist = Math.sqrt(dx * dx + dy * dy)
-            const connectionThreshold = 200 // Max distance to draw a line
+            const connectionThreshold = 200 
+            
             if (dist < connectionThreshold && ctx) {
-              const alpha = 0.6 * (1 - dist / connectionThreshold) // Fade connections with distance
+              const alpha = 0.6 * (1 - dist / connectionThreshold)
               ctx.beginPath()
-              ctx.strokeStyle = `rgba(217, 70, 239, ${alpha})` // Purple connections
-              ctx.lineWidth = 1 + (1 - dist / connectionThreshold) * 2 // Thicker lines closer
+              ctx.strokeStyle = `rgba(217, 70, 239, ${alpha})`
+              ctx.lineWidth = 1 + (1 - dist / connectionThreshold) * 2
               ctx.moveTo(p1.x, p1.y)
               ctx.lineTo(p2.x, p2.y)
               ctx.stroke()
@@ -371,6 +361,24 @@ const animate = () => {
           }
         })
       }
+
+      // SEPARATION FORCE (Prevent Clumping) - Check against ALL particles nearby
+      particles.forEach((p2, j) => {
+        if (i === j) return // Don't check self
+        const dx = p1.x - p2.x
+        const dy = p1.y - p2.y
+        const dist = Math.sqrt(dx * dx + dy * dy)
+        const minDistance = 40 // Minimum space between particles
+
+        if (dist < minDistance && dist > 0) {
+          const force = (minDistance - dist) / minDistance // Stronger force when closer
+          const repulsionX = (dx / dist) * force * 2 // Push apart strength
+          const repulsionY = (dy / dist) * force * 2
+          
+          p1.x += repulsionX
+          p1.y += repulsionY
+        }
+      })
     })
   }
 
