@@ -6,7 +6,7 @@
     
     <div class="hero__content">
       <div class="hero__text">
-        <h1 class="glitch" data-text="NIRD">NIRD</h1>
+        <h1 class="wind-effect">NIRD</h1>
         <p class="subtitle">Numérique <span class="neon">Inclusif</span> Responsable Durable</p>
         <p class="description">
           Construisons ensemble un avenir numérique éthique.
@@ -48,7 +48,7 @@ class Particle {
   y: number
   baseX: number // Position d'origine (Ancre)
   baseY: number // Position d'origine (Ancre)
-  vx: number // Vélocité X
+  vx: number // Vélocité Y
   vy: number // Vélocité Y
   size: number
   emoji: string
@@ -200,8 +200,7 @@ onMounted(() => {
 
 onUnmounted(() => {
   cancelAnimationFrame(animationFrameId)
-  // Note: Event listeners sur window ne sont pas supprimés ici car la fonction init crée une closure.
-  // Dans une app Vue plus complexe, il faudrait extraire la fonction resize.
+  window.removeEventListener('resize', init)
   
   if (heroRef.value) {
     heroRef.value.removeEventListener('mousemove', handleMouseMove)
@@ -285,50 +284,43 @@ h1 {
   margin-right: auto;
 }
 
-/* Glitch Effect */
-.glitch {
+/* Nouveau style d'effet de vent */
+.wind-effect {
   position: relative;
+  overflow: hidden; /* Important pour cacher les débordements de l'animation */
+  display: inline-block; /* Pour que overflow hidden fonctionne */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent; /* Masque le texte original */
+  background-image: linear-gradient(90deg, white 0%, white 50%, white 100%);
+  transition: background-position 0.2s ease-out; /* Pour un mouvement de fond fluide */
 }
 
-.glitch::before,
-.glitch::after {
-  content: attr(data-text);
+.wind-effect::before {
+  content: "NIRD"; /* Duplique le texte pour l'animation */
   position: absolute;
   top: 0;
-  left: 0;
-  width: 100%;
+  left: -100%; /* Commence en dehors de l'écran */
+  width: 300%; /* Largeur suffisante pour couvrir et donner un effet de passage */
   height: 100%;
-  background: #000000;
+  background: linear-gradient(90deg, transparent 0%, var(--neon-green) 50%, transparent 100%);
+  background-size: 30% 100%; /* Contrôle la taille de l'effet de vent */
+  background-repeat: no-repeat;
+  background-position: 0% 50%;
+  animation: wind-pass 4s infinite ease-in-out;
+  mix-blend-mode: screen; /* Pour un effet de lumière plus subtil */
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  pointer-events: none;
 }
 
-.glitch::before {
-  left: 2px;
-  text-shadow: -1px 0 #ff00c1;
-  clip: rect(44px, 450px, 56px, 0);
-  animation: glitch-anim 5s infinite linear alternate-reverse;
-}
-
-.glitch::after {
-  left: -2px;
-  text-shadow: -1px 0 #00fff9;
-  clip: rect(44px, 450px, 56px, 0);
-  animation: glitch-anim2 5s infinite linear alternate-reverse;
-}
-
-@keyframes glitch-anim {
-  0% { clip: rect(31px, 9999px, 94px, 0); }
-  4.166666667% { clip: rect(91px, 9999px, 43px, 0); }
-  8.333333333% { clip: rect(19px, 9999px, 6px, 0); }
-  12.5% { clip: rect(38px, 9999px, 34px, 0); }
-  16.66666667% { clip: rect(85px, 9999px, 92px, 0); }
-  20.83333333% { clip: rect(34px, 9999px, 19px, 0); }
-  25% { clip: rect(11px, 9999px, 62px, 0); }
-  100% { clip: rect(67px, 9999px, 90px, 0); }
-}
-
-@keyframes glitch-anim2 {
-  0% { clip: rect(65px, 9999px, 95px, 0); }
-  100% { clip: rect(20px, 9999px, 15px, 0); }
+@keyframes wind-pass {
+  0% { left: -150%; opacity: 0; }
+  10% { left: -50%; opacity: 1; }
+  50% { left: 100%; opacity: 1; }
+  60% { left: 150%; opacity: 0; }
+  100% { left: -150%; opacity: 0; }
 }
 
 @media (max-width: 768px) {
