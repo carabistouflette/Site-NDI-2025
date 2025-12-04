@@ -15,11 +15,24 @@
         
         <div class="hero-section__description animate-slide-up">
           <p class="hero-section__subtitle">
-            Rejoignez-nous pour une soirée exceptionnelle organisée par l'association NIRD,
-            où nous explorerons ensemble les facettes d'un numérique plus inclusif,
-            responsable et durable. À travers des expériences interactives et des jeux éducatifs,
-            découvrez comment la technologie peut transformer positivement notre société.
+            Rejoignez-nous pour la 8ème édition de la Nuit de l'Informatique, organisée par l'association NIRD
+            (Numérique Inclusif Responsable et Durable). Le vendredi 21 mars 2025, de 18h à minuit,
+            vivez une soirée immersive au cœur de l'innovation numérique accessible à tous.
           </p>
+          <div class="hero-section__highlights">
+            <div class="highlight-item">
+              <span class="highlight-icon">📅</span>
+              <span class="highlight-text">Vendredi 21 mars 2025</span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-icon">🕕</span>
+              <span class="highlight-text">18h - Minuit</span>
+            </div>
+            <div class="highlight-item">
+              <span class="highlight-icon">📍</span>
+              <span class="highlight-text">Campus Universitaire Paris-Saclay</span>
+            </div>
+          </div>
         </div>
         
         <div class="hero-section__actions animate-slide-up">
@@ -174,10 +187,49 @@ import NirdButton from '@/components/common/NirdButton.vue'
   font-size: 1.25rem;
   color: var(--nird-anthracite);
   line-height: 1.6;
-  margin: 0;
+  margin: 0 0 1.5rem 0;
   opacity: 0;
   animation: fade-in-up 0.8s ease forwards;
   animation-delay: 0.3s;
+}
+
+.hero-section__highlights {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  opacity: 0;
+  animation: fade-in-up 0.8s ease forwards;
+  animation-delay: 0.5s;
+}
+
+.highlight-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.highlight-item:last-child {
+  border-bottom: none;
+}
+
+.highlight-icon {
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: var(--gradient-digital);
+  border-radius: 50%;
+  color: white;
+}
+
+.highlight-text {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--nird-anthracite);
 }
 
 .hero-section__actions {
@@ -411,8 +463,18 @@ import NirdButton from '@/components/common/NirdButton.vue'
   }
   
   .hero-section__subtitle {
-    margin: 0 auto;
+    margin: 0 auto 1.5rem auto;
     font-size: 1.125rem;
+  }
+  
+  .hero-section__highlights {
+    align-items: center;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  .highlight-item {
+    justify-content: center;
   }
   
   .hero-section__actions {
@@ -453,6 +515,24 @@ import NirdButton from '@/components/common/NirdButton.vue'
   
   .hero-section__subtitle {
     font-size: 1rem;
+  }
+  
+  .hero-section__highlights {
+    max-width: 300px;
+  }
+  
+  .highlight-item {
+    padding: 0.4rem 0;
+  }
+  
+  .highlight-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1.125rem;
+  }
+  
+  .highlight-text {
+    font-size: 0.9rem;
   }
   
   .hero-section__actions {

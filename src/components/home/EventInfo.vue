@@ -23,11 +23,12 @@
               </div>
             </template>
             <div class="event-info__details">
-              <p><strong>Vendredi 28 mars 2025</strong></p>
-              <p>18h00 - 23h00</p>
+              <p><strong>Vendredi 21 mars 2025</strong></p>
+              <p>18h00 - Minuit</p>
               <p>Entrée libre et gratuite</p>
-              <p>Opening ceremony à 18h30</p>
+              <p>Cérémonie d'ouverture à 18h30</p>
               <p>Buffet et rafraîchissements inclus</p>
+              <p>Activités accessibles PMR</p>
             </div>
           </GradientCard>
           
@@ -43,12 +44,12 @@
               </div>
             </template>
             <div class="event-info__details">
-              <p><strong>Paris Expo Porte de Versailles</strong></p>
-              <p>Pavillon 7.2</p>
-              <p>1 Place de la Porte de Versailles</p>
-              <p>75015 Paris, France</p>
-              <p>Métro : Ligne 12 (Porte de Versailles)</p>
-              <p>Tramway : T2, T3 (Porte de Versailles)</p>
+              <p><strong>Campus Universitaire Paris-Saclay</strong></p>
+              <p>Bâtiment Breguet</p>
+              <p>3 Rue Joliot-Curie</p>
+              <p>91190 Gif-sur-Yvette, France</p>
+              <p>RER B : Gif-sur-Yvette (10 min à pied)</p>
+              <p>Bus : 91.06, 91.08 (Arrêt Moulon)</p>
             </div>
           </GradientCard>
           
@@ -86,11 +87,13 @@
             </template>
             <div class="event-info__details">
               <p><strong>Association NIRD</strong></p>
-              <p>Numerical Inclusion & Responsible Development</p>
+              <p>Numérique Inclusif Responsable et Durable</p>
+              <p>Créée en 2018 par des étudiants passionnés</p>
               <p>En partenariat avec :</p>
               <p>• Université Paris-Saclay</p>
-              <p>• Ministère du Numérique</p>
+              <p>• Agence du Numérique</p>
               <p>• Tech For Good France</p>
+              <p>• Fondation Mozilla</p>
             </div>
           </GradientCard>
         </div>
@@ -109,8 +112,8 @@
                     </svg>
                   </div>
                   <div class="map-text">
-                    <p>Paris Expo Porte de Versailles</p>
-                    <p>Pavillon 7.2</p>
+                    <p>Campus Universitaire Paris-Saclay</p>
+                    <p>Bâtiment Breguet</p>
                   </div>
                 </div>
               </div>
@@ -121,21 +124,21 @@
                     <span class="transport-icon">🚇</span>
                     <div>
                       <strong>Métro</strong>
-                      <p>Ligne 12 - Porte de Versailles</p>
+                      <p>RER B - Gif-sur-Yvette</p>
                     </div>
                   </div>
                   <div class="transport-option">
                     <span class="transport-icon">🚊</span>
                     <div>
                       <strong>Tramway</strong>
-                      <p>T2, T3 - Porte de Versailles</p>
+                      <p>Bus 91.06, 91.08 - Arrêt Moulon</p>
                     </div>
                   </div>
                   <div class="transport-option">
                     <span class="transport-icon">🚌</span>
                     <div>
                       <strong>Bus</strong>
-                      <p>Lignes 39, 80, PC1</p>
+                      <p>Lignes 91.06, 91.08, 91.10</p>
                     </div>
                   </div>
                 </div>
@@ -152,31 +155,32 @@
             <p>
               La Nuit de l'Informatique est l'événement phare de l'association NIRD,
               organisé chaque année pour promouvoir un numérique plus inclusif, responsable
-              et durable. Cette édition 2025 marque une étape importante avec plus de 500
-              participants attendus pour une soirée riche en découvertes et en interactions.
+              et durable. Cette 8ème édition 2025 marque une étape importante avec plus de
+              800 participants attendus pour une soirée riche en découvertes et en interactions.
             </p>
             <p>
-              À travers des ateliers pratiques, des conférences inspirantes et des jeux
-              éducatifs interactifs, nous explorons comment la technologie peut être un
-              vecteur de changement positif dans notre société. Des experts du numérique,
-              des innovateurs sociaux et des passionnés se retrouvent pour co-créer
-              le numérique de demain.
+              Fondée en 2018, l'association NIRD (Numérique Inclusif Responsable et Durable)
+              rassemble étudiants, professionnels et passionnés autour d'une vision commune :
+              rendre la technologie accessible à tous, éthique dans son développement et
+              durable dans son impact. À travers des ateliers pratiques, des conférences
+              inspirantes et des jeux éducatifs interactifs, nous explorons comment la technologie
+              peut être un vecteur de changement positif dans notre société.
             </p>
             <div class="event-info__stats">
               <div class="stat animate-stat">
-                <span class="stat__number">500+</span>
+                <span class="stat__number">800+</span>
                 <span class="stat__label">Participants attendus</span>
               </div>
               <div class="stat animate-stat">
-                <span class="stat__number">25+</span>
+                <span class="stat__number">30+</span>
                 <span class="stat__label">Jeux interactifs</span>
               </div>
               <div class="stat animate-stat">
-                <span class="stat__number">20+</span>
+                <span class="stat__number">25+</span>
                 <span class="stat__label">Conférenciers experts</span>
               </div>
               <div class="stat animate-stat">
-                <span class="stat__number">15+</span>
+                <span class="stat__number">20+</span>
                 <span class="stat__label">Partenaires engagés</span>
               </div>
             </div>

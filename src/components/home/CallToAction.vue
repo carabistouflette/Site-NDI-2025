@@ -4,25 +4,26 @@
       <div class="call-to-action__content">
         <div class="call-to-action__text">
           <h2 class="call-to-action__title animate-fade-in">
-            Prêt à révéler le potentiel du numérique inclusif ?
+            Rejoignez la 8ème édition de la Nuit de l'Informatique
           </h2>
           <p class="call-to-action__subtitle animate-slide-up">
-            Rejoignez-nous pour une soirée immersive où technologie, créativité et engagement
-            se rencontrent. Ensemble, explorons comment construire un avenir numérique
-            plus équitable, responsable et durable.
+            L'association NIRD vous invite à vivre une expérience unique le vendredi 21 mars 2025.
+            Plus de 800 participants, 30 jeux interactifs et 25 conférenciers experts vous attendent
+            pour co-créer le numérique de demain. Inscription gratuite, buffet inclus,
+            et accès PMR garanti.
           </p>
           <div class="call-to-action__highlights animate-slide-up">
             <div class="highlight-item">
-              <span class="highlight-icon">🚀</span>
-              <span class="highlight-text">Expériences immersives</span>
+              <span class="highlight-icon">🎓</span>
+              <span class="highlight-text">Certifications officielles</span>
             </div>
             <div class="highlight-item">
-              <span class="highlight-icon">🎯</span>
-              <span class="highlight-text">Apprentissage actif</span>
+              <span class="highlight-icon">🤝</span>
+              <span class="highlight-text">Networking avec experts</span>
             </div>
             <div class="highlight-item">
-              <span class="highlight-icon">🌍</span>
-              <span class="highlight-text">Impact positif</span>
+              <span class="highlight-icon">🎁</span>
+              <span class="highlight-text">Goodies et surprises</span>
             </div>
           </div>
         </div>
@@ -35,7 +36,7 @@
             @click="$router.push('/games')"
           >
             <span class="btn-content">
-              <span>Commencer l'aventure</span>
+              <span>Réserver ma place</span>
               <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
@@ -48,7 +49,7 @@
             class="call-to-action__secondary-btn"
           >
             <span class="btn-content">
-              <span>S'inscrire gratuitement</span>
+              <span>Devenir partenaire</span>
               <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>

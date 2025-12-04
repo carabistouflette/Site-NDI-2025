@@ -11,7 +11,7 @@
       
       <div class="game-preview__grid">
         <GradientCard
-          v-for="(game, index) in games"
+          v-for="game in games"
           :key="game.id"
           :variant="game.variant"
           class="game-preview__card animate-card"
@@ -175,46 +175,46 @@ const games = [
   {
     id: 'code-adventure',
     title: 'Code Adventure',
-    description: 'Apprends les bases de la programmation à travers une aventure interactive où tu résous des défis de code pour progresser dans différents niveaux.',
+    description: 'Plongez dans l\'univers de la programmation créative avec ce jeu immersif développé en partenariat avec Mozilla. Apprenez JavaScript, HTML et CSS en résolvant des défis progressifs qui vous mèneront de la création de votre première page web au développement d\'applications interactives. Chaque niveau débloque de nouvelles fonctionnalités et vous rapproche du titre de "Développeur Numérique Inclusif".',
     variant: 'digital' as const,
     icon: CodeIcon,
     emoji: '💻',
     difficulty: 2,
-    features: ['Apprentissage progressif', 'Exercices pratiques', 'Feedback instantané'],
-    tags: ['Programmation', 'Débutant', 'JavaScript']
+    features: ['15 niveaux progressifs', 'Système de badges', 'Projets créatifs', 'Mentorat par des professionnels'],
+    tags: ['Programmation', 'JavaScript', 'Web', 'Créativité']
   },
   {
     id: 'cyber-puzzle',
     title: 'Cyber Puzzle',
-    description: 'Résous des énigmes de cybersécurité pour protéger un système informatique contre des menaces virtuelles.',
+    description: 'Devenez un expert en cybersécurité dans ce jeu d\'énigmes collaboratif conçu avec l\'ANSSI. Protégez une entreprise virtuelle contre des cyberattaques réalistes en identifiant les vulnérabilités, en mettant en place des mesures de sécurité et en formant les employés aux bonnes pratiques. Chaque mission vous confronte à des scénarios basés sur des incidents réels.',
     variant: 'inclusive' as const,
     icon: PuzzleIcon,
     emoji: '🔐',
     difficulty: 3,
-    features: ['Scénarios réels', 'Apprentissage par jeu', 'Niveaux progressifs'],
-    tags: ['Cybersécurité', 'Logique', 'Défense']
+    features: ['10 scénarios réels', 'Mode multijoueur', 'Analyse de menaces', 'Certification incluse'],
+    tags: ['Cybersécurité', 'ANSSI', 'Collaboration', 'Protection']
   },
   {
     id: 'data-privacy',
     title: 'Data Privacy Quest',
-    description: 'Protège les données personnelles dans ce jeu de sensibilisation aux enjeux de la vie privée numérique.',
+    description: 'Navigatez dans le complexe monde de la protection des données personnelles avec ce jeu éducatif validé par la CNIL. Prenez les décisions cruciales d\'un DPO (Data Protection Officer) dans une entreprise innovante, gérez les demandes des utilisateurs, analysez les risques et assurez la conformité RGPD. Vos choix auront un impact direct sur la confiance des clients.',
     variant: 'responsible' as const,
     icon: ShieldIcon,
     emoji: '🛡️',
     difficulty: 2,
-    features: ['Cas concrets', 'Bonnes pratiques', 'RGPD expliqué'],
-    tags: ['Vie privée', 'Responsabilité', 'RGPD']
+    features: ['Cas d\'usage réels', 'Simulation de crises', 'Conformité RGPD', 'Expert CNIL'],
+    tags: ['RGPD', 'CNIL', 'Vie privée', 'Éthique']
   },
   {
     id: 'green-it',
     title: 'Green IT Challenge',
-    description: 'Découvre comment rendre le numérique plus écologique et réduire l\'impact environnemental de la technologie.',
+    description: 'Mesurez et réduisez l\'impact environnemental du numérique dans ce jeu sérieux développé avec l\'ADEME. Calculez l\'empreinte carbone de vos usages digitaux, découvrez des alternatives éco-responsables et concevez des stratégies de transition numérique durable. Transformez une entreprise traditionnelle en une organisation exemplaire en matière de Green IT.',
     variant: 'sustainable' as const,
     icon: LightbulbIcon,
     emoji: '🌱',
     difficulty: 1,
-    features: ['Calculs d\'impact', 'Actions concrètes', 'Comparatifs'],
-    tags: ['Écologie', 'Durable', 'Impact']
+    features: ['Calculateur d\'empreinte', 'Scénarios d\'entreprise', 'Solutions innovantes', 'Bilan ADEME'],
+    tags: ['Écologie', 'ADEME', 'Impact carbone', 'Durable']
   }
 ]
 
