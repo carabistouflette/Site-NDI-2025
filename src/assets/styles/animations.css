@@ -184,20 +184,23 @@
   animation: bounce 2s ease-in-out infinite;
 }
 
-/* Transitions de page */
-.page-transition-enter-active,
-.page-transition-leave-active {
-  transition: all 0.4s ease;
+/* Transitions de page - Blur Effect */
+.page-blur-enter-active,
+.page-blur-leave-active {
+  transition: opacity 0.5s ease, filter 0.5s ease, transform 0.5s ease;
+  will-change: opacity, filter, transform;
 }
 
-.page-transition-enter-from {
+.page-blur-enter-from {
   opacity: 0;
-  transform: translateX(100px);
+  filter: blur(12px);
+  transform: scale(0.98);
 }
 
-.page-transition-leave-to {
+.page-blur-leave-to {
   opacity: 0;
-  transform: translateX(-100px);
+  filter: blur(12px);
+  transform: scale(1.02);
 }
 
 /* Smooth scroll */
