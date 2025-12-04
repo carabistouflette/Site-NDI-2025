@@ -6,54 +6,86 @@
       </n-layout-header>
       
       <n-layout-content>
-        <div class="games-container">
-          <div class="games-header">
-            <n-h1 class="games-title">Jeux de la Nuit de l'Informatique 2025</n-h1>
-            <n-p class="games-subtitle">
-              Découvrez notre sélection de jeux éducatifs et interactifs pour explorer le numérique autrement.
-            </n-p>
+        <div class="terminal-container">
+          <!-- Background Effects -->
+          <div class="grid-bg"></div>
+          <div class="scanline"></div>
+          
+          <!-- Header HUD -->
+          <div class="hud-header animate-fade-down">
+            <div class="hud-top-bar">
+              <span class="hud-id">TERM_ID: NIRD_025</span>
+              <span class="hud-status">STATUS: ONLINE</span>
+            </div>
+            <h1 class="terminal-title">
+              GAME <span class="highlight">TERMINAL</span>
+            </h1>
+            <div class="hud-decoration"></div>
+          </div>
+
+          <!-- Filters -->
+          <div class="filters-container animate-fade-in">
+            <div class="filter-group">
+              <button 
+                v-for="filter in filters" 
+                :key="filter.id"
+                class="filter-btn"
+                :class="{ active: activeFilter === filter.id, [filter.id]: true }"
+                @click="activeFilter = filter.id"
+              >
+                <span class="filter-icon">{{ filter.icon }}</span>
+                {{ filter.label }}
+                <span class="count-badge">{{ getCount(filter.id) }}</span>
+              </button>
+            </div>
           </div>
           
-          <div class="games-grid">
-            <GradientCard
-              v-for="game in games"
-              :key="game.id"
-              :variant="game.variant"
-              class="game-card"
-              hoverable
-            >
-              <template #header>
-                <div class="game-card__header">
-                  <div class="game-card__icon">
-                    <component :is="game.icon" />
+          <!-- Games Grid -->
+          <div class="games-grid" ref="gridRef">
+            <transition-group name="grid-anim">
+              <div 
+                v-for="(game, index) in filteredGames" 
+                :key="game.id"
+                class="game-unit"
+                :class="game.variant"
+                @mousemove="handleCardMove($event, index)"
+                @mouseleave="handleCardLeave(index)"
+                :style="cardStyles[index]"
+              >
+                <div class="unit-frame">
+                  <div class="corner tl"></div>
+                  <div class="corner tr"></div>
+                  <div class="corner bl"></div>
+                  <div class="corner br"></div>
+                  
+                  <div class="unit-content">
+                    <div class="unit-header">
+                      <div class="icon-box">{{ game.emoji }}</div>
+                      <div class="unit-meta">
+                        <span class="unit-id">UNIT_{{ (index + 1).toString().padStart(3, '0') }}</span>
+                        <span class="difficulty-indicator">
+                          LVL {{ game.difficulty }}
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <h3 class="unit-title">{{ game.title }}</h3>
+                    <p class="unit-desc">{{ game.description }}</p>
+                    
+                    <div class="unit-tags">
+                      <span v-for="tag in game.tags" :key="tag" class="tag">#{{ tag }}</span>
+                    </div>
+                    
+                    <button class="access-btn">
+                      ACCEDER <span class="arrow">>></span>
+                    </button>
                   </div>
-                  <h3>{{ game.title }}</h3>
-                </div>
-              </template>
-              
-              <div class="game-card__content">
-                <p>{{ game.description }}</p>
-                <div class="game-card__tags">
-                  <span
-                    v-for="tag in game.tags"
-                    :key="tag"
-                    class="game-card__tag"
-                    :class="`game-card__tag--${game.variant}`"
-                  >
-                    {{ tag }}
-                  </span>
+                  
+                  <!-- Decorative Overlay -->
+                  <div class="scan-overlay"></div>
                 </div>
               </div>
-              
-              <template #action>
-                <NirdButton
-                  :variant="game.variant"
-                  @click="playGame(game.id)"
-                >
-                  Jouer
-                </NirdButton>
-              </template>
-            </GradientCard>
+            </transition-group>
           </div>
         </div>
       </n-layout-content>
@@ -66,286 +98,464 @@
 </template>
 
 <script setup lang="ts">
-import { h } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, reactive } from 'vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
-import GradientCard from '@/components/common/GradientCard.vue'
-import NirdButton from '@/components/common/NirdButton.vue'
 
-const router = useRouter()
+// Data
+const activeFilter = ref('all')
 
-// Icônes SVG pour les jeux
-const CodeIcon = () => h('svg', {
-  width: 24,
-  height: 24,
-  viewBox: '0 0 24 24',
-  fill: 'currentColor'
-}, [
-  h('path', { d: 'M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z' })
-])
-
-const PuzzleIcon = () => h('svg', {
-  width: 24,
-  height: 24,
-  viewBox: '0 0 24 24',
-  fill: 'currentColor'
-}, [
-  h('path', { d: 'M20.5 11H19V7c0-1.1-.9-2-2-2h-4V3.5C13 2.12 11.88 1 10.5 1S8 2.12 8 3.5V5H4c-1.1 0-1.99.9-1.99 2v3.8H3.5c1.49 0 2.7 1.21 2.7 2.7s-1.21 2.7-2.7 2.7H2V20c0 1.1.9 2 2 2h3.8v-1.5c0-1.49 1.21-2.7 2.7-2.7 1.49 0 2.7 1.21 2.7 2.7V22H17c1.1 0 2-.9 2-2v-4h1.5c1.38 0 2.5-1.12 2.5-2.5S21.88 11 20.5 11z' })
-])
-
-const ShieldIcon = () => h('svg', {
-  width: 24,
-  height: 24,
-  viewBox: '0 0 24 24',
-  fill: 'currentColor'
-}, [
-  h('path', { d: 'M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z' })
-])
-
-const LightbulbIcon = () => h('svg', {
-  width: 24,
-  height: 24,
-  viewBox: '0 0 24 24',
-  fill: 'currentColor'
-}, [
-  h('path', { d: 'M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z' })
-])
-
-const RobotIcon = () => h('svg', {
-  width: 24,
-  height: 24,
-  viewBox: '0 0 24 24',
-  fill: 'currentColor'
-}, [
-  h('path', { d: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z' })
-])
-
-const NetworkIcon = () => h('svg', {
-  width: 24,
-  height: 24,
-  viewBox: '0 0 24 24',
-  fill: 'currentColor'
-}, [
-  h('path', { d: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z' })
-])
-
-const DatabaseIcon = () => h('svg', {
-  width: 24,
-  height: 24,
-  viewBox: '0 0 24 24',
-  fill: 'currentColor'
-}, [
-  h('path', { d: 'M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4zM4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4zm0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4z' })
-])
-
-const CloudIcon = () => h('svg', {
-  width: 24,
-  height: 24,
-  viewBox: '0 0 24 24',
-  fill: 'currentColor'
-}, [
-  h('path', { d: 'M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z' })
-])
+const filters = [
+  { id: 'all', label: 'TOUS', icon: '💠' },
+  { id: 'digital', label: 'DIGITAL', icon: '💻' },
+  { id: 'inclusive', label: 'INCLUSIF', icon: '👁️' },
+  { id: 'responsible', label: 'RESPONSABLE', icon: '🛡️' },
+  { id: 'sustainable', label: 'DURABLE', icon: '🌱' }
+]
 
 const games = [
   {
     id: 'code-adventure',
     title: 'Code Adventure',
-    description: 'Apprends les bases de la programmation à travers une aventure interactive.',
-    variant: 'digital' as const,
-    icon: CodeIcon,
-    tags: ['Programmation', 'Débutant']
+    description: 'Initialisation des protocoles de programmation. Apprenez les bases du code.',
+    variant: 'digital',
+    emoji: '💻',
+    tags: ['DEV', 'LOGIC'],
+    difficulty: 1
   },
   {
     id: 'cyber-puzzle',
     title: 'Cyber Puzzle',
-    description: 'Résous des énigmes cybersécurité pour protéger un système informatique.',
-    variant: 'inclusive' as const,
-    icon: PuzzleIcon,
-    tags: ['Cybersécurité', 'Logique']
+    description: 'Faille de sécurité détectée. Résolvez les énigmes pour patcher le système.',
+    variant: 'inclusive',
+    emoji: '🧩',
+    tags: ['SEC', 'PUZZLE'],
+    difficulty: 2
   },
   {
     id: 'data-privacy',
     title: 'Data Privacy Quest',
-    description: 'Protège les données personnelles dans ce jeu de sensibilisation.',
-    variant: 'responsible' as const,
-    icon: ShieldIcon,
-    tags: ['Vie privée', 'Responsabilité']
+    description: 'Protection des données personnelles. Échappez à la surveillance.',
+    variant: 'responsible',
+    emoji: '🕵️',
+    tags: ['PRIVACY', 'STEALTH'],
+    difficulty: 3
   },
   {
     id: 'green-it',
     title: 'Green IT Challenge',
-    description: 'Découvre comment rendre le numérique plus écologique.',
-    variant: 'sustainable' as const,
-    icon: LightbulbIcon,
-    tags: ['Écologie', 'Durable']
+    description: 'Optimisation énergétique requise. Réduisez l\'empreinte carbone du serveur.',
+    variant: 'sustainable',
+    emoji: '🌿',
+    tags: ['ECO', 'OPTIM'],
+    difficulty: 2
   },
   {
     id: 'ai-ethics',
     title: 'AI Ethics Lab',
-    description: 'Explore les enjeux éthiques de l\'intelligence artificielle.',
-    variant: 'digital' as const,
-    icon: RobotIcon,
-    tags: ['IA', 'Éthique']
+    description: 'Analyse des biais algorithmiques. Entraînez une IA éthique.',
+    variant: 'digital',
+    emoji: '🤖',
+    tags: ['AI', 'ETHICS'],
+    difficulty: 4
   },
   {
     id: 'network-security',
     title: 'Network Defender',
-    description: 'Protège un réseau contre les cybermenaces.',
-    variant: 'inclusive' as const,
-    icon: NetworkIcon,
-    tags: ['Réseau', 'Sécurité']
+    description: 'Attaque DDoS imminente. Déployez les pare-feu.',
+    variant: 'inclusive',
+    emoji: '🌐',
+    tags: ['NET', 'DEFENSE'],
+    difficulty: 3
   },
   {
     id: 'data-mining',
     title: 'Data Mining Explorer',
-    description: 'Explore les données pour découvrir des tendances cachées.',
-    variant: 'responsible' as const,
-    icon: DatabaseIcon,
-    tags: ['Données', 'Analyse']
+    description: 'Extraction de données précieuses dans un océan d\'informations.',
+    variant: 'responsible',
+    emoji: '⛏️',
+    tags: ['DATA', 'MINING'],
+    difficulty: 2
   },
   {
     id: 'cloud-computing',
-    title: 'Cloud Computing Quest',
-    description: 'Découvre les mystères du cloud computing.',
-    variant: 'sustainable' as const,
-    icon: CloudIcon,
-    tags: ['Cloud', 'Infrastructure']
+    title: 'Cloud Sky Quest',
+    description: 'Navigation dans l\'infrastructure cloud. Maintenez l\'uptime.',
+    variant: 'sustainable',
+    emoji: '☁️',
+    tags: ['CLOUD', 'OPS'],
+    difficulty: 3
   }
 ]
 
-const playGame = (gameId: string) => {
-  // Redirection vers la page du jeu (placeholder pour l'instant)
-  router.push(`/games/${gameId}`)
+// Computed
+const filteredGames = computed(() => {
+  if (activeFilter.value === 'all') return games
+  return games.filter(game => game.variant === activeFilter.value)
+})
+
+const getCount = (filterId: string) => {
+  if (filterId === 'all') return games.length
+  return games.filter(game => game.variant === filterId).length
+}
+
+// 3D Tilt Logic
+const cardStyles = reactive<any>({})
+
+const handleCardMove = (e: MouseEvent, index: number) => {
+  const card = e.currentTarget as HTMLElement
+  const rect = card.getBoundingClientRect()
+  const x = e.clientX - rect.left
+  const y = e.clientY - rect.top
+  
+  const centerX = rect.width / 2
+  const centerY = rect.height / 2
+  
+  const rotateX = ((y - centerY) / centerY) * -5
+  const rotateY = ((x - centerX) / centerX) * 5
+
+  cardStyles[index] = {
+    transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`,
+  }
+}
+
+const handleCardLeave = (index: number) => {
+  cardStyles[index] = {
+    transform: 'perspective(1000px) rotateX(0) rotateY(0) scale3d(1, 1, 1)',
+  }
 }
 </script>
 
 <style scoped>
 .games-view {
   min-height: 100vh;
+  background: #020202;
+  color: white;
+  font-family: 'Courier New', Courier, monospace; /* Tech font feel */
 }
 
-.games-container {
-  padding: 2rem;
-  max-width: 1200px;
+.terminal-container {
+  max-width: 1400px;
   margin: 0 auto;
+  padding: 4rem 2rem;
+  position: relative;
+  min-height: 80vh;
 }
 
-.games-header {
-  text-align: center;
+/* Backgrounds */
+.grid-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.scanline {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: rgba(0, 255, 0, 0.1);
+  opacity: 0.5;
+  animation: scan 6s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes scan {
+  0% { top: -10%; }
+  100% { top: 110%; }
+}
+
+/* Header HUD */
+.hud-header {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 4rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 2rem;
+}
+
+.hud-top-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--neon-green);
+  margin-bottom: 1rem;
+  opacity: 0.8;
+}
+
+.terminal-title {
+  font-family: 'Inter', sans-serif; /* Cleaner font for title */
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -2px;
+  margin: 0;
+}
+
+.highlight {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--neon-green);
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+.hud-decoration {
+  height: 2px;
+  width: 100px;
+  background: var(--neon-green);
+  margin-top: 1rem;
+  box-shadow: 0 0 10px var(--neon-green);
+}
+
+/* Filters */
+.filters-container {
+  position: relative;
+  z-index: 2;
   margin-bottom: 3rem;
+  display: flex;
+  justify-content: center;
 }
 
-.games-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: var(--nird-anthracite);
-  margin: 0 0 1rem 0;
-  background: var(--gradient-unified);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.games-subtitle {
-  font-size: 1.25rem;
-  color: #6c757d;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
+.filter-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #888;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
 }
 
+.filter-btn:hover {
+  color: white;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.filter-btn.active {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Specific active colors */
+.filter-btn.active.digital { border-color: #0066FF; color: #0066FF; }
+.filter-btn.active.inclusive { border-color: #6B46C1; color: #6B46C1; }
+.filter-btn.active.responsible { border-color: #FF6B6B; color: #FF6B6B; }
+.filter-btn.active.sustainable { border-color: #F6AD55; color: #F6AD55; }
+.filter-btn.active.all { border-color: var(--neon-green); color: var(--neon-green); }
+
+.count-badge {
+  font-size: 0.7rem;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2px 6px;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+/* Games Grid */
 .games-grid {
+  position: relative;
+  z-index: 2;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
 }
 
-.game-card {
+/* Game Unit (Card) */
+.game-unit {
+  position: relative;
+  height: 380px;
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+}
+
+.unit-frame {
+  position: relative;
   height: 100%;
+  background: rgba(10, 10, 10, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Corners */
+.corner {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--neon-green);
+  z-index: 10;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+.game-unit:hover .corner { opacity: 1; box-shadow: 0 0 5px var(--neon-green); }
+.tl { top: 0; left: 0; border-right: none; border-bottom: none; }
+.tr { top: 0; right: 0; border-left: none; border-bottom: none; }
+.bl { bottom: 0; left: 0; border-right: none; border-top: none; }
+.br { bottom: 0; right: 0; border-left: none; border-top: none; }
+
+/* Content */
+.unit-content {
+  padding: 2rem;
+  flex: 1;
   display: flex;
   flex-direction: column;
 }
 
-.game-card__header {
+.unit-header {
   display: flex;
-  align-items: center;
-  gap: 1rem;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
 }
 
-.game-card__icon {
+.icon-box {
+  font-size: 3rem;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+}
+
+.unit-meta {
+  text-align: right;
+  font-size: 0.7rem;
+  color: #555;
+  font-family: monospace;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
+  flex-direction: column;
+  gap: 4px;
+}
+
+.difficulty-indicator {
+  color: var(--neon-green);
+  border: 1px solid var(--neon-green);
+  padding: 2px 4px;
+  border-radius: 2px;
+}
+
+.unit-title {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
   color: white;
-  flex-shrink: 0;
 }
 
-.game-card__content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.game-card__content p {
-  color: var(--nird-anthracite);
-  line-height: 1.6;
-  margin: 0;
+.unit-desc {
+  color: #999;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
   flex: 1;
 }
 
-.game-card__tags {
+.unit-tags {
   display: flex;
-  flex-wrap: wrap;
   gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
 }
 
-.game-card__tag {
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 500;
+.tag {
+  font-size: 0.7rem;
+  color: #666;
+  font-family: monospace;
+}
+
+.access-btn {
+  width: 100%;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
   color: white;
+  font-family: 'Courier New', monospace;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-left: 2px solid var(--neon-green);
 }
 
-.game-card__tag--digital {
-  background: var(--gradient-digital);
+.access-btn:hover {
+  background: var(--neon-green);
+  color: black;
+  padding-left: 1.5rem;
 }
 
-.game-card__tag--inclusive {
-  background: var(--gradient-inclusive);
+.arrow {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
 }
 
-.game-card__tag--responsible {
-  background: var(--gradient-responsible);
+.access-btn:hover .arrow {
+  opacity: 1;
+  transform: translateX(0);
 }
 
-.game-card__tag--sustainable {
-  background: var(--gradient-sustainable);
+/* Variant Specifics */
+.digital .corner, .digital .access-btn { border-color: #0066FF; }
+.digital:hover .access-btn { background: #0066FF; }
+.digital .difficulty-indicator { color: #0066FF; border-color: #0066FF; }
+
+.inclusive .corner, .inclusive .access-btn { border-color: #6B46C1; }
+.inclusive:hover .access-btn { background: #6B46C1; }
+.inclusive .difficulty-indicator { color: #6B46C1; border-color: #6B46C1; }
+
+.responsible .corner, .responsible .access-btn { border-color: #FF6B6B; }
+.responsible:hover .access-btn { background: #FF6B6B; }
+.responsible .difficulty-indicator { color: #FF6B6B; border-color: #FF6B6B; }
+
+.sustainable .corner, .sustainable .access-btn { border-color: #F6AD55; }
+.sustainable:hover .access-btn { background: #F6AD55; }
+.sustainable .difficulty-indicator { color: #F6AD55; border-color: #F6AD55; }
+
+/* Animation Transition Group */
+.grid-anim-move,
+.grid-anim-enter-active,
+.grid-anim-leave-active {
+  transition: all 0.5s cubic-bezier(0.55, 0, 0.1, 1);
+}
+
+.grid-anim-enter-from,
+.grid-anim-leave-to {
+  opacity: 0;
+  transform: scale(0.9) translateZ(0);
+}
+
+.grid-anim-leave-active {
+  position: absolute;
 }
 
 @media (max-width: 768px) {
-  .games-container {
-    padding: 1rem;
-  }
-  
-  .games-title {
-    font-size: 2rem;
-  }
-  
-  .games-subtitle {
-    font-size: 1.125rem;
-  }
-  
-  .games-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
+  .terminal-title { font-size: 2rem; }
+  .games-grid { grid-template-columns: 1fr; }
 }
 </style>
