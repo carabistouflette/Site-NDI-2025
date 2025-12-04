@@ -62,7 +62,7 @@ const activeRoute = computed(() => {
 
 const menuOptions = [
   {
-    label: () => h(RouterLink, { to: '/#accueil' }, { default: () => 'Accueil' }),
+    label: () => h(RouterLink, { to: '/' }, { default: () => 'Accueil' }),
     key: 'home'
   },
   {
@@ -70,36 +70,24 @@ const menuOptions = [
     key: 'games'
   },
   {
-    label: 'À propos',
-    key: 'about',
-    children: [
-      {
-        label: () => h(RouterLink, { to: '/#evenement' }, { default: () => 'L\'événement' }),
-        key: 'event'
-      },
-      {
-        label: () => h(RouterLink, { to: '/about' }, { default: () => 'L\'association NIRD' }),
-        key: 'association'
-      }
-    ]
+    label: () => h(RouterLink, { to: '/about' }, { default: () => 'L\'association' }),
+    key: 'about'
   },
   {
-    label: () => h(RouterLink, { to: '/#contact' }, { default: () => 'Contact' }),
+    label: () => h(RouterLink, { to: '/#join-us' }, { default: () => 'Nous rejoindre' }),
     key: 'contact'
   }
 ]
 
 const handleMenuClick = (key: string) => {
   if (key === 'home') {
-    router.push('/#accueil')
+    router.push('/')
   } else if (key === 'games') {
     router.push('/games')
-  } else if (key === 'event') {
-    router.push('/#evenement')
-  } else if (key === 'association') {
+  } else if (key === 'about') {
     router.push('/about')
   } else if (key === 'contact') {
-    router.push('/#contact')
+    router.push('/#join-us')
   }
   isMobileMenuOpen.value = false
 }
@@ -127,8 +115,9 @@ onUnmounted(() => {
 
 <style scoped>
 .app-header {
-  background: white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background: rgba(5, 5, 5, 0.9);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -150,7 +139,7 @@ onUnmounted(() => {
   gap: 0.5rem;
   font-weight: 600;
   font-size: 1.25rem;
-  color: var(--nird-anthracite);
+  color: white;
 }
 
 .logo {
@@ -171,6 +160,25 @@ onUnmounted(() => {
   margin: 0 2rem;
 }
 
+/* Override Naive UI Menu Styles for Dark Mode */
+:deep(.n-menu-item-content-header a) {
+  color: var(--text-secondary) !important;
+}
+
+:deep(.n-menu-item-content--selected .n-menu-item-content-header a),
+:deep(.n-menu-item-content:hover .n-menu-item-content-header a) {
+  color: var(--neon-green) !important;
+}
+
+:deep(.n-menu .n-menu-item-content .n-menu-item-content-header) {
+  color: var(--text-secondary);
+}
+
+:deep(.n-menu .n-menu-item-content--selected .n-menu-item-content-header),
+:deep(.n-menu .n-menu-item-content:hover .n-menu-item-content-header) {
+  color: var(--neon-green);
+}
+
 .app-header__actions {
   display: flex;
   align-items: center;
@@ -181,7 +189,7 @@ onUnmounted(() => {
   display: none;
   background: none;
   border: none;
-  color: var(--nird-anthracite);
+  color: white;
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 8px;
@@ -189,8 +197,8 @@ onUnmounted(() => {
 }
 
 .mobile-menu-toggle:hover {
-  background: rgba(0, 102, 255, 0.1);
-  color: var(--nird-blue-electric);
+  background: rgba(57, 255, 20, 0.1);
+  color: var(--neon-green);
 }
 
 @media (max-width: 768px) {
@@ -203,8 +211,8 @@ onUnmounted(() => {
     top: 64px;
     left: 0;
     right: 0;
-    background: white;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
     z-index: 99;
     transform: translateY(-100%);
     transition: transform 0.3s ease;

@@ -30,20 +30,10 @@
         <div class="app-footer__section">
           <h3 class="app-footer__title">Navigation</h3>
           <ul class="app-footer__links">
-            <li><RouterLink to="/#accueil">Accueil</RouterLink></li>
+            <li><RouterLink to="/">Accueil</RouterLink></li>
             <li><RouterLink to="/games">Jeux</RouterLink></li>
-            <li><RouterLink to="/#evenement">L'événement</RouterLink></li>
-            <li><RouterLink to="/#contact">Contact</RouterLink></li>
-          </ul>
-        </div>
-        
-        <div class="app-footer__section">
-          <h3 class="app-footer__title">L'événement</h3>
-          <ul class="app-footer__links">
-            <li><RouterLink to="/#evenement">Programme</RouterLink></li>
-            <li><RouterLink to="/#evenement">Lieu</RouterLink></li>
-            <li><RouterLink to="/#contact">Inscription</RouterLink></li>
-            <li><RouterLink to="/#evenement">Partenaires</RouterLink></li>
+            <li><RouterLink to="/about">Association</RouterLink></li>
+            <li><RouterLink to="/#join-us">Nous rejoindre</RouterLink></li>
           </ul>
         </div>
         
@@ -76,8 +66,8 @@ import { RouterLink } from 'vue-router'
 
 <style scoped>
 .app-footer {
-  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-  border-top: 1px solid #dee2e6;
+  background: #080808;
+  border-top: 1px solid var(--border-color);
   padding: 3rem 0 1rem;
   margin-top: auto;
 }
@@ -104,12 +94,12 @@ import { RouterLink } from 'vue-router'
 .app-footer__title {
   font-size: 1.125rem;
   font-weight: 600;
-  color: var(--nird-anthracite);
+  color: white;
   margin: 0;
 }
 
 .app-footer__description {
-  color: #6c757d;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin: 0;
 }
@@ -126,16 +116,19 @@ import { RouterLink } from 'vue-router'
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: white;
-  color: var(--nird-anthracite);
+  background: #1a1a1a;
+  color: white;
   transition: all 0.3s ease;
   text-decoration: none;
+  border: 1px solid var(--border-color);
 }
 
 .social-link:hover {
-  background: var(--gradient-digital);
-  color: white;
+  background: var(--neon-green);
+  color: black;
   transform: translateY(-2px);
+  box-shadow: var(--glow-text);
+  border-color: var(--neon-green);
 }
 
 .app-footer__links {
@@ -149,14 +142,15 @@ import { RouterLink } from 'vue-router'
 
 .app-footer__links a,
 .app-footer__links RouterLink {
-  color: #6c757d;
+  color: var(--text-secondary);
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .app-footer__links a:hover,
 .app-footer__links RouterLink:hover {
-  color: var(--nird-blue-electric);
+  color: var(--neon-green);
+  text-shadow: var(--glow-text);
 }
 
 .app-footer__contact {
@@ -166,12 +160,12 @@ import { RouterLink } from 'vue-router'
 }
 
 .app-footer__contact p {
-  color: #6c757d;
+  color: var(--text-secondary);
   margin: 0;
 }
 
 .app-footer__bottom {
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid var(--border-color);
   padding-top: 1.5rem;
   display: flex;
   justify-content: space-between;
@@ -181,7 +175,7 @@ import { RouterLink } from 'vue-router'
 }
 
 .app-footer__copyright p {
-  color: #6c757d;
+  color: #444;
   margin: 0;
 }
 
@@ -191,13 +185,13 @@ import { RouterLink } from 'vue-router'
 }
 
 .app-footer__legal a {
-  color: #6c757d;
+  color: #444;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .app-footer__legal a:hover {
-  color: var(--nird-blue-electric);
+  color: var(--neon-green);
 }
 
 @media (max-width: 768px) {
