@@ -9,23 +9,18 @@
         <h2 class="section-title">ZONES D'INTERACTION</h2>
         <p class="subtitle">Initialisation des protocoles ludiques...</p>
       </div>
-      
+
       <div class="cards-container" @mousemove="handleContainerMouseMove">
-        <div 
-          v-for="(game, index) in games" 
-          :key="index"
-          class="holo-card"
-          :class="game.variant"
-          @mousemove="handleCardMove($event, index)"
-          @mouseleave="handleCardLeave(index)"
-          :style="cardStyles[index]"
-        >
+        <div v-for="(game, index) in games" :key="index" class="holo-card" :class="game.variant"
+          @mousemove="handleCardMove($event, index)" @mouseleave="handleCardLeave(index)" 
+          @click="goToGames"
+          :style="cardStyles[index]">
           <div class="card-content">
             <div class="card-header">
               <div class="icon-3d">{{ game.icon }}</div>
               <span class="status-badge">ONLINE</span>
             </div>
-            
+
             <div class="card-body">
               <h3 class="game-title">{{ game.title }}</h3>
               <p class="game-desc">{{ game.desc }}</p>
@@ -33,17 +28,17 @@
 
             <div class="card-footer">
               <div class="stat-row">
-                <span class="stat-label">DIFFICULTY</span>
-                <div class="stat-bar">
-                  <div class="stat-fill" :style="{ width: game.difficulty + '%' }"></div>
+                <span class="stat-label">NIVEAU DE CHAOS</span>
+                <div class="chaos-meter">
+                  <span class="chaos-value">{{ game.chaosLevel }}</span>
                 </div>
               </div>
-              <button class="launch-btn">
+              <button class="launch-btn" @click.stop="goToGames">
                 INITIALISER <span class="btn-glitch">>></span>
               </button>
             </div>
           </div>
-          
+
           <!-- Decorative Elements -->
           <div class="card-border"></div>
           <div class="shine"></div>
@@ -54,36 +49,43 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+
+const goToGames = () => {
+  router.push('/games')
+}
 
 const games = [
   {
-    title: 'Cyber Defense Protocol',
-    desc: 'Simulateur de crise. Protégez l\'infrastructure contre les attaques DDoS et Phishing en temps réel.',
-    icon: '🛡️',
+    title: 'Au Cœur du LLM',
+    desc: 'Comprenez enfin la "boîte noire". Une démo interactive sur la quantification et l\'optimisation.',
+    icon: '🧠',
     variant: 'digital',
-    difficulty: 80
+    chaosLevel: '🧠 CÉRÉBRAL'
   },
   {
-    title: 'Green Code Optimizer',
-    desc: 'Refactorisation d\'urgence. Réduisez la consommation énergétique de l\'algorithme avant la surchauffe.',
-    icon: '🌿',
+    title: 'Eco-Quest RPG',
+    desc: 'Aventure textuelle comparant différents modèles d\'IA. Le Green IT en action.',
+    icon: '🌱',
     variant: 'sustainable',
-    difficulty: 60
+    chaosLevel: '🌱 BIODEGRADABLE'
   },
   {
-    title: 'Access-Ability Breach',
-    desc: 'Navigation à l\'aveugle. Résolvez les puzzles en utilisant uniquement les lecteurs d\'écran et le son.',
-    icon: '👁️',
-    variant: 'inclusive',
-    difficulty: 90
-  },
-  {
-    title: 'Data Shadow Runner',
-    desc: 'Infiltration furtive. Échappez aux traceurs publicitaires et récupérez vos données personnelles.',
-    icon: '🕵️',
+    title: 'Samurai Volume',
+    desc: 'Un contrôleur de volume possédé. Quiconque peut le calmer sera un réel samurai.',
+    icon: '🔊',
     variant: 'responsible',
-    difficulty: 45
+    chaosLevel: '🔥 OVER 9000'
+  },
+  {
+    title: 'Le Serpent Caché',
+    desc: 'Mais où est le serpent ? Cherchez bien...',
+    icon: '🐍',
+    variant: 'inclusive',
+    chaosLevel: '👀 INVISIBLE'
   }
 ]
 
@@ -95,10 +97,10 @@ const handleCardMove = (e: MouseEvent, index: number) => {
   const rect = card.getBoundingClientRect()
   const x = e.clientX - rect.left
   const y = e.clientY - rect.top
-  
+
   const centerX = rect.width / 2
   const centerY = rect.height / 2
-  
+
   const rotateX = ((y - centerY) / centerY) * -10 // Max 10deg rotation
   const rotateY = ((x - centerX) / centerX) * 10
 
@@ -122,8 +124,8 @@ const handleContainerMouseMove = (e: MouseEvent) => {
     const rect = card.getBoundingClientRect()
     const x = e.clientX - rect.left
     const y = e.clientY - rect.top
-    ;(card as HTMLElement).style.setProperty('--spotlight-x', `${x}px`)
-    ;(card as HTMLElement).style.setProperty('--spotlight-y', `${y}px`)
+      ; (card as HTMLElement).style.setProperty('--spotlight-x', `${x}px`)
+      ; (card as HTMLElement).style.setProperty('--spotlight-y', `${y}px`)
   })
 }
 </script>
@@ -144,7 +146,7 @@ const handleContainerMouseMove = (e: MouseEvent) => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
+  background-image:
     linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
@@ -165,8 +167,13 @@ const handleContainerMouseMove = (e: MouseEvent) => {
 }
 
 @keyframes scan {
-  0% { top: -10%; }
-  100% { top: 110%; }
+  0% {
+    top: -10%;
+  }
+
+  100% {
+    top: 110%;
+  }
 }
 
 .container {
@@ -219,14 +226,26 @@ const handleContainerMouseMove = (e: MouseEvent) => {
   border: 1px solid rgba(255, 255, 255, 0.05);
   transform-style: preserve-3d;
   cursor: pointer;
-  transition: transform 0.1s ease-out; /* Smooth movement */
+  transition: transform 0.1s ease-out;
+  /* Smooth movement */
 }
 
 /* Variant Colors */
-.holo-card.digital { --card-color: #0066FF; }
-.holo-card.sustainable { --card-color: #F6AD55; }
-.holo-card.inclusive { --card-color: #6B46C1; }
-.holo-card.responsible { --card-color: #FF6B6B; }
+.holo-card.digital {
+  --card-color: #0066FF;
+}
+
+.holo-card.sustainable {
+  --card-color: #F6AD55;
+}
+
+.holo-card.inclusive {
+  --card-color: #6B46C1;
+}
+
+.holo-card.responsible {
+  --card-color: #FF6B6B;
+}
 
 /* Card Internal Layout */
 .card-content {
@@ -237,7 +256,8 @@ const handleContainerMouseMove = (e: MouseEvent) => {
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  transform: translateZ(20px); /* Slight popping out */
+  transform: translateZ(20px);
+  /* Slight popping out */
   z-index: 5;
   overflow: hidden;
 }
@@ -251,7 +271,8 @@ const handleContainerMouseMove = (e: MouseEvent) => {
 
 .icon-3d {
   font-size: 3.5rem;
-  transform: translateZ(50px); /* Pop out more */
+  transform: translateZ(50px);
+  /* Pop out more */
   filter: drop-shadow(0 0 20px var(--card-color));
 }
 
@@ -303,17 +324,20 @@ const handleContainerMouseMove = (e: MouseEvent) => {
   margin-bottom: 5px;
 }
 
-.stat-bar {
-  height: 4px;
-  background: #222;
-  border-radius: 2px;
-  overflow: hidden;
+.chaos-meter {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.stat-fill {
-  height: 100%;
-  background: var(--card-color);
-  box-shadow: 0 0 10px var(--card-color);
+.chaos-value {
+  color: var(--card-color);
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 1px;
+  font-size: 0.9rem;
+  text-shadow: 0 0 10px var(--card-color);
 }
 
 .launch-btn {
@@ -342,13 +366,11 @@ const handleContainerMouseMove = (e: MouseEvent) => {
   inset: 0;
   border-radius: 16px;
   padding: 2px;
-  background: radial-gradient(
-    800px circle at var(--mouse-x) var(--mouse-y), 
-    var(--card-color),
-    transparent 40%
-  );
-  -webkit-mask: 
-    linear-gradient(#fff 0 0) content-box, 
+  background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y),
+      var(--card-color),
+      transparent 40%);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
@@ -366,11 +388,9 @@ const handleContainerMouseMove = (e: MouseEvent) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(
-    circle at var(--mouse-x) var(--mouse-y),
-    rgba(255, 255, 255, 0.1),
-    transparent 50%
-  );
+  background: radial-gradient(circle at var(--mouse-x) var(--mouse-y),
+      rgba(255, 255, 255, 0.1),
+      transparent 50%);
   border-radius: 16px;
   opacity: 0;
   pointer-events: none;
@@ -383,7 +403,14 @@ const handleContainerMouseMove = (e: MouseEvent) => {
 }
 
 @media (max-width: 768px) {
-  .section-title { font-size: 2.5rem; }
-  .holo-card { transform: none !important; } /* Disable tilt on mobile */
+  .section-title {
+    font-size: 2.5rem;
+  }
+
+  .holo-card {
+    transform: none !important;
+  }
+
+  /* Disable tilt on mobile */
 }
 </style>
