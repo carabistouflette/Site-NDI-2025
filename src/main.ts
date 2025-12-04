@@ -1,6 +1,7 @@
 import './assets/main.css'
 import './assets/styles/variables.css'
 import './assets/styles/nird-theme.css'
+import './assets/styles/animations.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
