@@ -1,7 +1,8 @@
 <template>
   <div id="app" class="nird-theme">
+    <AppHeader />
     <router-view v-slot="{ Component }">
-      <transition name="page-transition" mode="out-in">
+      <transition name="page-blur" mode="out-in">
         <component :is="Component" />
       </transition>
     </router-view>
@@ -9,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-// L'application utilise maintenant le router pour gérer les vues avec des transitions
+import AppHeader from '@/components/layout/AppHeader.vue'
 </script>
 
 <style>
@@ -21,8 +22,8 @@
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: var(--nird-anthracite);
-  background-color: #f8f9fa;
+  color: var(--text-primary);
+  background-color: #050505;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
@@ -65,22 +66,6 @@
 
 .fade-in {
   animation: fadeIn 0.6s ease-out;
-}
-
-/* Transitions de page */
-.page-transition-enter-active,
-.page-transition-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.page-transition-enter-from {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.page-transition-leave-to {
-  opacity: 0;
-  transform: translateY(-20px);
 }
 
 /* Responsive utilities */

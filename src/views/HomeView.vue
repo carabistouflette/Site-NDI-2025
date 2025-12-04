@@ -1,25 +1,18 @@
 <template>
   <div class="home-view">
-    <n-layout>
-      <n-layout-header>
-        <AppHeader />
-      </n-layout-header>
-      
-      <n-layout-content>
-        <HeroSection />
-        <GamePreview />
-        <NirdPresentation />
-      </n-layout-content>
-      
-      <n-layout-footer>
-        <AppFooter />
-      </n-layout-footer>
-    </n-layout>
+    <main>
+      <HeroSection />
+      <GamePreview />
+      <NirdPresentation />
+    </main>
+    
+    <footer>
+      <AppFooter />
+    </footer>
   </div>
 </template>
 
 <script setup lang="ts">
-import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import HeroSection from '@/components/home/HeroSection.vue'
 import GamePreview from '@/components/home/GamePreview.vue'

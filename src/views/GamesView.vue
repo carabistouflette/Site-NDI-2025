@@ -1,184 +1,176 @@
 <template>
   <div class="games-view">
-    <n-layout>
-      <n-layout-header bordered>
-        <AppHeader />
-      </n-layout-header>
-
-      <n-layout-content>
-        <!-- Intro Section -->
-        <div class="intro-section">
-          <div class="intro-bg"></div>
-          <div class="intro-content">
-            <h1 class="main-title">
-              <span class="glitch-text" data-text="Nos Expériences">Nos Expériences</span>
-            </h1>
-            <p class="subtitle">
-              Quatre univers. <span class="highlight">Quatre concepts.</span> Une Nuit.
-            </p>
-            <div class="scroll-indicator">
-              <span class="arrow-down">↓</span>
-            </div>
+    <main>
+      <!-- Intro Section -->
+      <div class="intro-section">
+        <div class="intro-bg"></div>
+        <div class="intro-content">
+          <h1 class="main-title">
+            <span class="glitch-text" data-text="Nos Expériences">Nos Expériences</span>
+          </h1>
+          <p class="subtitle">
+            Quatre univers. <span class="highlight">Quatre concepts.</span> Une Nuit.
+          </p>
+          <div class="scroll-indicator">
+            <span class="arrow-down">↓</span>
           </div>
         </div>
+      </div>
 
-        <!-- 1. Eco-Quest RPG (Retro Terminal Style) -->
-        <section class="game-section eco-quest">
-          <div class="terminal-window">
-            <div class="terminal-header">
-              <span class="dot red"></span>
-              <span class="dot yellow"></span>
-              <span class="dot green"></span>
-              <span class="terminal-title">eco_quest_launcher.sh</span>
-            </div>
-            <div class="terminal-body">
-              <p class="term-line">
-                <span class="prompt">user@nird:~$</span> ./init_adventure.sh --green-mode
-              </p>
-              <p class="term-line">
-                <span class="system">SYSTEM:</span> Loading world assets... [OK]
-              </p>
-              <p class="term-line">
-                <span class="system">SYSTEM:</span> Optimizing AI models... <span class="success">[COMPLETED]</span>
-              </p>
-              <br />
-              <p class="term-line typing-effect">
-                "Bienvenue, voyageur. Vous entrez dans un monde où chaque mot compte."
-              </p>
-              <p class="term-line typing-effect-delayed">
-                Le destin de la planète dépend de vos choix... et de la taille de votre modèle.
-              </p>
-              <br />
-              <div class="terminal-actions">
-                <button class="retro-btn">
-                  [ COMMENCER L'AVENTURE ]
-                </button>
-              </div>
-            </div>
+      <!-- 1. Eco-Quest RPG (Retro Terminal Style) -->
+      <section class="game-section eco-quest">
+        <div class="terminal-window">
+          <div class="terminal-header">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+            <span class="terminal-title">eco_quest_launcher.sh</span>
           </div>
-          <div class="section-info">
-            <h2 class="retro-title">Eco-Quest RPG</h2>
-            <p>
-              Un Jeu de Rôle textuel où la puissance brute ne fait pas tout.
-              Comparez des modèles massifs à des modèles optimisés (Green AI).
-              Moins de consommation, plus d'imagination.
+          <div class="terminal-body">
+            <p class="term-line">
+              <span class="prompt">user@nird:~$</span> ./init_adventure.sh --green-mode
             </p>
-          </div>
-        </section>
-
-        <!-- 2. Au Cœur du LLM (Tech / Lab Style) -->
-        <section class="game-section llm-core">
-          <div class="blueprint-bg">
-            <div class="grid-lines"></div>
-            <!-- Container for Infinite Scrolling -->
-            <div class="infinite-scroll-container">
-              <!-- First Group -->
-              <div class="terms-group">
-                <span class="term t1">Q4_K_M</span>
-                <span class="term t2">LORA</span>
-                <span class="term t3">AWQ</span>
-                <span class="term t4">GPTQ</span>
-                <span class="term t5">FP16</span>
-                <span class="term t6">INT8</span>
-                <span class="term t7">BF16</span>
-                <span class="term t8">PRUNING</span>
-              </div>
-              <!-- Duplicate Group for seamless loop -->
-              <div class="terms-group">
-                <span class="term t1">Q4_K_M</span>
-                <span class="term t2">LORA</span>
-                <span class="term t3">AWQ</span>
-                <span class="term t4">GPTQ</span>
-                <span class="term t5">FP16</span>
-                <span class="term t6">INT8</span>
-                <span class="term t7">BF16</span>
-                <span class="term t8">PRUNING</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="lab-interface">
-            <div class="tech-visual-container">
-               <!-- Tensor Cube Visualization -->
-               <div class="tensor-cube">
-                  <div class="face front"><span>WEIGHTS</span></div>
-                  <div class="face back"><span>BIAS</span></div>
-                  <div class="face right"><span>ATTENTION</span></div>
-                  <div class="face left"><span>LAYERS</span></div>
-                  <div class="face top"><span>INPUT</span></div>
-                  <div class="face bottom"><span>OUTPUT</span></div>
-               </div>
-               <div class="orbit-data-ring"></div>
-            </div>
-
-            <div class="lab-content">
-              <h2 class="lab-title">Au Cœur du LLM</h2>
-              <p class="lab-desc">
-                Plongez dans les matrices. <span class="tech-term">LORA</span>, <span class="tech-term">Q4_K_M</span>, <span class="tech-term">INT8</span>...
-                Ces termes ne sont pas de la magie, c'est de l'optimisation.
-                <br><br>
-                Comprenez comment la <span class="tech-highlight">quantification</span> réduit la précision pour gagner en vitesse et en énergie, sans perdre l'intelligence.
-              </p>
-              <button class="lab-btn">
-                <span class="btn-icon">⚙️</span> OPTIMISER LE MODÈLE
+            <p class="term-line">
+              <span class="system">SYSTEM:</span> Loading world assets... [OK]
+            </p>
+            <p class="term-line">
+              <span class="system">SYSTEM:</span> Optimizing AI models... <span class="success">[COMPLETED]</span>
+            </p>
+            <br />
+            <p class="term-line typing-effect">
+              "Bienvenue, voyageur. Vous entrez dans un monde où chaque mot compte."
+            </p>
+            <p class="term-line typing-effect-delayed">
+              Le destin de la planète dépend de vos choix... et de la taille de votre modèle.
+            </p>
+            <br />
+            <div class="terminal-actions">
+              <button class="retro-btn">
+                [ COMMENCER L'AVENTURE ]
               </button>
             </div>
           </div>
-        </section>
+        </div>
+        <div class="section-info">
+          <h2 class="retro-title">Eco-Quest RPG</h2>
+          <p>
+            Un Jeu de Rôle textuel où la puissance brute ne fait pas tout.
+            Comparez des modèles massifs à des modèles optimisés (Green AI).
+            Moins de consommation, plus d'imagination.
+          </p>
+        </div>
+      </section>
 
-        <!-- 3. Le Serpent Caché (Mystery / Minimalist) -->
-        <section class="game-section hidden-snake">
-          <div class="void-container">
-            <h2 class="void-text" @mouseenter="revealHint" @mouseleave="hideHint">
-              Mais où est le serpent ?
-            </h2>
-            <p class="void-hint" :class="{ visible: showHint }">
-              <i>Cherchez l'anomalie dans le vide...</i>
-            </p>
-            <!-- The "Snake" is a tiny pixel at the bottom right -->
-            <div class="snake-trigger" title="Sssss..."></div>
+      <!-- 2. Au Cœur du LLM (Tech / Lab Style) -->
+      <section class="game-section llm-core">
+        <div class="blueprint-bg">
+          <div class="grid-lines"></div>
+          <!-- Container for Infinite Scrolling -->
+          <div class="infinite-scroll-container">
+            <!-- First Group -->
+            <div class="terms-group">
+              <span class="term t1">Q4_K_M</span>
+              <span class="term t2">LORA</span>
+              <span class="term t3">AWQ</span>
+              <span class="term t4">GPTQ</span>
+              <span class="term t5">FP16</span>
+              <span class="term t6">INT8</span>
+              <span class="term t7">BF16</span>
+              <span class="term t8">PRUNING</span>
+            </div>
+            <!-- Duplicate Group for seamless loop -->
+            <div class="terms-group">
+              <span class="term t1">Q4_K_M</span>
+              <span class="term t2">LORA</span>
+              <span class="term t3">AWQ</span>
+              <span class="term t4">GPTQ</span>
+              <span class="term t5">FP16</span>
+              <span class="term t6">INT8</span>
+              <span class="term t7">BF16</span>
+              <span class="term t8">PRUNING</span>
+            </div>
           </div>
-        </section>
+        </div>
+        
+        <div class="lab-interface">
+          <div class="tech-visual-container">
+             <!-- Tensor Cube Visualization -->
+             <div class="tensor-cube">
+                <div class="face front"><span>WEIGHTS</span></div>
+                <div class="face back"><span>BIAS</span></div>
+                <div class="face right"><span>ATTENTION</span></div>
+                <div class="face left"><span>LAYERS</span></div>
+                <div class="face top"><span>INPUT</span></div>
+                <div class="face bottom"><span>OUTPUT</span></div>
+             </div>
+             <div class="orbit-data-ring"></div>
+          </div>
 
-        <!-- 4. Samurai Volume (Chaos / Glitch) -->
-        <section class="game-section samurai-chaos">
-          <div class="chaos-overlay"></div>
-          <div class="chaos-container">
-            <div class="glitch-box" data-text="SAMURAI VOLUME">
-              SAMURAI VOLUME
-            </div>
-            
-            <div class="volume-control-gone-wrong">
-              <div class="volume-knob">
-                <div class="knob-marker"></div>
-              </div>
-              <div class="volume-display">VOL: <span class="shaking-text">ERROR</span>%</div>
-            </div>
-
-            <div class="chaos-desc">
-              <p>IL EST POSSÉDÉ.</p>
-              <p>IL NE VEUT PAS BAISSER.</p>
-              <p class="highlight-red">CALMEZ-LE SI VOUS L'OSEZ.</p>
-            </div>
-
-            <button class="chaos-btn">
-              DÉGAINER LE KATANA
+          <div class="lab-content">
+            <h2 class="lab-title">Au Cœur du LLM</h2>
+            <p class="lab-desc">
+              Plongez dans les matrices. <span class="tech-term">LORA</span>, <span class="tech-term">Q4_K_M</span>, <span class="tech-term">INT8</span>...
+              Ces termes ne sont pas de la magie, c'est de l'optimisation.
+              <br><br>
+              Comprenez comment la <span class="tech-highlight">quantification</span> réduit la précision pour gagner en vitesse et en énergie, sans perdre l'intelligence.
+            </p>
+            <button class="lab-btn">
+              <span class="btn-icon">⚙️</span> OPTIMISER LE MODÈLE
             </button>
           </div>
-        </section>
+        </div>
+      </section>
 
-      </n-layout-content>
+      <!-- 3. Le Serpent Caché (Mystery / Minimalist) -->
+      <section class="game-section hidden-snake">
+        <div class="void-container">
+          <h2 class="void-text" @mouseenter="revealHint" @mouseleave="hideHint">
+            Mais où est le serpent ?
+          </h2>
+          <p class="void-hint" :class="{ visible: showHint }">
+            <i>Cherchez l'anomalie dans le vide...</i>
+          </p>
+          <!-- The "Snake" is a tiny pixel at the bottom right -->
+          <div class="snake-trigger" title="Sssss..."></div>
+        </div>
+      </section>
 
-      <n-layout-footer bordered>
-        <AppFooter />
-      </n-layout-footer>
-    </n-layout>
+      <!-- 4. Samurai Volume (Chaos / Glitch) -->
+      <section class="game-section samurai-chaos">
+        <div class="chaos-overlay"></div>
+        <div class="chaos-container">
+          <div class="glitch-box" data-text="SAMURAI VOLUME">
+            SAMURAI VOLUME
+          </div>
+          
+          <div class="volume-control-gone-wrong">
+            <div class="volume-knob">
+              <div class="knob-marker"></div>
+            </div>
+            <div class="volume-display">VOL: <span class="shaking-text">ERROR</span>%</div>
+          </div>
+
+          <div class="chaos-desc">
+            <p>IL EST POSSÉDÉ.</p>
+            <p>IL NE VEUT PAS BAISSER.</p>
+            <p class="highlight-red">CALMEZ-LE SI VOUS L'OSEZ.</p>
+          </div>
+
+          <button class="chaos-btn">
+            DÉGAINER LE KATANA
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <AppFooter />
+    </footer>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 
 // Logic for Snake Hint
