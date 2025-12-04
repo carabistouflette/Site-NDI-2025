@@ -6,29 +6,59 @@
         <span class="logo-text">NIRD</span>
       </div>
       
-      <nav class="app-header__navigation">
-        <n-menu mode="horizontal" :options="menuOptions" />
+      <nav class="app-header__navigation" :class="{ 'app-header__navigation--mobile': isMobileMenuOpen }">
+        <n-menu
+          mode="horizontal"
+          :options="menuOptions"
+          :value="activeRoute"
+          @update:value="handleMenuClick"
+        />
       </nav>
       
       <div class="app-header__actions">
-        <NirdButton 
-          variant="digital" 
+        <NirdButton
+          variant="digital"
           type="primary"
           @click="$router.push('/games')"
         >
           Accès aux jeux
         </NirdButton>
+        <button
+          class="mobile-menu-toggle"
+          @click="toggleMobileMenu"
+          aria-label="Toggle mobile menu"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path v-if="!isMobileMenuOpen" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+            <path v-else d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+          </svg>
+        </button>
       </div>
     </div>
   </header>
 </template>
 
 <script setup lang="ts">
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { h } from 'vue'
 import { RouterLink } from 'vue-router'
 import { NMenu } from 'naive-ui'
 import NirdButton from '@/components/common/NirdButton.vue'
 
+const route = useRoute()
+const router = useRouter()
+const isMobileMenuOpen = ref(false)
+const isMobile = ref(false)
+
+const activeRoute = computed(() => {
+  const path = route.path
+  if (path === '/') return 'home'
+  if (path.startsWith('/games')) return 'games'
+  if (path.startsWith('/about')) return 'about'
+  if (path.startsWith('/contact')) return 'contact'
+  return 'home'
+})
 
 const menuOptions = [
   {
@@ -44,7 +74,7 @@ const menuOptions = [
     key: 'about',
     children: [
       {
-        label: 'L\'association NIRD',
+        label: () => h(RouterLink, { to: '/about' }, { default: () => 'L\'association NIRD' }),
         key: 'association'
       },
       {
@@ -54,10 +84,43 @@ const menuOptions = [
     ]
   },
   {
-    label: 'Contact',
+    label: () => h(RouterLink, { to: '/contact' }, { default: () => 'Contact' }),
     key: 'contact'
   }
 ]
+
+const handleMenuClick = (key: string) => {
+  if (key === 'home') {
+    router.push('/')
+  } else if (key === 'games') {
+    router.push('/games')
+  } else if (key === 'association') {
+    router.push('/about')
+  } else if (key === 'contact') {
+    router.push('/contact')
+  }
+  isMobileMenuOpen.value = false
+}
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value
+}
+
+const checkMobile = () => {
+  isMobile.value = window.innerWidth <= 768
+  if (!isMobile.value) {
+    isMobileMenuOpen.value = false
+  }
+}
+
+onMounted(() => {
+  checkMobile()
+  window.addEventListener('resize', checkMobile)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', checkMobile)
+})
 </script>
 
 <style scoped>
@@ -112,13 +175,54 @@ const menuOptions = [
   gap: 1rem;
 }
 
+.mobile-menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--nird-anthracite);
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.mobile-menu-toggle:hover {
+  background: rgba(0, 102, 255, 0.1);
+  color: var(--nird-blue-electric);
+}
+
 @media (max-width: 768px) {
   .app-header__container {
     padding: 0 0.5rem;
   }
   
   .app-header__navigation {
-    display: none;
+    position: fixed;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 99;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+    opacity: 0;
+    pointer-events: none;
+  }
+  
+  .app-header__navigation--mobile {
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  
+  .app-header__navigation .n-menu {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  
+  .mobile-menu-toggle {
+    display: block;
   }
   
   .app-header__actions {

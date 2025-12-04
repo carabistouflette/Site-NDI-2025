@@ -4,9 +4,9 @@ import './assets/styles/nird-theme.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import { createRouter, createWebHistory } from 'vue-router'
 
 import App from './App.vue'
+import router from './router'
 import { nirdTheme } from './assets/styles/theme'
 
 // Import Naive UI
@@ -30,26 +30,6 @@ import {
   NSpace,
   NDivider
 } from 'naive-ui'
-
-// Import des vues
-import HomeView from './views/HomeView.vue'
-
-// Configuration du router
-const router = createRouter({
-  history: createWebHistory(),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView
-    },
-    {
-      path: '/games',
-      name: 'games',
-      component: () => import('./views/GamesView.vue')
-    }
-  ]
-})
 
 // Création de l'application avec Naive UI
 const naive = create({

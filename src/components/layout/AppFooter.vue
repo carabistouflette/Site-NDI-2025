@@ -32,18 +32,18 @@
           <ul class="app-footer__links">
             <li><RouterLink to="/">Accueil</RouterLink></li>
             <li><RouterLink to="/games">Jeux</RouterLink></li>
-            <li><a href="#">À propos</a></li>
-            <li><a href="#">Contact</a></li>
+            <li><RouterLink to="/about">À propos</RouterLink></li>
+            <li><RouterLink to="/contact">Contact</RouterLink></li>
           </ul>
         </div>
         
         <div class="app-footer__section">
           <h3 class="app-footer__title">L'événement</h3>
           <ul class="app-footer__links">
-            <li><a href="#">Programme</a></li>
-            <li><a href="#">Lieu</a></li>
-            <li><a href="#">Inscription</a></li>
-            <li><a href="#">Partenaires</a></li>
+            <li><a href="#programme">Programme</a></li>
+            <li><a href="#lieu">Lieu</a></li>
+            <li><a href="#inscription">Inscription</a></li>
+            <li><a href="#partenaires">Partenaires</a></li>
           </ul>
         </div>
         
@@ -62,8 +62,8 @@
           <p>&copy; 2025 NIRD. Tous droits réservés.</p>
         </div>
         <div class="app-footer__legal">
-          <a href="#">Mentions légales</a>
-          <a href="#">Politique de confidentialité</a>
+          <a href="#mentions-legales">Mentions légales</a>
+          <a href="#politique-confidentialite">Politique de confidentialité</a>
         </div>
       </div>
     </div>

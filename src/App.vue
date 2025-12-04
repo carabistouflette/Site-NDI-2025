@@ -1,11 +1,15 @@
 <template>
   <div id="app" class="nird-theme">
-    <router-view />
+    <router-view v-slot="{ Component }">
+      <transition name="page-transition" mode="out-in">
+        <component :is="Component" />
+      </transition>
+    </router-view>
   </div>
 </template>
 
 <script setup lang="ts">
-// L'application utilise maintenant le router pour gérer les vues
+// L'application utilise maintenant le router pour gérer les vues avec des transitions
 </script>
 
 <style>
@@ -61,6 +65,22 @@
 
 .fade-in {
   animation: fadeIn 0.6s ease-out;
+}
+
+/* Transitions de page */
+.page-transition-enter-active,
+.page-transition-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.page-transition-enter-from {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-leave-to {
+  opacity: 0;
+  transform: translateY(-20px);
 }
 
 /* Responsive utilities */
