@@ -1,0 +1,24 @@
+:root {
+  /* Couleurs principales NIRD */
+  --nird-blue-king: #0052CC;        /* Bleu Roi - Numérique */
+  --nird-blue-electric: #0066FF;    /* Bleu Électrique */
+  --nird-violet: #6B46C1;           /* Violet - Inclusif */
+  --nird-fuchsia: #D53F8C;          /* Fuchsia */
+  --nird-coral: #FF6B6B;            /* Rose Corail - Responsable */
+  --nird-salmon: #FFA07A;           /* Saumon */
+  --nird-golden: #F6AD55;           /* Jaune Doré - Durable */
+  --nird-amber: #ED8936;            /* Ambré */
+  --nird-anthracite: #2D3748;       /* Gris Anthracite - Texte */
+  
+  /* Dégradés NIRD */
+  --gradient-digital: linear-gradient(135deg, var(--nird-blue-king), var(--nird-blue-electric));
+  --gradient-inclusive: linear-gradient(135deg, var(--nird-violet), var(--nird-fuchsia));
+  --gradient-responsible: linear-gradient(135deg, var(--nird-coral), var(--nird-salmon));
+  --gradient-sustainable: linear-gradient(135deg, var(--nird-golden), var(--nird-amber));
+  --gradient-unified: linear-gradient(135deg, 
+    var(--nird-blue-electric), 
+    var(--nird-violet), 
+    var(--nird-coral), 
+    var(--nird-golden)
+  );
+}

@@ -1,0 +1,76 @@
+/* Thème NIRD personnalisé pour Naive UI */
+
+.nird-theme {
+  /* Personnalisation des couleurs principales */
+  --n-primary-color: #0066FF;           /* Bleu Électrique */
+  --n-primary-color-hover: #0052CC;     /* Bleu Roi */
+  --n-primary-color-pressed: #0041A8;   /* Bleu foncé */
+  --n-primary-color-suppl: #6B46C1;      /* Violet */
+  
+  /* Couleurs sémantiques */
+  --n-info-color: #0066FF;               /* Bleu Électrique */
+  --n-info-color-hover: #0052CC;         /* Bleu Roi */
+  --n-info-color-pressed: #0041A8;       /* Bleu foncé */
+  --n-success-color: #F6AD55;            /* Jaune Doré */
+  --n-success-color-hover: #ED8936;      /* Ambré */
+  --n-success-color-pressed: #DD6B20;    /* Orange foncé */
+  --n-warning-color: #ED8936;            /* Ambré */
+  --n-warning-color-hover: #DD6B20;      /* Orange foncé */
+  --n-warning-color-pressed: #C05621;    /* Orange très foncé */
+  --n-error-color: #FF6B6B;              /* Rose Corail */
+  --n-error-color-hover: #E53E3E;        /* Rouge */
+  --n-error-color-pressed: #C53030;      /* Rouge foncé */
+  
+  /* Couleurs de texte */
+  --n-text-color-base: #2D3748;         /* Gris Anthracite */
+  --n-text-color-1: #2D3748;            /* Gris Anthracite */
+  --n-text-color-2: #4A5568;             /* Gris clair */
+  --n-text-color-3: #718096;             /* Gris plus clair */
+  
+  /* Couleurs de fond */
+  --n-card-color: #FFFFFF;
+  --n-modal-color: #FFFFFF;
+  --n-popover-color: #FFFFFF;
+  --n-dropdown-color: #FFFFFF;
+  
+  /* Bordures et ombres */
+  --n-border-color: #E2E8F0;
+  --n-divider-color: #E2E8F0;
+  --n-box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --n-box-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+/* Personnalisation des composants spécifiques */
+.nird-theme .n-button--primary-type {
+  background: linear-gradient(135deg, #0066FF, #0052CC);
+  border: none;
+  box-shadow: 0 4px 6px -1px rgba(0, 102, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.nird-theme .n-button--primary-type:hover {
+  background: linear-gradient(135deg, #0052CC, #0041A8);
+  box-shadow: 0 6px 8px -1px rgba(0, 102, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+.nird-theme .n-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.nird-theme .n-card:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.nird-theme .n-menu-item {
+  border-radius: 8px;
+  margin: 4px 0;
+  transition: all 0.2s ease;
+}
+
+.nird-theme .n-menu-item:hover {
+  background-color: rgba(0, 102, 255, 0.1);
+}
