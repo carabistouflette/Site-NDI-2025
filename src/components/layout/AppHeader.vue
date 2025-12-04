@@ -120,7 +120,7 @@ let lastScrollY = 0
 const menuItems = [
   { label: 'Accueil', to: '/', key: 'home', icon: IconHome },
   { label: 'Jeux', to: '/games', key: 'games', icon: IconGamepad },
-  { label: 'L\'association', to: '/about', key: 'about', icon: IconUsers }
+  { label: 'L\'association', to: '/association', key: 'association', icon: IconUsers }
 ]
 
 const handleScroll = () => {
@@ -248,6 +248,7 @@ main, footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative; /* Added for absolute centering of nav */
 }
 
 /* Logo */
@@ -257,6 +258,19 @@ main, footer {
   gap: 0.75rem;
   text-decoration: none;
   position: relative;
+  z-index: 10; /* Ensure logo is above nav if overlap */
+}
+
+/* ... (logo styles kept same) ... */
+
+/* Desktop Nav */
+.app-header__nav {
+  display: flex;
+  gap: 2.5rem;
+  align-items: center;
+  position: absolute; /* Absolute centering */
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .logo {
