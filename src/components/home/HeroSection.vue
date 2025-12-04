@@ -6,7 +6,9 @@
     
     <div class="hero__content">
       <div class="hero__text">
-        <h1 class="wind-effect">NIRD</h1>
+        <!-- Le texte avec l'effet néon flow -->
+        <h1 class="neon-flow" data-text="NIRD">NIRD</h1>
+        
         <p class="subtitle">Numérique <span class="neon">Inclusif</span> Responsable Durable</p>
         <p class="description">
           Construisons ensemble un avenir numérique éthique.
@@ -28,109 +30,70 @@ let particles: Particle[] = []
 // Configuration
 const PARTICLE_COUNT = 70
 const MOUSE_RADIUS = 120
-const REPELL_FORCE = 15 // Force de répulsion
-const RETURN_SPEED = 0.05 // Vitesse de retour (plus petit = plus lent/fluide)
-const FRICTION = 0.90 // Ralentissement naturel
+const REPELL_FORCE = 15
+const RETURN_SPEED = 0.05
+const FRICTION = 0.90
 const EMOJI_SIZE = 24
 
 // Emojis
 const emojis = ['🌱', '🌿', '🌳', '♻️', '🌍', '💧', '💻', '💾', '🌐', '⚡', '👾']
 const SNAKE_EMOJI = '🐍'
 
-// État de la souris
-const mouse = {
-  x: -1000,
-  y: -1000
-}
+const mouse = { x: -1000, y: -1000 }
 
 class Particle {
   x: number
   y: number
-  baseX: number // Position d'origine (Ancre)
-  baseY: number // Position d'origine (Ancre)
-  vx: number // Vélocité Y
-  vy: number // Vélocité Y
+  baseX: number
+  baseY: number
+  vx: number
+  vy: number
   size: number
   emoji: string
   opacity: number
-  density: number // Facteur de poids aléatoire pour varier les mouvements
+  density: number
 
   constructor(canvasWidth: number, canvasHeight: number, isSnake = false) {
     this.x = Math.random() * canvasWidth
     this.y = Math.random() * canvasHeight
     this.baseX = this.x
     this.baseY = this.y
-    
     this.vx = 0
     this.vy = 0
-
-    this.size = Math.random() * 10 + 14 // 14px à 24px
+    this.size = Math.random() * 10 + 14
     this.emoji = isSnake ? SNAKE_EMOJI : emojis[Math.floor(Math.random() * emojis.length)]
     this.opacity = Math.random() * 0.5 + 0.3
     this.density = (Math.random() * 30) + 1
   }
 
   update(canvasWidth: number, canvasHeight: number) {
-    // 1. Calcul de la distance avec la souris
     const dx = mouse.x - this.x
     const dy = mouse.y - this.y
     const distance = Math.sqrt(dx * dx + dy * dy)
     
-    // 2. Force de Répulsion (Si la souris est proche)
-    let forceDirectionX = 0
-    let forceDirectionY = 0
-    let force = 0
-
     if (distance < MOUSE_RADIUS) {
-      forceDirectionX = dx / distance
-      forceDirectionY = dy / distance
-      // La force est plus forte plus on est près
-      force = (MOUSE_RADIUS - distance) / MOUSE_RADIUS
-      
-      // On pousse la vélocité à l'opposé de la souris
-      const directionX = forceDirectionX * force * REPELL_FORCE * -1
-      const directionY = forceDirectionY * force * REPELL_FORCE * -1
-      
+      const force = (MOUSE_RADIUS - distance) / MOUSE_RADIUS
+      const directionX = (dx / distance) * force * REPELL_FORCE * -1
+      const directionY = (dy / distance) * force * REPELL_FORCE * -1
       this.vx += directionX
       this.vy += directionY
     }
 
-    // 3. Force d'Attraction (Retour à la base)
-    // Si on n'est pas repoussé, on retourne doucement vers la base
     const homeDx = this.baseX - this.x
     const homeDy = this.baseY - this.y
-    
-    // On ajoute une petite force vers la maison
     this.vx += homeDx * RETURN_SPEED * 0.5
     this.vy += homeDy * RETURN_SPEED * 0.5
-
-    // 4. Application de la friction (pour éviter que ça oscille indéfiniment)
     this.vx *= FRICTION
     this.vy *= FRICTION
 
-    // 5. Mise à jour de la position
     this.x += this.vx
     this.y += this.vy
 
-    // 6. Contrainte des bords (Mur invisible)
-    // Empêcher de sortir de l'écran
     const padding = this.size
-    if (this.x < padding) {
-      this.x = padding
-      this.vx *= -0.5 // Rebond léger
-    }
-    if (this.x > canvasWidth - padding) {
-      this.x = canvasWidth - padding
-      this.vx *= -0.5
-    }
-    if (this.y < padding) {
-      this.y = padding
-      this.vy *= -0.5
-    }
-    if (this.y > canvasHeight - padding) {
-      this.y = canvasHeight - padding
-      this.vy *= -0.5
-    }
+    if (this.x < padding) { this.x = padding; this.vx *= -0.5 }
+    if (this.x > canvasWidth - padding) { this.x = canvasWidth - padding; this.vx *= -0.5 }
+    if (this.y < padding) { this.y = padding; this.vy *= -0.5 }
+    if (this.y > canvasHeight - padding) { this.y = canvasHeight - padding; this.vy *= -0.5 }
   }
 
   draw(context: CanvasRenderingContext2D) {
@@ -146,33 +109,26 @@ const init = () => {
   if (!canvasRef.value) return
   const canvas = canvasRef.value
   ctx = canvas.getContext('2d')
-  
-  // Fonction interne pour reset les particules adaptées à la taille
   const resetParticles = () => {
     canvas.width = heroRef.value?.offsetWidth || window.innerWidth
     canvas.height = heroRef.value?.offsetHeight || window.innerHeight
-    
     particles = []
-    particles.push(new Particle(canvas.width, canvas.height, true)) // Le serpent
+    particles.push(new Particle(canvas.width, canvas.height, true))
     for (let i = 0; i < PARTICLE_COUNT - 1; i++) {
       particles.push(new Particle(canvas.width, canvas.height))
     }
   }
-  
   window.addEventListener('resize', resetParticles)
   resetParticles()
 }
 
 const animate = () => {
   if (!ctx || !canvasRef.value) return
-  
   ctx.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
-  
   particles.forEach(particle => {
     particle.update(canvasRef.value!.width, canvasRef.value!.height)
     particle.draw(ctx!)
   })
-  
   animationFrameId = requestAnimationFrame(animate)
 }
 
@@ -191,7 +147,6 @@ const handleMouseLeave = () => {
 onMounted(() => {
   init()
   animate()
-  
   if (heroRef.value) {
     heroRef.value.addEventListener('mousemove', handleMouseMove)
     heroRef.value.addEventListener('mouseleave', handleMouseLeave)
@@ -201,7 +156,6 @@ onMounted(() => {
 onUnmounted(() => {
   cancelAnimationFrame(animationFrameId)
   window.removeEventListener('resize', init)
-  
   if (heroRef.value) {
     heroRef.value.removeEventListener('mousemove', handleMouseMove)
     heroRef.value.removeEventListener('mouseleave', handleMouseLeave)
@@ -251,14 +205,37 @@ onUnmounted(() => {
   pointer-events: none;
 }
 
-h1 {
+/* EFFET NEON FLOW - SOBRE ET ELEGANT */
+.neon-flow {
   font-size: 8rem;
   font-weight: 900;
   line-height: 1;
   margin: 0;
-  color: white;
   letter-spacing: -5px;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  color: transparent; /* Texte vide */
+  
+  /* Contour fin vert sombre */
+  -webkit-text-stroke: 2px rgba(57, 255, 20, 0.3);
+  
+  /* Gradient qui passe dedans */
+  background: linear-gradient(
+    90deg,
+    rgba(57, 255, 20, 0) 0%,
+    rgba(57, 255, 20, 0) 40%,
+    rgba(57, 255, 20, 1) 50%, /* Point lumineux intense */
+    rgba(57, 255, 20, 0) 60%,
+    rgba(57, 255, 20, 0) 100%
+  );
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  
+  animation: neon-flow-anim 4s linear infinite;
+}
+
+@keyframes neon-flow-anim {
+  0% { background-position: 200% center; }
+  100% { background-position: -200% center; }
 }
 
 .subtitle {
@@ -284,38 +261,8 @@ h1 {
   margin-right: auto;
 }
 
-/* Nouveau style d'effet de vent */
-.wind-effect {
-  position: relative;
-  display: inline-block;
-  color: white; /* Texte blanc de base */
-  /* Masque l'overflow pour que le "vent" ne dépasse pas du texte */
-  background: linear-gradient(
-    110deg, 
-    #ffffff 0%, 
-    #ffffff 40%, 
-    var(--neon-green) 50%, 
-    #ffffff 60%, 
-    #ffffff 100%
-  );
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shine-wind 5s linear infinite;
-}
-
-@keyframes shine-wind {
-  0% {
-    background-position: 200% center;
-  }
-  100% {
-    background-position: -200% center;
-  }
-}
-
 @media (max-width: 768px) {
-  h1 { font-size: 5rem; }
+  .neon-flow { font-size: 5rem; }
   .subtitle { font-size: 1rem; }
 }
 </style>
