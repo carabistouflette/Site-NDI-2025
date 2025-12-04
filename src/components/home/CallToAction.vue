@@ -96,6 +96,6 @@ import { NGrid, NGi, NH2, NIcon } from 'naive-ui'
 import NirdButton from '@/components/common/NirdButton.vue'
 </script>
 
-<style scoped>
+<style>
 @import '@/assets/styles/components/call-to-action.css';
 </style>

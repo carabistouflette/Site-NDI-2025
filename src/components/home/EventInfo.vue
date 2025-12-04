@@ -219,6 +219,6 @@ import { NGrid, NGi, NH2, NIcon } from 'naive-ui'
 import GradientCard from '@/components/common/GradientCard.vue'
 </script>
 
-<style scoped>
+<style>
 @import '@/assets/styles/components/event-info.css';
 </style>

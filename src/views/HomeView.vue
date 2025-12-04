@@ -61,7 +61,8 @@ onMounted(() => {
   min-height: 100vh;
 }
 
-section {
+/* Animation supprimée temporairement pour débogage du rendu */
+/* section {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.6s ease, transform 0.6s ease;
@@ -70,5 +71,5 @@ section {
 section.fade-in {
   opacity: 1;
   transform: translateY(0);
-}
+} */
 </style>

@@ -247,6 +247,6 @@ const showGameInfo = (gameId: string) => {
 }
 </script>
 
-<style scoped>
+<style>
 @import '@/assets/styles/components/game-preview.css';
 </style>

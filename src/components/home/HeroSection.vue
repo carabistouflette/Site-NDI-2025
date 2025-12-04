@@ -104,7 +104,7 @@ import { NGrid, NGi, NSpace, NIcon } from 'naive-ui'
 import NirdButton from '@/components/common/NirdButton.vue'
 </script>
 
-<style scoped>
+<style>
 @import '@/assets/styles/components/hero-section.css';
 
 /* Styles spécifiques à Naive UI integration pour le responsive */
