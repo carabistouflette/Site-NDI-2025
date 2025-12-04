@@ -230,7 +230,7 @@ const toggleMute = () => {
     </div>
 
     <!-- Video Container -->
-    <div class="relative flex-grow flex items-center justify-center w-full max-w-3xl mb-8 rounded-lg overflow-hidden shadow-lg border-0 border-primary-color max-h-[70vh] z-10 video-container">
+    <div class="relative inline-block mb-8 rounded-lg overflow-hidden shadow-lg border-0 border-primary-color z-10 video-container">
       <video
         ref="videoRef"
         :src="videoUrl"
@@ -238,7 +238,7 @@ const toggleMute = () => {
         autoplay
         playsinline
         muted
-        class="w-full h-full object-contain pointer-events-none"
+        class="h-[60vh] w-auto object-contain pointer-events-none block"
         :volume="volume"
       ></video>
       <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center pointer-events-none" v-if="videoRef && videoRef.muted">
