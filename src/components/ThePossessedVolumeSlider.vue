@@ -160,11 +160,14 @@ onMounted(() => {
   velocityX.value = (Math.random() > 0.5 ? 1 : -1) * 3; // Speed 3
   velocityY.value = (Math.random() > 0.5 ? 1 : -1) * 3;
 
-  if (videoRef.value) {
-    videoRef.value.volume = volume.value;
-    videoRef.value.muted = true; 
-  }
-});
+    // Randomize initial slider position
+    sliderX.value = Math.random() * (window.innerWidth - sliderWidth);
+    sliderY.value = Math.random() * (window.innerHeight - sliderHeight);
+  
+    if (videoRef.value) {
+      videoRef.value.volume = volume.value;
+      videoRef.value.muted = true;
+    }});
 
 onUnmounted(() => {
   window.removeEventListener('mousemove', updateFakeCursor);
