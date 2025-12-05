@@ -47,6 +47,18 @@ const router = createRouter({
       name: 'rpg-play',
       component: () => import('@/views/RpgGameView.vue'),
       meta: { title: 'Eco Quest - L\'Aventure' }
+    },
+    {
+      path: '/games/llm',
+      name: 'llm-game',
+      component: () => import('@/views/LLMGameView.vue'),
+      meta: { title: 'Au Cœur du LLM - Simulation' }
+    },
+    {
+      path: '/games/volume',
+      name: 'volume-game',
+      component: () => import('@/views/VolumeGameView.vue'),
+      meta: { title: 'Samurai Volume - Challenge' }
     }
   ],
   scrollBehavior(to, from, savedPosition) {
