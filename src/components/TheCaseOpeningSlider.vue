@@ -41,11 +41,13 @@ const generateItem = (id: number, forceType?: 'common' | 'rare' | 'legendary'): 
   if (type === 'legendary') {
     // Perfect volumes
     const opts = [0, 50, 100];
-    value = opts[Math.floor(Math.random() * opts.length)];
+    const idx = Math.floor(Math.random() * opts.length);
+    value = opts[idx]!;
   } else if (type === 'rare') {
     // Decent volumes
     const opts = [25, 33, 66, 75];
-    value = opts[Math.floor(Math.random() * opts.length)];
+    const idx = Math.floor(Math.random() * opts.length);
+    value = opts[idx]!;
   } else {
     // Trash volumes (13, 87, 99, 1, etc.)
     value = Math.floor(Math.random() * 101);
@@ -136,12 +138,14 @@ const spin = () => {
       if (actualIndex >= items.value.length) actualIndex = items.value.length - 1;
 
       const wonItem = items.value[actualIndex];
-      volume.value = wonItem.value / 100;
-      if (videoRef.value) videoRef.value.volume = volume.value;
+      if (wonItem) {
+        volume.value = wonItem.value / 100;
+        if (videoRef.value) videoRef.value.volume = volume.value;
 
-      // Troll Message
-      const missedItem = items.value[actualIndex - 1]; // The one just before (usually better)
-      statusMessage.value = `Dommage ! Vous avez raté le ${missedItem ? missedItem.value : '???'}% de peu... Volume réglé à ${wonItem.value}%`;
+        // Troll Message
+        const missedItem = items.value[actualIndex - 1]; // The one just before (usually better)
+        statusMessage.value = `Dommage ! Vous avez raté le ${missedItem ? missedItem.value : '???'}% de peu... Volume réglé à ${wonItem.value}%`;
+      }
     }, 6000);
   }, 50);
 };
