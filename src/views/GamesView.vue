@@ -45,7 +45,7 @@
             </p>
             <br />
             <div class="terminal-actions">
-              <button class="retro-btn">
+              <button class="retro-btn" @click="$router.push('/rpg/setup')">
                 [ COMMENCER L'AVENTURE ]
               </button>
             </div>
