@@ -33,7 +33,7 @@ const client = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY,
   defaultHeaders: {
-    "HTTP-Referer": process.env.FRONTEND_URL || "https://ndi-2025-frontend.fly.dev",
+    "HTTP-Referer": process.env.FRONTEND_URL || "https://site-ndi-2025.fly.dev",
     "X-Title": "Site NDI 2025",
   }
 });

@@ -1,29 +1,33 @@
-# Fly.io configuration for Backend API
-app = "ndi-2025-backend"
-primary_region = "cdg"
+# fly.toml app configuration file generated for site-ndi-2025-backend on 2025-12-05T19:06:59+01:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'site-ndi-2025-backend'
+primary_region = 'cdg'
 
 [build]
-  dockerfile = "Dockerfile"
+  dockerfile = 'Dockerfile'
 
 [env]
-  PORT = "3001"
+  PORT = '3001'
 
 [http_service]
   internal_port = 3001
   force_https = true
-  auto_stop_machines = "stop"
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
-  processes = ["app"]
+  processes = ['app']
 
   [[http_service.checks]]
-    interval = "15s"
-    timeout = "5s"
-    grace_period = "10s"
-    method = "GET"
-    path = "/"
+    interval = '15s'
+    timeout = '5s'
+    grace_period = '10s'
+    method = 'GET'
+    path = '/'
 
 [[vm]]
-  memory = "256mb"
-  cpu_kind = "shared"
+  memory = '256mb'
+  cpu_kind = 'shared'
   cpus = 1
