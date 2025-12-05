@@ -270,19 +270,55 @@ html {
 }
 
 /* Responsive animations */
+
 @media (prefers-reduced-motion: reduce) {
+
   *,
+
   *::before,
+
   *::after {
+
     animation-duration: 0.01ms !important;
+
     animation-iteration-count: 1 !important;
+
     transition-duration: 0.01ms !important;
+
   }
+
   
+
   .scroll-animate-fade-in,
+
   .scroll-animate-slide-left,
+
   .scroll-animate-slide-right,
+
   .scroll-animate-scale-up {
+
     transition: none !important;
+
   }
+
+}
+
+
+
+/* Terminal Scanline Effect */
+
+@keyframes scanlines {
+
+  0% {
+
+    background-position: 0 0;
+
+  }
+
+  100% {
+
+    background-position: 0 100%;
+
+  }
+
 }

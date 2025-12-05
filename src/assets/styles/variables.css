@@ -33,4 +33,7 @@
   /* Neon Glows */
   --glow-text: 0 0 10px rgba(57, 255, 20, 0.5);
   --glow-box: 0 0 20px rgba(57, 255, 20, 0.1);
+
+  /* Fonts */
+  --font-terminal: 'Share Tech Mono', monospace;
 }
