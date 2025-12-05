@@ -24,6 +24,7 @@ const challenges = [
 
 const currentChallenge = shallowRef<any>(null);
 const backButtonRef = ref<HTMLElement | null>(null);
+const isHoveringBack = ref(false);
 
 // Custom Cursor Logic
 const mouseX = ref(window.innerWidth / 2);
@@ -32,6 +33,15 @@ const mouseY = ref(window.innerHeight / 2);
 const updateMouse = (e: MouseEvent) => {
   mouseX.value = e.clientX;
   mouseY.value = e.clientY;
+
+  // Check hover for Back Button
+  if (currentChallenge.value && backButtonRef.value) {
+    const { x, y } = getVisualCursorPosition();
+    const rect = backButtonRef.value.getBoundingClientRect();
+    isHoveringBack.value = x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+  } else {
+    isHoveringBack.value = false;
+  }
 };
 
 const getVisualCursorPosition = () => {
@@ -98,18 +108,21 @@ const backToMenu = () => {
     }"
   >
 
-    <!-- GLOBAL FAKE CURSOR -->
-    <div
-      class="fixed pointer-events-none z-[50000] text-5xl filter drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-none will-change-transform"
-      :style="{
-        left: '0px',
-        top: '0px',
-        ...cursorStyle
-      }"
-    >
-      🖐️
-    </div>
-
+        <!-- GLOBAL FAKE CURSOR -->
+        <div
+          class="fixed pointer-events-none z-[50000] text-5xl filter drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-none will-change-transform"
+          :style="{
+            left: '0px',
+            top: '0px',
+            ...cursorStyle
+          }"
+        >
+          <span class="relative">
+            🖐️
+            <!-- Precision Dot -->
+            <div class="absolute top-0 left-0 w-1.5 h-1.5 bg-red-500 rounded-full shadow-[0_0_8px_rgba(255,0,0,0.8)] animate-pulse"></div>
+          </span>
+        </div>
     <!-- MENU SCREEN -->
     <div v-if="!currentChallenge" class="flex flex-col items-center justify-center h-full w-full p-8 z-10 relative">
       <h1 class="text-5xl md:text-7xl font-bold mb-12 text-primary-color uppercase tracking-[0.2em] drop-shadow-[0_0_15px_rgba(139,0,0,0.8)] text-center animate-float">
@@ -144,12 +157,13 @@ const backToMenu = () => {
     <!-- GAME SCREEN -->
     <div v-else class="h-full w-full relative">
       <!-- Back Button -->
-      <button
+      <button 
         ref="backButtonRef"
         @click="backToMenu"
-        class="fixed top-4 left-4 z-[30000] px-4 py-2 bg-black/50 text-white/50 hover:text-white hover:bg-primary-color/80 rounded border border-white/10 text-xs uppercase tracking-widest transition-all"
+        class="fixed top-4 left-4 z-[30000] px-4 py-2 rounded border text-xs uppercase tracking-widest transition-all duration-200"
+        :class="isHoveringBack ? 'text-white bg-primary-color/80 border-primary-color shadow-[0_0_15px_var(--primary-color)]' : 'bg-black/50 text-white/50 border-white/10'"
       >
-        Quitter
+        Abandonner
       </button>
 
       <component :is="currentChallenge.component" />
