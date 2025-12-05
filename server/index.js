@@ -1,49 +1,22 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import OpenAI from 'openai'; // On importe la lib officielle
+import OpenAI from 'openai';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// CORS configuration for both local development and production
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Allow localhost for development
-    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-      return callback(null, true);
-    }
-    
-    // Allow any Fly.io domain (both frontend and backend)
-    if (origin.includes('.fly.dev')) {
-      return callback(null, true);
-    }
-    
-    // Reject other origins
-    callback(new Error('Not allowed by CORS'));
-  },
+// CORS SIMPLE - Accept ALL origins
+app.use(cors({
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['Content-Length', 'X-Request-Id']
-};
-
-// Apply CORS BEFORE other middlewares
-app.use(cors(corsOptions));
-
-// Handle preflight requests explicitly
-app.options('*', cors(corsOptions));
-
-// Apply helmet with CORS-friendly configuration
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" },
-  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }));
+
+// Handle ALL preflight requests
+app.options('*', cors());
 
 const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,
