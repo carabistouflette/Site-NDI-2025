@@ -25,7 +25,7 @@ OPENROUTER_API_KEY=sk-or-v1-...
 - **Body (JSON)** :
   ```json
   {
-    "model": "google/gemini-2.0-flash-exp:free", // ou autre modèle supporté
+    "model": "openai/gpt-oss-120b", // ou autre modèle supporté
     "messages": [
       { "role": "user", "content": "Bonjour !" }
     ],
