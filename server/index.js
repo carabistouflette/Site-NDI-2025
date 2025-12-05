@@ -8,8 +8,6 @@ import OpenAI from 'openai'; // On importe la lib officielle
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(helmet());
-
 // CORS configuration for both local development and production
 const corsOptions = {
   origin: function (origin, callback) {
@@ -35,10 +33,17 @@ const corsOptions = {
   exposedHeaders: ['Content-Length', 'X-Request-Id']
 };
 
+// Apply CORS BEFORE other middlewares
 app.use(cors(corsOptions));
 
 // Handle preflight requests explicitly
 app.options('*', cors(corsOptions));
+
+// Apply helmet with CORS-friendly configuration
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" }
+}));
 
 const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,
@@ -124,6 +129,6 @@ app.post('/api/chat', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Secure Server running on http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Secure Server running on port ${PORT}`);
 });
