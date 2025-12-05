@@ -1,7 +1,7 @@
 <template>
   <div class="llm-game-container">
     <canvas ref="bgCanvas" class="bg-canvas"></canvas>
-    
+
     <div class="game-window">
       <!-- HUD Header -->
       <header class="game-header">
@@ -14,7 +14,8 @@
         </div>
         <div class="progress-container">
           <div class="step-dots">
-            <div v-for="s in 4" :key="s" class="step-dot" :class="{ active: stage >= s - 1, current: stage === s - 1 }"></div>
+            <div v-for="s in 4" :key="s" class="step-dot" :class="{ active: stage >= s - 1, current: stage === s - 1 }">
+            </div>
           </div>
         </div>
       </header>
@@ -50,13 +51,8 @@
           </div>
 
           <div class="token-selector">
-            <div 
-              v-for="token in currentOptions" 
-              :key="token.text"
-              class="token-card"
-              :class="{ 'best-pick': token.prob > 0.6 }"
-              @click="pickToken(token)"
-            >
+            <div v-for="token in currentOptions" :key="token.text" class="token-card"
+              :class="{ 'best-pick': token.prob > 0.6 }" @click="pickToken(token)">
               <div class="token-header">
                 <span class="token-id">ID:{{ Math.floor(Math.random() * 9999) }}</span>
                 <span class="token-prob">{{ (token.prob * 100).toFixed(1) }}%</span>
@@ -95,11 +91,18 @@
               </div>
               <div class="metric-row">
                 <label>CPU LOAD</label>
-                <div class="bar-bg"><div class="bar-fill" :style="{ width: isOverheating ? '95%' : '15%', background: isOverheating ? 'red' : '#0f0' }"></div></div>
+                <div class="bar-bg">
+                  <div class="bar-fill"
+                    :style="{ width: isOverheating ? '95%' : '15%', background: isOverheating ? 'red' : '#0f0' }"></div>
+                </div>
               </div>
               <div class="metric-row">
                 <label>POWER</label>
-                <div class="bar-bg"><div class="bar-fill" :style="{ width: isOverheating ? '850W' : '120W', background: isOverheating ? 'red' : '#0f0' }"></div></div>
+                <div class="bar-bg">
+                  <div class="bar-fill"
+                    :style="{ width: isOverheating ? '850W' : '120W', background: isOverheating ? 'red' : '#0f0' }">
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -206,7 +209,8 @@ function runBootSequence() {
   let i = 0
   const interval = setInterval(() => {
     if (i < fullBootLog.length) {
-      bootLines.value.push(fullBootLog[i])
+      const line = fullBootLog[i]
+      if (line) bootLines.value.push(line)
       i++
     } else {
       clearInterval(interval)
@@ -248,7 +252,9 @@ const scenarios = [
 
 const currentOptions = computed(() => {
   if (step.value >= scenarios.length) return []
-  return scenarios[step.value].options.sort((a, b) => b.prob - a.prob) // Sort visually? No, let's shuffle or keep fixed to make user look. Actually sorted is better for "Top K" viz.
+  const scenario = scenarios[step.value]
+  if (!scenario) return []
+  return scenario.options.sort((a, b) => b.prob - a.prob) // Sort visually? No, let's shuffle or keep fixed to make user look. Actually sorted is better for "Top K" viz.
 })
 
 function pickToken(token: any) {
@@ -328,7 +334,7 @@ function initCanvas() {
   canvas.height = window.innerHeight
 
   const particles: any[] = []
-  for(let i=0; i<50; i++) {
+  for (let i = 0; i < 50; i++) {
     particles.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -341,7 +347,7 @@ function initCanvas() {
     if (!ctx || !canvas) return
     ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    
+
     ctx.fillStyle = '#00ff41'
     particles.forEach(p => {
       p.y += p.speed
@@ -350,7 +356,7 @@ function initCanvas() {
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
       ctx.fill()
     })
-    
+
     // Draw grid lines
     ctx.strokeStyle = 'rgba(0, 255, 65, 0.05)'
     ctx.lineWidth = 1
@@ -370,7 +376,7 @@ onMounted(() => {
   runBootSequence()
   initCanvas()
   window.addEventListener('resize', () => {
-    if(bgCanvas.value) {
+    if (bgCanvas.value) {
       bgCanvas.value.width = window.innerWidth
       bgCanvas.value.height = window.innerHeight
     }
@@ -429,7 +435,7 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   border-bottom: 1px solid #333;
 }
 
@@ -439,8 +445,16 @@ onUnmounted(() => {
   letter-spacing: -1px;
 }
 
-.blink { animation: blink 1s infinite; color: #0f0; }
-@keyframes blink { 50% { opacity: 0; } }
+.blink {
+  animation: blink 1s infinite;
+  color: #0f0;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
 
 .mini-stats {
   font-size: 0.8rem;
@@ -450,10 +464,21 @@ onUnmounted(() => {
   gap: 1rem;
 }
 
-.text-danger { color: #ff3333; }
-.text-warning { color: #ffbd2e; }
-.text-success { color: #0f0; }
-.text-white { color: white; }
+.text-danger {
+  color: #ff3333;
+}
+
+.text-warning {
+  color: #ffbd2e;
+}
+
+.text-success {
+  color: #0f0;
+}
+
+.text-white {
+  color: white;
+}
 
 .step-dots {
   display: flex;
@@ -466,8 +491,15 @@ onUnmounted(() => {
   background: #333;
   border-radius: 50%;
 }
-.step-dot.active { background: #0066ff; }
-.step-dot.current { box-shadow: 0 0 10px #0066ff; background: #fff; }
+
+.step-dot.active {
+  background: #0066ff;
+}
+
+.step-dot.current {
+  box-shadow: 0 0 10px #0066ff;
+  background: #fff;
+}
 
 /* --- STAGES COMMON --- */
 .stage {
@@ -479,8 +511,15 @@ onUnmounted(() => {
 }
 
 @keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .stage-info {
@@ -524,11 +563,25 @@ onUnmounted(() => {
   letter-spacing: 1px;
 }
 
-.cyber-btn.warning { border-color: #ff3333; color: #ff3333; }
-.cyber-btn.warning:hover { background: rgba(255, 51, 51, 0.1); box-shadow: 0 0 20px rgba(255, 51, 51, 0.4); }
+.cyber-btn.warning {
+  border-color: #ff3333;
+  color: #ff3333;
+}
 
-.cyber-btn.success { border-color: #0f0; color: #0f0; }
-.cyber-btn.success:hover { background: rgba(0, 255, 0, 0.1); box-shadow: 0 0 20px rgba(0, 255, 0, 0.4); }
+.cyber-btn.warning:hover {
+  background: rgba(255, 51, 51, 0.1);
+  box-shadow: 0 0 20px rgba(255, 51, 51, 0.4);
+}
+
+.cyber-btn.success {
+  border-color: #0f0;
+  color: #0f0;
+}
+
+.cyber-btn.success:hover {
+  background: rgba(0, 255, 0, 0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.4);
+}
 
 
 /* --- STAGE 0: BOOT --- */
@@ -546,10 +599,19 @@ onUnmounted(() => {
   min-height: 150px;
 }
 
-.boot-line { margin-bottom: 0.5rem; }
-.prefix { opacity: 0.5; margin-right: 0.5rem; }
+.boot-line {
+  margin-bottom: 0.5rem;
+}
 
-.start-prompt { text-align: center; animation: fadeIn 1s; }
+.prefix {
+  opacity: 0.5;
+  margin-right: 0.5rem;
+}
+
+.start-prompt {
+  text-align: center;
+  animation: fadeIn 1s;
+}
 
 .glitch-title {
   font-size: 3.5rem;
@@ -559,7 +621,10 @@ onUnmounted(() => {
   margin-bottom: 0.5rem;
 }
 
-.subtitle { color: #888; margin-bottom: 2rem; }
+.subtitle {
+  color: #888;
+  margin-bottom: 2rem;
+}
 
 /* --- STAGE 1: TOKENS --- */
 .neural-viz {
@@ -571,15 +636,22 @@ onUnmounted(() => {
 
 .context-display {
   font-size: 1.5rem;
-  background: rgba(255,255,255,0.05);
+  background: rgba(255, 255, 255, 0.05);
   padding: 1.5rem;
   border-radius: 8px;
   width: 100%;
   border: 1px solid #333;
 }
 
-.confirmed-word { color: #fff; margin-right: 0.6em; }
-.cursor { color: #0066ff; animation: blink 1s infinite; }
+.confirmed-word {
+  color: #fff;
+  margin-right: 0.6em;
+}
+
+.cursor {
+  color: #0066ff;
+  animation: blink 1s infinite;
+}
 
 .token-selector {
   display: grid;
@@ -633,7 +705,9 @@ onUnmounted(() => {
 }
 
 /* --- STAGE 2: INFRA --- */
-.infra-stage { position: relative; }
+.infra-stage {
+  position: relative;
+}
 
 .alert-overlay {
   position: absolute;
@@ -645,8 +719,15 @@ onUnmounted(() => {
 }
 
 @keyframes pulse-red {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .server-room {
@@ -674,8 +755,15 @@ onUnmounted(() => {
   transition: all 0.5s;
 }
 
-.rack.burning { border-color: #ff3333; box-shadow: 0 0 30px rgba(255, 0, 0, 0.3); }
-.rack.optimized { border-color: #0f0; box-shadow: 0 0 30px rgba(0, 255, 0, 0.2); }
+.rack.burning {
+  border-color: #ff3333;
+  box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+}
+
+.rack.optimized {
+  border-color: #0f0;
+  box-shadow: 0 0 30px rgba(0, 255, 0, 0.2);
+}
 
 .server-unit {
   height: 40px;
@@ -687,9 +775,23 @@ onUnmounted(() => {
   padding: 0 10px;
 }
 
-.leds { display: flex; gap: 4px; }
-.led { width: 4px; height: 4px; background: #0f0; border-radius: 50%; animation: blink 0.2s infinite alternate; }
-.burning .led { background: #ff3333; animation-duration: 0.05s; }
+.leds {
+  display: flex;
+  gap: 4px;
+}
+
+.led {
+  width: 4px;
+  height: 4px;
+  background: #0f0;
+  border-radius: 50%;
+  animation: blink 0.2s infinite alternate;
+}
+
+.burning .led {
+  background: #ff3333;
+  animation-duration: 0.05s;
+}
 
 .fan {
   width: 20px;
@@ -699,13 +801,21 @@ onUnmounted(() => {
   border-top-color: #888;
   animation: spin 2s linear infinite;
 }
-.fan.fast { animation-duration: 0.1s; border-color: #ff3333; }
 
-@keyframes spin { to { transform: rotate(360deg); } }
+.fan.fast {
+  animation-duration: 0.1s;
+  border-color: #ff3333;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
 .metrics-panel {
   flex: 1;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   padding: 1.5rem;
   border-radius: 8px;
   border: 1px solid #333;
@@ -735,7 +845,10 @@ onUnmounted(() => {
   margin-top: 5px;
 }
 
-.bar-fill { height: 100%; transition: all 1s ease; }
+.bar-fill {
+  height: 100%;
+  transition: all 1s ease;
+}
 
 .actions-panel {
   display: flex;
@@ -779,11 +892,28 @@ onUnmounted(() => {
   transition: all 0.5s;
 }
 
-.model-core.int8 .particles-container { width: 140px; height: 140px; }
-.model-core.int8 .weight-dot { width: 12px; height: 12px; background: #ffbd2e; }
+.model-core.int8 .particles-container {
+  width: 140px;
+  height: 140px;
+}
 
-.model-core.q4 .particles-container { width: 100px; height: 100px; }
-.model-core.q4 .weight-dot { width: 8px; height: 8px; background: #0f0; border-radius: 50%; }
+.model-core.int8 .weight-dot {
+  width: 12px;
+  height: 12px;
+  background: #ffbd2e;
+}
+
+.model-core.q4 .particles-container {
+  width: 100px;
+  height: 100px;
+}
+
+.model-core.q4 .weight-dot {
+  width: 8px;
+  height: 8px;
+  background: #0f0;
+  border-radius: 50%;
+}
 
 .core-label {
   position: absolute;
@@ -801,7 +931,11 @@ onUnmounted(() => {
   gap: 2rem;
 }
 
-.slider-group label { display: block; margin-bottom: 1rem; color: #0066ff; }
+.slider-group label {
+  display: block;
+  margin-bottom: 1rem;
+  color: #0066ff;
+}
 
 .cyber-slider {
   width: 100%;
@@ -867,20 +1001,57 @@ onUnmounted(() => {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
-.cert-icon { font-size: 4rem; margin-bottom: 1rem; }
-.cert-details { text-align: left; margin-top: 1.5rem; color: #ccc; }
-.cert-details ul { list-style: none; padding: 0; }
-.cert-details li { margin-bottom: 0.5rem; border-bottom: 1px solid rgba(0,255,0,0.2); padding-bottom: 0.5rem; }
+.cert-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.cert-details {
+  text-align: left;
+  margin-top: 1.5rem;
+  color: #ccc;
+}
+
+.cert-details ul {
+  list-style: none;
+  padding: 0;
+}
+
+.cert-details li {
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0, 255, 0, 0.2);
+  padding-bottom: 0.5rem;
+}
 
 /* RESPONSIVE */
 @media (max-width: 768px) {
-  .quant-visualizer { flex-direction: column; }
-  .rack-container { flex-direction: column; }
-  .rack { width: 100%; flex-direction: row; justify-content: space-around; }
-  .server-unit { width: 18%; }
+  .quant-visualizer {
+    flex-direction: column;
+  }
+
+  .rack-container {
+    flex-direction: column;
+  }
+
+  .rack {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .server-unit {
+    width: 18%;
+  }
 }
 </style>
