@@ -272,38 +272,37 @@ const toggleMute = () => {
       </button>
     </div>
 
-    <!-- FLOATING SLIDER (BLOOD VIAL STYLE) -->
-    <div
-        ref="sliderRef"
-        class="fixed top-0 left-0 h-14 w-72 bg-black/60 backdrop-blur-md rounded-full border border-primary-color/50 overflow-hidden cursor-none shadow-[0_0_25px_rgba(139,0,0,0.4)] z-[50]"
-        :style="{
-            transform: `translate(${slider.x}px, ${slider.y}px) rotate(${slider.rotation}deg)`
-        }"
-      >
-        <!-- Glass Reflection -->
-        <div class="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none z-20"></div>
-
-        <!-- Liquid Background -->
-        <div class="absolute inset-0 bg-gray-900/80 pointer-events-none"></div>
-
-        <!-- Blood Fill -->
+        <!-- FLOATING SLIDER (BLOOD VIAL STYLE) -->
         <div
-          class="absolute h-full bg-gradient-to-r from-[#4a0000] via-primary-color to-[#ff0000] pointer-events-none transition-none z-10"
-          :style="{ width: `${sliderPosition}%` }"
-        ></div>
-
-        <!-- Knob / Bubble -->
-        <div
-          class="absolute w-1 h-full bg-white/50 shadow-[0_0_10px_white] transform -translate-x-1/2 pointer-events-none z-30 mix-blend-overlay"
-          :style="{ left: `${sliderPosition}%` }"
-        ></div>
-
-        <!-- Text on slider -->
-        <div class="absolute inset-0 flex items-center justify-center text-sm font-bold text-white/80 tracking-widest pointer-events-none z-40 mix-blend-difference">
-            {{ Math.round(sliderPosition) }}%
+            ref="sliderRef"
+            class="fixed top-0 left-0 h-14 w-72 bg-black/90 backdrop-blur-xl rounded-full border-2 border-red-900/50 overflow-hidden cursor-none shadow-[0_0_30px_rgba(139,0,0,0.3)] z-[50]"
+            :style="{
+                transform: `translate(${slider.x}px, ${slider.y}px) rotate(${slider.rotation}deg)`
+            }"
+          >
+            <!-- Glass Reflection -->
+            <div class="absolute inset-0 bg-gradient-to-b from-white/5 to-transparent pointer-events-none z-20"></div>
+            
+            <!-- Dark Liquid Base -->
+            <div class="absolute inset-0 bg-red-950/30 pointer-events-none"></div>
+            
+            <!-- Blood Fill -->
+            <div
+              class="absolute h-full bg-gradient-to-r from-black via-red-900 to-primary-color pointer-events-none transition-none z-10"
+              :style="{ width: `${sliderPosition}%` }"
+            ></div>
+            
+            <!-- Glowing Knob -->
+            <div
+              class="absolute w-1 h-full bg-primary-color shadow-[0_0_15px_var(--primary-color)] transform -translate-x-1/2 pointer-events-none z-30"
+              :style="{ left: `${sliderPosition}%` }"
+            ></div>
+    
+            <!-- Text on slider -->
+            <div class="absolute inset-0 flex items-center justify-center text-sm font-bold text-white/90 tracking-[0.2em] pointer-events-none z-40 drop-shadow-md font-serif">
+                {{ Math.round(sliderPosition) }}%
+            </div>
         </div>
-    </div>
-
     <div class="text-center z-10 pointer-events-none pb-4 animate-text-flicker">
          <p class="text-gray-500 text-xs uppercase tracking-widest opacity-60">Patience est mère de sûreté...</p>
     </div>
