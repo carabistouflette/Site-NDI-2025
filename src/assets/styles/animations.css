@@ -1,0 +1,324 @@
+/* Animations globales pour l'interactivité du site */
+
+/* Animations de scroll */
+@keyframes scroll-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scroll-slide-left {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scroll-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scroll-scale-up {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Classes pour les animations de scroll */
+.scroll-animate-fade-in {
+  opacity: 0;
+  transition: all 0.6s ease;
+}
+
+.scroll-animate-fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-animate-slide-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s ease;
+}
+
+.scroll-animate-slide-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-animate-slide-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.6s ease;
+}
+
+.scroll-animate-slide-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.scroll-animate-scale-up {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.6s ease;
+}
+
+.scroll-animate-scale-up.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Micro-interactions */
+.hover-lift {
+  transition: all 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+}
+
+.hover-glow {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.hover-glow::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--nird-blue-electric), var(--nird-violet));
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: -1;
+}
+
+.hover-glow:hover::before {
+  opacity: 0.7;
+}
+
+.hover-scale {
+  transition: all 0.3s ease;
+}
+
+.hover-scale:hover {
+  transform: scale(1.05);
+}
+
+.hover-rotate {
+  transition: all 0.3s ease;
+}
+
+.hover-rotate:hover {
+  transform: rotate(5deg);
+}
+
+/* Animations de chargement */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Classes utilitaires */
+.pulse-animation {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.spin-animation {
+  animation: spin 1s linear infinite;
+}
+
+.bounce-animation {
+  animation: bounce 2s ease-in-out infinite;
+}
+
+/* Transitions de page - Blur Effect */
+.page-blur-enter-active,
+.page-blur-leave-active {
+  transition: opacity 0.5s ease, filter 0.5s ease, transform 0.5s ease;
+  will-change: opacity, filter, transform;
+}
+
+.page-blur-enter-from {
+  opacity: 0;
+  filter: blur(12px);
+  transform: scale(0.98);
+}
+
+.page-blur-leave-to {
+  opacity: 0;
+  filter: blur(12px);
+  transform: scale(1.02);
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Amélioration du focus */
+.focus-visible:focus {
+  outline: 2px solid var(--nird-blue-electric);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Animations de texte */
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.typewriter-effect {
+  overflow: hidden;
+  white-space: nowrap;
+  animation: typewriter 3s steps(40, end);
+}
+
+/* Effet de brillance */
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer-effect {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 3s infinite;
+}
+
+/* Effet de ripple pour les clics */
+.ripple-effect {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  transform: scale(0);
+  animation: ripple 0.6s ease-out;
+  pointer-events: none;
+}
+
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+/* Responsive animations */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+
+  *::before,
+
+  *::after {
+
+    animation-duration: 0.01ms !important;
+
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+
+  }
+
+  
+
+  .scroll-animate-fade-in,
+
+  .scroll-animate-slide-left,
+
+  .scroll-animate-slide-right,
+
+  .scroll-animate-scale-up {
+
+    transition: none !important;
+
+  }
+
+}
+
+
+
+/* Terminal Scanline Effect */
+
+@keyframes scanlines {
+
+  0% {
+
+    background-position: 0 0;
+
+  }
+
+  100% {
+
+    background-position: 0 100%;
+
+  }
+
+}
