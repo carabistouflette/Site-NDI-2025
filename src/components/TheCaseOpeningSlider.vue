@@ -65,7 +65,7 @@ const generateItem = (id: number, forceType?: 'common' | 'rare' | 'legendary'): 
 const prepareStrip = () => {
   const newItems: VolumeItem[] = [];
   for (let i = 0; i < VISIBLE_ITEMS; i++) {
-    // Rigging the end: 
+    // Rigging the end:
     // Index 45 = GOLD (The bait)
     // Index 46 = BLUE (The trap - where we land)
     // Index 47 = GOLD (The "Oh no I missed it by 1 pixel" bait)
@@ -75,7 +75,7 @@ const prepareStrip = () => {
     else newItems.push(generateItem(i));
   }
   items.value = newItems;
-  
+
   // Reset position visually without transition
   transitionDuration.value = 0;
   sliderOffset.value = 0;
@@ -83,10 +83,10 @@ const prepareStrip = () => {
 
 const spin = () => {
   if (isSpinning.value) return;
-  
+
   // Reset first to start position
   prepareStrip();
-  
+
   statusMessage.value = "Ouverture de la caisse...";
   isSpinning.value = true;
 
@@ -95,19 +95,19 @@ const spin = () => {
     // TARGET: Index 46 (The common trash item)
     // We want to land randomly within item 46, but biased towards the left side (close to the previous Gold item 45)
     const targetIndex = 46;
-    
+
     // Calculate visual center of the screen
     const screenCenter = window.innerWidth / 2;
     // Calculate where the target item is in the strip relative to 0
     // Center of target item = (Index * (W + Gap)) + (W / 2)
     const itemFullWidth = ITEM_WIDTH + ITEM_GAP;
     const targetCenterInStrip = (targetIndex * itemFullWidth) + (ITEM_WIDTH / 2);
-    
+
     // Random offset inside the item (to land "just a bit" inside)
     // A small random jitter. If we want to be cruel, we land near the border of the previous item.
     // -ITEM_WIDTH/2 + 5px means "Just barely entered the item"
-    const randomJitter = (Math.random() * (ITEM_WIDTH - 20)) - (ITEM_WIDTH / 2) + 10; 
-    
+    const randomJitter = (Math.random() * (ITEM_WIDTH - 20)) - (ITEM_WIDTH / 2) + 10;
+
     // Final calculation: We want (TargetCenter + Jitter) to be at ScreenCenter.
     // So we move the strip to the left (negative).
     const finalOffset = -(targetCenterInStrip + randomJitter - screenCenter);
@@ -122,7 +122,7 @@ const spin = () => {
       const wonItem = items.value[targetIndex];
       volume.value = wonItem.value / 100;
       if (videoRef.value) videoRef.value.volume = volume.value;
-      
+
       // Cruel message
       statusMessage.value = `Dommage ! Vous avez raté le ${items.value[45].value}% de peu... Volume réglé à ${wonItem.value}%`;
     }, 6000);
@@ -149,7 +149,7 @@ const getRarityColor = (type: string) => {
 
 <template>
   <div class="absolute inset-0 flex flex-col items-center justify-center overflow-hidden font-serif select-none">
-    
+
     <!-- VIDEO PREVIEW -->
     <div class="absolute top-0 left-0 w-full h-full z-0 opacity-20 pointer-events-none">
         <video
@@ -166,31 +166,31 @@ const getRarityColor = (type: string) => {
 
     <!-- MAIN UI -->
     <div class="z-10 w-full max-w-6xl flex flex-col items-center relative">
-      
+
       <h1 class="text-4xl font-bold mb-12 text-primary-color tracking-[0.2em] drop-shadow-[0_0_10px_black]">
         VOLUME LOOTBOX
       </h1>
 
       <!-- CAROUSEL CONTAINER -->
       <div class="relative w-full h-64 bg-black/80 border-y-4 border-gray-800 backdrop-blur-sm mb-12 overflow-hidden shadow-[0_0_50px_black] flex items-center">
-        
+
         <!-- CENTER LINE (CURSOR) -->
         <div class="absolute left-1/2 top-0 bottom-0 w-1 bg-yellow-400 z-30 transform -translate-x-1/2 shadow-[0_0_15px_yellow]"></div>
         <div class="absolute left-1/2 top-4 transform -translate-x-1/2 text-yellow-400 z-30 text-xs uppercase font-bold tracking-widest">▼</div>
         <div class="absolute left-1/2 bottom-4 transform -translate-x-1/2 text-yellow-400 z-30 text-xs uppercase font-bold tracking-widest">▲</div>
 
         <!-- SLIDING STRIP -->
-        <div 
+        <div
           class="flex items-center h-48 px-[50vw]"
-          :style="{ 
+          :style="{
             transform: `translateX(${sliderOffset}px)`,
             transition: isSpinning ? `transform ${transitionDuration}s cubic-bezier(0.15, 0, 0.10, 1)` : 'none'
           }"
         >
-          <div 
-            v-for="item in items" 
+          <div
+            v-for="item in items"
             :key="item.id"
-            class="flex-shrink-0 flex flex-col items-center justify-center w-[160px] h-40 mx-2 border-b-4 bg-gradient-to-b from-transparent to-black rounded-sm transition-transform"
+            class="flex-shrink-0 flex flex-col items-center justify-center w-[160px] h-40 mx-2 border-b-4 border-r-2 bg-gradient-to-b from-transparent to-black rounded-sm transition-transform"
             :class="getRarityColor(item.type)"
           >
             <div class="text-3xl font-bold mb-2">{{ item.value }}%</div>
@@ -206,15 +206,15 @@ const getRarityColor = (type: string) => {
       <!-- CONTROLS -->
       <div class="flex flex-col items-center space-y-6">
         <p class="text-gray-400 text-sm h-6 uppercase tracking-widest animate-pulse">{{ statusMessage }}</p>
-        
-        <button 
+
+        <button
           @click="spin"
           :disabled="isSpinning"
           class="px-12 py-6 bg-green-700 text-white text-2xl font-bold rounded shadow-[0_0_20px_rgba(21,128,61,0.5)] border-b-4 border-green-900 active:border-b-0 active:translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:grayscale hover:brightness-110"
         >
           {{ isSpinning ? 'OUVERTURE EN COURS...' : 'ACHETER UNE CLÉ (2.49€)' }}
         </button>
-        
+
         <p class="text-xs text-gray-600 max-w-md text-center italic">
           *En cliquant, vous acceptez de ne jamais avoir le volume désiré. Les clés ne sont pas remboursables.
         </p>
