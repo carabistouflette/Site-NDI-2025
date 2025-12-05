@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
+import ChallengeLayout from '@/layouts/ChallengeLayout.vue'
+import MenuView from '@/views/MenuView.vue'
+import ChallengeView from '@/views/ChallengeView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -55,12 +58,6 @@ const router = createRouter({
       meta: { title: 'Au Cœur du LLM - Simulation' }
     },
     {
-      path: '/games/volume',
-      name: 'volume-game',
-      component: () => import('@/views/VolumeGameView.vue'),
-      meta: { title: 'Samurai Volume - Challenge' }
-    },
-    {
       path: '/snake',
       name: 'snake',
       component: () => import('@/components/SnekSnek.vue'),
@@ -68,6 +65,23 @@ const router = createRouter({
         title: 'Snake 3D - Secret Game',
         hideHeader: true
       }
+    },
+    {
+      path: '/challenge',
+      component: ChallengeLayout,
+      meta: { disableMainCss: true },
+      children: [
+        {
+          path: '',
+          name: 'menu',
+          component: MenuView
+        },
+        {
+          path: ':id',
+          name: 'challenge',
+          component: ChallengeView
+        }
+      ]
     }
   ],
   scrollBehavior(to, from, savedPosition) {

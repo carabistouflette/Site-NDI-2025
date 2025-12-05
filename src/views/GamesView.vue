@@ -91,7 +91,7 @@
             </div>
           </div>
         </div>
-        
+
         <div class="lab-interface">
           <div class="tech-visual-container">
              <!-- Tensor Cube Visualization -->
@@ -139,7 +139,7 @@
           <div class="glitch-box" data-text="SAMURAI VOLUME">
             SAMURAI VOLUME
           </div>
-          
+
           <div class="volume-control-gone-wrong">
             <div class="volume-knob">
               <div class="knob-marker"></div>
@@ -153,7 +153,7 @@
             <p class="highlight-red">CALMEZ-LE SI VOUS L'OSEZ.</p>
           </div>
 
-          <button class="chaos-btn" @click="$router.push('/games/volume')">
+          <button class="chaos-btn" @click="$router.push('/challenge')">
             DÉGAINER LE KATANA
           </button>
         </div>
@@ -202,7 +202,7 @@ const hideHint = () => showHint.value = false
   left: 0;
   width: 100%;
   height: 100%;
-  background: 
+  background:
     radial-gradient(circle at 20% 30%, rgba(0, 102, 255, 0.15), transparent 40%),
     radial-gradient(circle at 80% 70%, rgba(107, 70, 193, 0.15), transparent 40%);
   z-index: 1;
@@ -354,7 +354,7 @@ const hideHint = () => showHint.value = false
 .blueprint-bg {
   position: absolute;
   inset: 0;
-  background: 
+  background:
     linear-gradient(rgba(0, 102, 255, 0.05) 1px, transparent 1px),
     linear-gradient(90deg, rgba(0, 102, 255, 0.05) 1px, transparent 1px);
   background-size: 40px 40px;
@@ -368,7 +368,7 @@ const hideHint = () => showHint.value = false
   display: flex;
   flex-direction: column;
   /* Height needs to be large enough to accommodate the scrolling */
-  height: 200%; 
+  height: 200%;
   animation: scroll-up 30s linear infinite;
   pointer-events: none;
 }

@@ -7,7 +7,9 @@ const route = useRoute()
 
 <template>
   <AppHeader v-if="!route.meta.hideHeader" />
-  <RouterView />
+  <div :class="{ 'main-styles-enabled': !route.meta.disableMainCss }">
+    <RouterView />
+  </div>
 </template>
 
 
