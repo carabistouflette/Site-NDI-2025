@@ -13,7 +13,7 @@ import { RouterLink } from 'vue-router';
     </p>
 
     <RouterLink 
-      to="/menu"
+      to="/challenge"
       class="px-8 py-4 text-2xl font-bold text-white border-2 border-primary-color bg-black/60 backdrop-blur-md rounded hover:bg-primary-color hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(139,0,0,0.4)] hover:shadow-[0_0_40px_rgba(139,0,0,0.8)] uppercase tracking-widest"
     >
       Entrer

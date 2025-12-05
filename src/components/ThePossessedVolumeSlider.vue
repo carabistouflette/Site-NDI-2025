@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, reactive } from 'vue';
 import videoUrl from '@/assets/mercredi_addams.mp4';
-import bloodUrl from '@/assets/blood.svg';
 
 // --- COMPOSABLES (Internal) ---
 
@@ -202,7 +201,7 @@ onUnmounted(() => {
 
 <template>
   <!-- Main Container -->
-  <div 
+  <div
     class="absolute inset-0 flex flex-col items-center justify-between p-4 overflow-hidden select-none font-serif"
   >
 

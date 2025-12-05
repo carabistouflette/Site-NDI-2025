@@ -15,7 +15,7 @@ const currentChallenge = computed(() => {
 const isPossessed = computed(() => route.params.id === 'possessed');
 
 const backToMenu = () => {
-  router.push('/menu');
+  router.push('/challenge');
 };
 
 const checkCollision = (e: MouseEvent) => {

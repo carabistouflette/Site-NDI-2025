@@ -12,7 +12,7 @@ const router = createRouter({
       component: HomeView
     },
     {
-      path: '/menu',
+      path: '/challenge',
       name: 'menu',
       component: MenuView
     },
