@@ -64,6 +64,14 @@ const updateSliderFromFakeX = (x: number) => {
 
 const startExperience = () => {
   hasStarted.value = true;
+  
+  // Trigger Fullscreen
+  if (!document.fullscreenElement) {
+    document.documentElement.requestFullscreen().catch(err => {
+      console.log(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+    });
+  }
+
   if (videoRef.value) {
     videoRef.value.volume = volume.value;
     videoRef.value.muted = false;
@@ -197,7 +205,7 @@ const toggleMute = () => {
   <div class="fixed inset-0 flex flex-col items-center justify-between bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-[#0a0a0a] to-black text-white p-4 overflow-hidden select-none font-serif">
 
     <!-- FAKE CURSOR -->
-    <div 
+    <div
       class="fixed pointer-events-none z-[20000] text-5xl filter drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-none will-change-transform"
       :style="{
         left: '0px',
@@ -209,7 +217,7 @@ const toggleMute = () => {
     </div>
 
     <!-- TITLE -->
-    <h1 class="text-4xl md:text-6xl font-bold mb-4 text-primary-color uppercase tracking-[0.2em] z-10 drop-shadow-[0_0_10px_rgba(139,0,0,0.5)] mt-8">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4 text-primary-color uppercase tracking-[0.2em] z-10 mt-8">
       Attrapez le Volume
     </h1>
 
@@ -266,16 +274,16 @@ const toggleMute = () => {
       >
         <!-- Glass Reflection -->
         <div class="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none z-20"></div>
-        
+
         <!-- Liquid Background -->
         <div class="absolute inset-0 bg-gray-900/80 pointer-events-none"></div>
-        
+
         <!-- Blood Fill -->
         <div
           class="absolute h-full bg-gradient-to-r from-[#4a0000] via-primary-color to-[#ff0000] pointer-events-none transition-none z-10"
           :style="{ width: `${sliderPosition}%` }"
         ></div>
-        
+
         <!-- Knob / Bubble -->
         <div
           class="absolute w-1 h-full bg-white/50 shadow-[0_0_10px_white] transform -translate-x-1/2 pointer-events-none z-30 mix-blend-overlay"
