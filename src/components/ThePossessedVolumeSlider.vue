@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, reactive } from 'vue';
 import videoUrl from '@/assets/mercredi_addams.mp4';
+import bloodUrl from '@/assets/blood.svg';
 
 const videoRef = ref<HTMLVideoElement | null>(null);
 const volume = ref(0.5);
@@ -64,7 +65,7 @@ const updateSliderFromFakeX = (x: number) => {
 
 const startExperience = () => {
   hasStarted.value = true;
-  
+
   // Trigger Fullscreen
   if (!document.fullscreenElement) {
     document.documentElement.requestFullscreen().catch(err => {
@@ -201,8 +202,16 @@ const toggleMute = () => {
 </script>
 
 <template>
-  <!-- Main Container with Deep Gradient Background -->
-  <div class="fixed inset-0 flex flex-col items-center justify-between bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-[#0a0a0a] to-black text-white p-4 overflow-hidden select-none font-serif">
+  <!-- Main Container with Breathing Background -->
+  <div
+    class="fixed inset-0 flex flex-col items-center justify-between bg-gray-900 text-white p-4 overflow-hidden select-none font-serif"
+    :style="{
+      backgroundImage: `url(${bloodUrl}), radial-gradient(ellipse at center, #111827, #0a0a0a, #000000)`,
+      backgroundSize: '100% 120%, 100% 100%',
+      backgroundPosition: 'center',
+      backgroundBlendMode: 'hard-light'
+    }"
+  >
 
     <!-- FAKE CURSOR -->
     <div
@@ -217,7 +226,7 @@ const toggleMute = () => {
     </div>
 
     <!-- TITLE -->
-    <h1 class="text-4xl md:text-6xl font-bold mb-4 text-primary-color uppercase tracking-[0.2em] z-10 mt-8">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4 text-primary-color uppercase tracking-[0.2em] z-10 mt-8 animate-float drop-shadow-[0_0_15px_rgba(139,0,0,0.6)]">
       Attrapez le Volume
     </h1>
 
@@ -235,7 +244,8 @@ const toggleMute = () => {
     </div>
 
     <!-- VIDEO CONTAINER -->
-    <div class="relative inline-block mb-8 rounded-lg overflow-hidden z-10 video-container ring-1 ring-primary-color/30">
+    <!-- Added animate-neon-pulse for heartbeat effect -->
+    <div class="relative inline-block mb-8 rounded-2xl overflow-hidden z-10 video-container border-0 border-primary-color animate-neon-pulse">
       <video
         ref="videoRef"
         :src="videoUrl"
@@ -243,14 +253,12 @@ const toggleMute = () => {
         autoplay
         playsinline
         muted
-        class="h-[55vh] md:h-[60vh] w-auto object-contain pointer-events-none block opacity-90 mix-blend-lighten"
+        class="h-[55vh] md:h-[60vh] w-auto object-contain pointer-events-none block"
         :volume="volume"
       ></video>
       <div class="absolute inset-0 bg-black/20 flex items-center justify-center pointer-events-none" v-if="videoRef && videoRef.muted">
         <p class="text-white text-2xl font-bold animate-pulse border-4 border-white p-4 rotate-12 mix-blend-overlay">MUTED</p>
       </div>
-      <!-- CRT Scanline overlay effect -->
-      <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-20 bg-[length:100%_4px,6px_100%] pointer-events-none"></div>
     </div>
 
     <!-- MUTE BUTTON -->
@@ -296,7 +304,7 @@ const toggleMute = () => {
         </div>
     </div>
 
-    <div class="text-center z-10 pointer-events-none pb-4">
+    <div class="text-center z-10 pointer-events-none pb-4 animate-text-flicker">
          <p class="text-gray-500 text-xs uppercase tracking-widest opacity-60">Patience est mère de sûreté...</p>
     </div>
 
@@ -327,6 +335,51 @@ html, body, #app {
 .text-primary-color { color: var(--primary-color); }
 .border-primary-color { border-color: var(--primary-color); }
 .bg-primary-color { background-color: var(--primary-color); }
+
+/* --- CUSTOM ANIMATIONS --- */
+
+/* 1. Background Breathing */
+@keyframes bg-breathe {
+  0%, 100% { background-size: 100% 100%; }
+  50% { background-size: 120% 120%; }
+}
+.animate-bg-breathe {
+  animation: bg-breathe 15s ease-in-out infinite;
+}
+
+/* 2. Ghost Float */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* 3. Neon Heartbeat Pulse */
+@keyframes neon-pulse {
+  0% { box-shadow: 0 0 10px rgba(139, 0, 0, 0.2), 0 0 20px rgba(139, 0, 0, 0.1); }
+  5% { box-shadow: 0 0 20px rgba(139, 0, 0, 0.6), 0 0 40px rgba(139, 0, 0, 0.4); }
+  10% { box-shadow: 0 0 10px rgba(139, 0, 0, 0.2), 0 0 20px rgba(139, 0, 0, 0.1); }
+  15% { box-shadow: 0 0 25px rgba(139, 0, 0, 0.7), 0 0 50px rgba(139, 0, 0, 0.5); }
+  100% { box-shadow: 0 0 10px rgba(139, 0, 0, 0.2), 0 0 20px rgba(139, 0, 0, 0.1); }
+}
+.animate-neon-pulse {
+  animation: neon-pulse 4s infinite; /* Slow rhythm */
+}
+
+/* 4. Text Light Flicker */
+@keyframes text-flicker {
+  0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+    opacity: 1;
+  }
+  20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+    opacity: 0.2;
+  }
+}
+.animate-text-flicker {
+  animation: text-flicker 5s infinite;
+}
 
 /* Neon Glow for Video */
 .video-container {
