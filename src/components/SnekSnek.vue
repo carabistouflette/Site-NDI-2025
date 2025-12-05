@@ -77,7 +77,7 @@ const playSound = (type: 'laser' | 'jump_up' | 'jump_land' | 'dead') => {
 // --- HIGH SCORE ---
 const getCookie = (name: string): string | null => {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-  return match ? match[2] : null;
+  return match ? (match[2] || null) : null;
 };
 const setCookie = (name: string, value: string, days: number) => {
   const d = new Date(); d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
@@ -133,6 +133,7 @@ const updateCameraSmooth = (forceSnap = false) => {
   const followIndex = Math.min(2, rs.length - 1);
   const followSeg = rs[followIndex];
   const head = rs[0];
+  if (!followSeg || !head) return;
   const baseX = followSeg.x + 0.5;
   const baseZ = followSeg.y + 0.5;
   const baseY = followSeg.height + 1.0;
@@ -273,6 +274,7 @@ const startGame = () => {
 const advanceOneStep = () => {
   if (gameState.value !== 'PLAYING') return;
   const head = snake.value[0];
+  if (!head) return;
   if (queuedDir.value) {
     direction.value = queuedDir.value;
     queuedDir.value = null;
@@ -339,6 +341,7 @@ const frameLoop = () => {
 
   if (gameState.value === 'JUMPING_UP') {
     const head = snake.value[0];
+    if (!head) return;
     const step = (platformHeight / 0.5) * delta;
     const nh = { ...head, height: head.height + step };
 
@@ -389,6 +392,7 @@ const handleAction = (action: 'UP' | 'LEFT' | 'RIGHT') => {
   // Gestion spéciale du SAUT
   if (gameState.value === 'WAITING_FOR_INPUT') {
     const head = snake.value[0];
+    if (!head) return;
     const landX = head.x + wantedDir.x * 2;
     const landY = head.y + wantedDir.y * 2;
     prevSnake = snake.value.map((s) => ({ ...s }));
@@ -430,6 +434,7 @@ onMounted(() => {
     setCookie('highestScore', '0', 365);
     highScore.value = 0;
   }
+  startGame();
 });
 
 onUnmounted(() => {
