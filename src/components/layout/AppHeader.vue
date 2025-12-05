@@ -12,7 +12,7 @@
       <!-- Logo Section -->
       <RouterLink to="/" class="app-header__logo group">
         <div class="logo-wrapper">
-          <img src="/src/assets/logo.svg" alt="Logo NIRD" class="logo" />
+          <img src="/src/assets/nird_logo.ico" alt="Logo NIRD" class="logo" />
           <div class="logo-glow"></div>
         </div>
         <span class="logo-text">
