@@ -35,6 +35,18 @@ const router = createRouter({
       meta: {
         title: 'Contact - Nuit de l\'Informatique 2025'
       }
+    },
+    {
+      path: '/rpg/setup',
+      name: 'rpg-setup',
+      component: () => import('@/views/RpgSetupView.vue'),
+      meta: { title: 'Eco Quest - Création de Profil' }
+    },
+    {
+      path: '/rpg/play',
+      name: 'rpg-play',
+      component: () => import('@/views/RpgGameView.vue'),
+      meta: { title: 'Eco Quest - L\'Aventure' }
     }
   ],
   scrollBehavior(to, from, savedPosition) {
