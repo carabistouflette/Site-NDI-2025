@@ -22,13 +22,17 @@ const snake = ref<Position[]>([]);
 let prevSnake: Position[] = [];
 const moveProgress = ref(0);
 
-const food = ref<{ x: number; y: number, h: number }>({ x: 5, y: 5, h: 0 });
+const food = ref<{ x: number; y: number; h: number }>({ x: 5, y: 5, h: 0 });
 const direction = ref({ x: 0, y: -1 });
 const queuedDir = ref<{ x: number; y: number } | null>(null);
 const score = ref(0);
 const highScore = ref(0);
 
+// --- MODE AVANCÉ (plateformes + jumpers après 50 pts) ---
 const advancedMode = computed(() => score.value >= 50);
+
+// --- MINIMAP ---
+const minimapCanvas = ref<HTMLCanvasElement | null>(null);
 
 // --- BOUCLE ---
 let frameLoopId: number | null = null;
@@ -42,44 +46,68 @@ const cameraTarget = ref<[number, number, number]>([10, 0, 10]);
 // --- AUDIO ---
 let audioCtx: AudioContext | null = null;
 const initAudio = () => {
-  if (!audioCtx) audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
-  else if (audioCtx.state === 'suspended') audioCtx.resume();
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  } else if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
 };
 
 const playSound = (type: 'laser' | 'jump_up' | 'jump_land' | 'dead') => {
   if (!audioCtx) return;
   const osc = audioCtx.createOscillator();
   const gain = audioCtx.createGain();
-  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
 
   if (type === 'jump_up') {
-    osc.type = 'triangle'; osc.frequency.setValueAtTime(200, audioCtx.currentTime); osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.4);
-    gain.gain.setValueAtTime(0.3, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+    osc.type = 'triangle';
+    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+    osc.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 0.4);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.4);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.4);
   } else if (type === 'jump_land') {
-    osc.type = 'square'; osc.frequency.setValueAtTime(500, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
-    gain.gain.setValueAtTime(0.4, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(500, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.15);
+    gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.15);
   } else if (type === 'dead') {
-    osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.5);
-    gain.gain.setValueAtTime(0.6, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(30, audioCtx.currentTime + 0.5);
+    gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.5);
   } else {
-    osc.type = 'square'; osc.frequency.setValueAtTime(700, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(1400, audioCtx.currentTime + 0.1);
-    gain.gain.setValueAtTime(0.25, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-    osc.start(); osc.stop(audioCtx.currentTime + 0.1);
+    osc.type = 'square';
+    osc.frequency.setValueAtTime(700, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1400, audioCtx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.1);
   }
 };
 
-// --- HIGH SCORE ---
+// --- HIGH SCORE (cookies) ---
 const getCookie = (name: string): string | null => {
   const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
   return match ? match[2] : null;
 };
+
 const setCookie = (name: string, value: string, days: number) => {
-  const d = new Date(); d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-  document.cookie = name + "=" + value + ";" + "expires=" + d.toUTCString() + ";path=/";
+  const d = new Date();
+  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+  const expires = 'expires=' + d.toUTCString();
+  document.cookie = name + '=' + value + ';' + expires + ';path=/';
 };
+
 const updateHighScore = () => {
   if (score.value > highScore.value) {
     highScore.value = score.value;
@@ -87,7 +115,7 @@ const updateHighScore = () => {
   }
 };
 
-// --- MAP ---
+// --- MAP / PLATEFORMES ---
 const generateLShapes = () => {
   const blocks: { x: number; y: number }[] = [];
   for (let x = -3; x <= -1; x++) for (let y = -3; y <= 5; y++) blocks.push({ x, y });
@@ -102,8 +130,13 @@ const generateLShapes = () => {
 };
 const lShapePlatforms = generateLShapes();
 const visualLShapes = computed(() => lShapePlatforms);
-const isPlatform = (x: number, y: number) => lShapePlatforms.some((p) => p.x === x && p.y === y);
-const isMainBoard = (x: number, y: number) => x >= 0 && x < boardSize && y >= 0 && y < boardSize;
+
+const isPlatform = (x: number, y: number) =>
+  lShapePlatforms.some((p) => p.x === x && p.y === y);
+
+const isMainBoard = (x: number, y: number) =>
+  x >= 0 && x < boardSize && y >= 0 && y < boardSize;
+
 const getGroundHeightAt = (x: number, y: number) => {
   if (advancedMode.value && isPlatform(x, y)) return platformHeight;
   if (isMainBoard(x, y)) return 0;
@@ -122,22 +155,32 @@ const renderSnake = computed(() => {
     };
   });
 });
+
 const lerp = (start: number, end: number, t: number) => start + (end - start) * t;
 
+// --- CAMERA ---
 const updateCameraSmooth = (forceSnap = false) => {
   const rs = renderSnake.value;
   if (!rs.length) return;
+
   const followIndex = Math.min(2, rs.length - 1);
   const followSeg = rs[followIndex];
   const head = rs[0];
+
   const baseX = followSeg.x + 0.5;
   const baseZ = followSeg.y + 0.5;
   const baseY = followSeg.height + 1.0;
+
   const dirX = direction.value.x;
   const dirY = direction.value.y;
-  const targetCamX = baseX - dirX * 6;
-  const targetCamY = baseY + 4;
-  const targetCamZ = baseZ - dirY * 6;
+
+  const backDistance = 6;
+  const heightOffset = 4;
+
+  const targetCamX = baseX - dirX * backDistance;
+  const targetCamY = baseY + heightOffset;
+  const targetCamZ = baseZ - dirY * backDistance;
+
   const targetLookX = head.x + 0.5;
   const targetLookY = head.height + 0.5;
   const targetLookZ = head.y + 0.5;
@@ -159,6 +202,57 @@ const updateCameraSmooth = (forceSnap = false) => {
   }
 };
 
+// --- MINIMAP (vue du dessus + extensions) ---
+const drawMinimap = () => {
+  const canvas = minimapCanvas.value;
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // On affiche une grille de -5 à +24 (30 cases) pour couvrir -3..22
+  const mapOffset = 5;
+  const visibleGridSize = 30;
+  const cellSize = canvas.width / visibleGridSize;
+
+  const drawCell = (x: number, y: number, color: string) => {
+    ctx.fillStyle = color;
+    ctx.fillRect((x + mapOffset) * cellSize, (y + mapOffset) * cellSize, cellSize, cellSize);
+  };
+
+  // Plateau principal
+  ctx.fillStyle = '#222';
+  ctx.fillRect(
+    (0 + mapOffset) * cellSize,
+    (0 + mapOffset) * cellSize,
+    20 * cellSize,
+    20 * cellSize
+  );
+
+  // Plateformes + jumpers si mode avancé
+  if (advancedMode.value) {
+    lShapePlatforms.forEach((p) => drawCell(p.x, p.y, '#555'));
+    const jumpers = [
+      { x: 0, y: 0 },
+      { x: 19, y: 0 },
+      { x: 0, y: 19 },
+      { x: 19, y: 19 },
+    ];
+    jumpers.forEach((j) => drawCell(j.x, j.y, '#0f0'));
+  }
+
+  // Food
+  drawCell(food.value.x, food.value.y, '#f00');
+
+  // Snake
+  renderSnake.value.forEach((seg, i) => {
+    const color = i === 0 ? '#fff' : '#42b883';
+    drawCell(seg.x, seg.y, color);
+  });
+};
+
 // --- GAME LOGIC ---
 const setGameOver = () => {
   if (gameState.value === 'GAME_OVER') return;
@@ -169,26 +263,44 @@ const setGameOver = () => {
   frameLoopId = null;
 };
 
+// Food peut apparaître sur plateau ou plateformes (après 50 pts)
 const spawnFood = () => {
   while (true) {
     const x = Math.floor(Math.random() * 30) - 5;
     const y = Math.floor(Math.random() * 30) - 5;
+
     const onMainBoard = isMainBoard(x, y);
     const onPlatform = isPlatform(x, y);
+
     let isValidSpot = false;
     let spawnH = 0;
-    if (onMainBoard) { isValidSpot = true; spawnH = 0; }
-    else if (advancedMode.value && onPlatform) { isValidSpot = true; spawnH = platformHeight; }
+
+    if (onMainBoard) {
+      isValidSpot = true;
+      spawnH = 0;
+    } else if (advancedMode.value && onPlatform) {
+      isValidSpot = true;
+      spawnH = platformHeight;
+    }
 
     if (isValidSpot) {
-      const isJumper = (x===0&&y===0)||(x===19&&y===0)||(x===0&&y===19)||(x===19&&y===19);
-      const onSnake = snake.value.some((s) => s.x === x && s.y === y && Math.abs(s.height - spawnH) < 0.5);
-      if (!isJumper && !onSnake) { food.value = { x, y, h: spawnH }; return; }
+      const isJumper =
+        (x === 0 && y === 0) ||
+        (x === 19 && y === 0) ||
+        (x === 0 && y === 19) ||
+        (x === 19 && y === 19);
+      const onSnakePos = snake.value.some(
+        (s) => s.x === x && s.y === y && Math.abs(s.height - spawnH) < 0.5,
+      );
+      if (!isJumper && !onSnakePos) {
+        food.value = { x, y, h: spawnH };
+        return;
+      }
     }
   }
 };
 
-// MODIFICATION ICI : RELOAD PAGE AU LIEU DE RESET
+// Restart qui force un reload si on a déjà joué une partie
 const startGame = () => {
   if (gameState.value === 'GAME_OVER' && snake.value.length > 0) {
     window.location.reload();
@@ -207,10 +319,13 @@ const startGame = () => {
   score.value = 0;
   gameState.value = 'PLAYING';
   spawnFood();
+
   lastFrameTime = performance.now();
   moveAccumulator = 0;
   moveProgress.value = 0;
+
   updateCameraSmooth(true);
+
   if (frameLoopId !== null) window.clearInterval(frameLoopId);
   frameLoopId = window.setInterval(frameLoop, 1000 / 60);
 };
@@ -218,14 +333,18 @@ const startGame = () => {
 const advanceOneStep = () => {
   if (gameState.value !== 'PLAYING') return;
   const head = snake.value[0];
+
   if (queuedDir.value) {
     direction.value = queuedDir.value;
     queuedDir.value = null;
   }
+
   prevSnake = snake.value.map((s) => ({ ...s }));
+
   let nextX = head.x + direction.value.x;
   let nextY = head.y + direction.value.y;
   let nextH = head.height;
+
   const groundH = getGroundHeightAt(nextX, nextY);
 
   if (groundH > nextH + 0.5) return setGameOver();
@@ -235,8 +354,12 @@ const advanceOneStep = () => {
     if (potentialH <= groundH) {
       nextH = groundH;
       if (advancedMode.value && groundH === 0) {
-        const isJumper = (nextX===0&&nextY===0)||(nextX===19&&nextY===0)||(nextX===0&&nextY===19)||(nextX===19&&nextY===19);
-        if (isJumper) return setGameOver();
+        const isJumperAtLanding =
+          (nextX === 0 && nextY === 0) ||
+          (nextX === 19 && nextY === 0) ||
+          (nextX === 0 && nextY === 19) ||
+          (nextX === 19 && nextY === 19);
+        if (isJumperAtLanding) return setGameOver();
       }
     } else {
       nextH = potentialH;
@@ -246,29 +369,50 @@ const advanceOneStep = () => {
   }
 
   if (nextH < -15) return setGameOver();
-  if (head.height < -2) { nextX = head.x; nextY = head.y; }
+  if (head.height < -2) {
+    nextX = head.x;
+    nextY = head.y;
+  }
 
+  // Jumpers : dès qu'on entre sur une case jumper (layer sol), on monte directement au layer plateformes puis pause
   if (advancedMode.value && Math.abs(nextH) < 0.1 && isMainBoard(nextX, nextY)) {
-    const isJumper = (nextX===0&&nextY===0)||(nextX===19&&nextY===0)||(nextX===0&&nextY===19)||(nextX===19&&nextY===19);
+    const isJumper =
+      (nextX === 0 && nextY === 0) ||
+      (nextX === 19 && nextY === 0) ||
+      (nextX === 0 && nextY === 19) ||
+      (nextX === 19 && nextY === 19);
     if (isJumper) {
       playSound('jump_up');
-      gameState.value = 'JUMPING_UP';
-      snake.value.unshift({ x: nextX, y: nextY, height: 0 });
+
+      prevSnake = snake.value.map((s) => ({ ...s }));
+      // On place la tête sur le jumper, déjà au niveau des plateformes
+      snake.value.unshift({ x: nextX, y: nextY, height: platformHeight });
       snake.value.pop();
       moveProgress.value = 0;
-      prevSnake = snake.value.map((s) => ({ ...s }));
+
+      // Pause en haut pour choisir la direction
+      gameState.value = 'WAITING_FOR_INPUT';
+      playSound('jump_land');
       return;
     }
   }
 
-  if (snake.value.some(s => s.x === nextX && s.y === nextY && Math.abs(s.height - nextH) < 0.5)) {
+  if (
+    snake.value.some(
+      (s) => s.x === nextX && s.y === nextY && Math.abs(s.height - nextH) < 0.5,
+    )
+  ) {
     return setGameOver();
   }
 
   const newHead = { x: nextX, y: nextY, height: nextH };
   snake.value.unshift(newHead);
 
-  if (nextX === food.value.x && nextY === food.value.y && Math.abs(nextH - food.value.h) < 0.5) {
+  if (
+    nextX === food.value.x &&
+    nextY === food.value.y &&
+    Math.abs(nextH - food.value.h) < 0.5
+  ) {
     score.value += 10;
     spawnFood();
     playSound('laser');
@@ -281,19 +425,7 @@ const frameLoop = () => {
   const now = performance.now();
   const delta = (now - lastFrameTime) / 1000;
   lastFrameTime = now;
-  if (gameState.value === 'JUMPING_UP') {
-    const head = snake.value[0];
-    const step = (platformHeight / 0.25) * delta;
-    const nh = { ...head, height: head.height + step };
-    if (nh.height >= platformHeight) {
-      nh.height = platformHeight;
-      snake.value[0] = nh;
-      gameState.value = 'WAITING_FOR_INPUT';
-      playSound('jump_land');
-    } else {
-      snake.value[0] = nh;
-    }
-  }
+
   if (gameState.value === 'PLAYING') {
     moveAccumulator += delta;
     while (moveAccumulator >= moveIntervalSec) {
@@ -304,7 +436,9 @@ const frameLoop = () => {
   } else {
     moveProgress.value = 0;
   }
+
   updateCameraSmooth(false);
+  drawMinimap();
 };
 
 const handleKeydown = (e: KeyboardEvent) => {
@@ -312,15 +446,19 @@ const handleKeydown = (e: KeyboardEvent) => {
   const keys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
   if (!keys.includes(key)) return;
   e.preventDefault();
+
   if (gameState.value === 'GAME_OVER') return;
+
   const currentDir = direction.value;
   const turnLeft = (d: { x: number; y: number }) => ({ x: d.y, y: -d.x });
   const turnRight = (d: { x: number; y: number }) => ({ x: -d.y, y: d.x });
+
   let wantedDir = { ...currentDir };
   if (key === 'ArrowLeft') wantedDir = turnLeft(currentDir);
   else if (key === 'ArrowRight') wantedDir = turnRight(currentDir);
   else if (key === 'ArrowUp') wantedDir = currentDir;
   else if (key === 'ArrowDown') return;
+
   if (gameState.value === 'WAITING_FOR_INPUT') {
     const head = snake.value[0];
     const landX = head.x + wantedDir.x * 2;
@@ -334,6 +472,7 @@ const handleKeydown = (e: KeyboardEvent) => {
     playSound('jump_land');
     return;
   }
+
   if (gameState.value === 'PLAYING') {
     if (wantedDir.x === -direction.value.x && wantedDir.y === -direction.value.y) return;
     queuedDir.value = wantedDir;
@@ -342,6 +481,7 @@ const handleKeydown = (e: KeyboardEvent) => {
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown);
+
   const savedScore = getCookie('highestScore');
   if (savedScore) {
     highScore.value = parseInt(savedScore, 10);
@@ -359,21 +499,32 @@ onUnmounted(() => {
 
 <template>
   <div class="game-wrapper">
+    <!-- Minimap vue du dessus -->
+    <canvas
+      ref="minimapCanvas"
+      width="180"
+      height="180"
+      class="minimap"
+    ></canvas>
+
     <div class="ui-layer">
-      <h2>Snake 3D: Force Reload</h2>
+      <h2>Snake 3D + Map</h2>
       <div class="score-board">
         <div class="score">Score: {{ score }}</div>
         <div class="high-score">Best: {{ highScore }}</div>
       </div>
+
       <div v-if="gameState === 'WAITING_FOR_INPUT'" class="status jump">
         Choisis ta direction ! ⬅️➡️⬆️
       </div>
       <div v-if="gameState === 'GAME_OVER'" class="status lost">
         GAME OVER
       </div>
+
       <button @click="startGame">
         {{ gameState === 'GAME_OVER' ? 'Rejouer' : 'Restart' }}
       </button>
+
       <div class="controls-hint">
         ⬆️ tout droit • ⬅️ / ➡️ tournent par rapport à la tête
       </div>
@@ -381,52 +532,82 @@ onUnmounted(() => {
 
     <TresCanvas window-size clear-color="#111" shadows>
       <TresPerspectiveCamera :position="cameraPosition" :look-at="cameraTarget" />
+
       <TresAmbientLight :intensity="0.7" />
       <TresDirectionalLight :position="[5, 20, 5]" :intensity="1.5" cast-shadow />
 
+      <!-- Plateau principal -->
       <TresMesh
         v-for="n in boardSize * boardSize"
         :key="`floor-${n}`"
-        :position="[((n-1)%boardSize)+0.5, -0.55, Math.floor((n-1)/boardSize)+0.5]"
+        :position="[
+          ((n - 1) % boardSize) + 0.5,
+          -0.55,
+          Math.floor((n - 1) / boardSize) + 0.5
+        ]"
         receive-shadow
       >
         <TresBoxGeometry :args="[0.95, 1, 0.95]" />
         <TresMeshStandardMaterial
-          :color="((((n-1)%boardSize)+Math.floor((n-1)/boardSize))%2===0)?'#222':'#333'"
+          :color="
+            (((n - 1) % boardSize) + Math.floor((n - 1) / boardSize)) % 2 === 0
+              ? '#222'
+              : '#333'
+          "
         />
       </TresMesh>
 
+      <!-- Jumpers (uniquement si score >= 50) -->
       <template v-if="advancedMode">
-        <TresMesh :position="[0.5, -0.4, 0.5]"><TresBoxGeometry :args="[0.9, 1.2, 0.9]" /><TresMeshStandardMaterial color="#0f0" emissive="#0f0" /></TresMesh>
-        <TresMesh :position="[19.5, -0.4, 0.5]"><TresBoxGeometry :args="[0.9, 1.2, 0.9]" /><TresMeshStandardMaterial color="#0f0" emissive="#0f0" /></TresMesh>
-        <TresMesh :position="[0.5, -0.4, 19.5]"><TresBoxGeometry :args="[0.9, 1.2, 0.9]" /><TresMeshStandardMaterial color="#0f0" emissive="#0f0" /></TresMesh>
-        <TresMesh :position="[19.5, -0.4, 19.5]"><TresBoxGeometry :args="[0.9, 1.2, 0.9]" /><TresMeshStandardMaterial color="#0f0" emissive="#0f0" /></TresMesh>
+        <TresMesh :position="[0.5, -0.4, 0.5]">
+          <TresBoxGeometry :args="[0.9, 1.2, 0.9]" />
+          <TresMeshStandardMaterial color="#0f0" emissive="#0f0" />
+        </TresMesh>
+        <TresMesh :position="[19.5, -0.4, 0.5]">
+          <TresBoxGeometry :args="[0.9, 1.2, 0.9]" />
+          <TresMeshStandardMaterial color="#0f0" emissive="#0f0" />
+        </TresMesh>
+        <TresMesh :position="[0.5, -0.4, 19.5]">
+          <TresBoxGeometry :args="[0.9, 1.2, 0.9]" />
+          <TresMeshStandardMaterial color="#0f0" emissive="#0f0" />
+        </TresMesh>
+        <TresMesh :position="[19.5, -0.4, 19.5]">
+          <TresBoxGeometry :args="[0.9, 1.2, 0.9]" />
+          <TresMeshStandardMaterial color="#0f0" emissive="#0f0" />
+        </TresMesh>
       </template>
 
+      <!-- Plateformes en L (uniquement si score >= 50) -->
       <TresMesh
         v-for="(b, i) in visualLShapes"
         v-if="advancedMode"
         :key="`plat-${i}`"
-        :position="[b.x+0.5, (platformHeight/2)-0.5, b.y+0.5]"
+        :position="[b.x + 0.5, platformHeight / 2 - 0.5, b.y + 0.5]"
         receive-shadow
       >
         <TresBoxGeometry :args="[0.95, platformHeight, 0.95]" />
         <TresMeshStandardMaterial color="#555" />
       </TresMesh>
 
+      <!-- Snake -->
       <TresMesh
         v-for="(segment, i) in renderSnake"
         :key="`snake-${i}`"
-        :position="[segment.x+0.5, 0.45 + segment.height, segment.y+0.5]"
+        :position="[segment.x + 0.5, 0.45 + segment.height, segment.y + 0.5]"
         cast-shadow
       >
         <TresBoxGeometry :args="[0.9, 0.9, 0.9]" />
         <TresMeshStandardMaterial :color="i === 0 ? '#42b883' : '#35495e'" />
       </TresMesh>
 
-      <TresMesh :position="[food.x+0.5, 0.45 + food.h, food.y+0.5]" cast-shadow>
+      <!-- Food -->
+      <TresMesh :position="[food.x + 0.5, 0.45 + food.h, food.y + 0.5]" cast-shadow>
         <TresSphereGeometry :args="[0.4]" />
-        <TresMeshStandardMaterial color="#e74c3c" emissive="#f00" :emissive-intensity="0.6" />
+        <TresMeshStandardMaterial
+          color="#e74c3c"
+          emissive="#f00"
+          :emissive-intensity="0.6"
+        />
       </TresMesh>
     </TresCanvas>
   </div>
@@ -438,12 +619,25 @@ onUnmounted(() => {
   height: 100vh;
   background: #000;
   overflow: hidden;
-  font-family: "Courier New", monospace;
+  font-family: 'Courier New', monospace;
+  position: relative;
 }
-.ui-layer {
+
+.minimap {
   position: absolute;
   top: 20px;
   left: 20px;
+  z-index: 101;
+  border: 2px solid #666;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.9);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.ui-layer {
+  position: absolute;
+  top: 20px;
+  left: 220px;
   z-index: 100;
   color: white;
   background: rgba(0, 0, 0, 0.85);
@@ -452,14 +646,75 @@ onUnmounted(() => {
   border: 1px solid #444;
   min-width: 240px;
 }
-.score-board { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.score { font-size: 1.3em; color: #0ff; }
-.high-score { font-size: 1.1em; color: #fb0; font-weight: bold; }
-.status { font-weight: bold; margin: 10px 0; font-size: 1.4em; text-align: center; }
-.status.lost { color: #ff3bff; text-shadow: 0 0 10px #ff3bff; }
-.status.jump { color: #00ffff; animation: pulse 0.5s infinite alternate; }
-.controls-hint { margin-top: 15px; font-size: 0.9em; color: #ccc; text-align: center; border-top: 1px solid #666; padding-top: 10px; }
-button { width: 100%; background: #42b883; border: none; padding: 10px 20px; color: white; font-weight: bold; cursor: pointer; font-size: 1.1em; margin-top: 8px; }
-button:hover { filter: brightness(1.15); }
-@keyframes pulse { from { opacity: 1; transform: scale(1); } to { opacity: 0.7; transform: scale(1.05); } }
+
+.score-board {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.score {
+  font-size: 1.3em;
+  color: #0ff;
+}
+
+.high-score {
+  font-size: 1.1em;
+  color: #fb0;
+  font-weight: bold;
+}
+
+.status {
+  font-weight: bold;
+  margin: 10px 0;
+  font-size: 1.4em;
+  text-align: center;
+}
+
+.status.lost {
+  color: #ff3bff;
+  text-shadow: 0 0 10px #ff3bff;
+}
+
+.status.jump {
+  color: #00ffff;
+  animation: pulse 0.5s infinite alternate;
+}
+
+.controls-hint {
+  margin-top: 15px;
+  font-size: 0.9em;
+  color: #ccc;
+  text-align: center;
+  border-top: 1px solid #666;
+  padding-top: 10px;
+}
+
+button {
+  width: 100%;
+  background: #42b883;
+  border: none;
+  padding: 10px 20px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 1.1em;
+  margin-top: 8px;
+}
+
+button:hover {
+  filter: brightness(1.15);
+}
+
+@keyframes pulse {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
 </style>
