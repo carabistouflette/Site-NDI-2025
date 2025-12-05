@@ -109,10 +109,7 @@
           <div class="lab-content">
             <h2 class="lab-title">Au Cœur du LLM</h2>
             <p class="lab-desc">
-              Plongez dans les matrices. <span class="tech-term">LORA</span>, <span class="tech-term">Q4_K_M</span>, <span class="tech-term">INT8</span>...
-              Ces termes ne sont pas de la magie, c'est de l'optimisation.
-              <br><br>
-              Comprenez comment la <span class="tech-highlight">quantification</span> réduit la précision pour gagner en vitesse et en énergie, sans perdre l'intelligence.
+              Plongez dans les matrices. Comprenez comment la <span class="tech-highlight">quantification</span> (LORA, Q4_K_M...) optimise l'IA pour gagner en vitesse et en énergie.
             </p>
             <button class="lab-btn" @click="$router.push('/games/llm')">
               <span class="btn-icon">⚙️</span> LANCER LA SIMULATION

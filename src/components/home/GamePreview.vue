@@ -12,8 +12,7 @@
 
       <div class="cards-container" @mousemove="handleContainerMouseMove">
         <div v-for="(game, index) in games" :key="index" class="holo-card" :class="game.variant"
-          @mousemove="handleCardMove($event, index)" @mouseleave="handleCardLeave(index)" 
-          @click="goToGames"
+          @mousemove="handleCardMove($event, index)" @mouseleave="handleCardLeave(index)" @click="goToGames"
           :style="cardStyles[index]">
           <div class="card-content">
             <div class="card-header">
@@ -61,7 +60,7 @@ const goToGames = () => {
 const games = [
   {
     title: 'Au Cœur du LLM',
-    desc: 'Comprenez enfin la "boîte noire". Une démo interactive sur la quantification et l\'optimisation.',
+    desc: 'Comprenez enfin la "boîte noire". Une démo interactive sur l\'optimisation.',
     icon: '🧠',
     variant: 'digital',
     chaosLevel: '🧠 CÉRÉBRAL'
