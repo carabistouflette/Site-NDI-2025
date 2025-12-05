@@ -202,33 +202,14 @@ onUnmounted(() => {
 
 <template>
   <!-- Main Container -->
-  <div
-    class="fixed inset-0 flex flex-col items-center justify-between bg-gray-900 text-white p-4 overflow-hidden select-none font-serif animate-bg-breathe"
-    :style="{
-      backgroundImage: `url(${bloodUrl}), radial-gradient(ellipse at center, #111827, #0a0a0a, #000000)`,
-      backgroundSize: '100% 100%, 100% 100%',
-      backgroundPosition: 'center',
-      backgroundBlendMode: 'hard-light'
-    }"
+  <div 
+    class="absolute inset-0 flex flex-col items-center justify-between p-4 overflow-hidden select-none font-serif"
   >
 
-    <!-- FAKE CURSOR -->
-    <div
-      class="fixed pointer-events-none z-[20000] text-5xl filter drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-none will-change-transform"
-      :style="{
-        left: '0px',
-        top: '0px',
-        transform: `translate(${fakeCursor.x.value}px, ${fakeCursor.y.value}px)`
-      }"
-    >
-      🖐️
-    </div>
-
     <!-- TITLE -->
-    <h1 class="text-4xl md:text-6xl font-bold mb-4 text-primary-color uppercase tracking-[0.2em] z-10 mt-8 animate-float drop-shadow-[0_0_15px_rgba(139,0,0,0.6)]">
+    <h1 class="text-4xl md:text-6xl font-bold mb-4 text-primary-color uppercase tracking-[0.2em] z-10 mt-8 drop-shadow-[0_0_15px_rgba(139,0,0,0.6)] animate-float">
       Attrapez le Volume
     </h1>
-
     <!-- START OVERLAY -->
     <div v-if="!hasStarted" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm">
       <button
@@ -301,16 +282,8 @@ onUnmounted(() => {
 </template>
 
 <style>
-/* GLOBAL RESET */
+/* COMPONENT-SPECIFIC CURSOR HIDING */
 * { cursor: none !important; }
-html, body, #app { overflow: hidden; width: 100vw; height: 100vh; margin: 0; padding: 0; background-color: #050505; }
-
-:root { --primary-color: #8B0000; }
-
-/* Utility Classes */
-.text-primary-color { color: var(--primary-color); }
-.border-primary-color { border-color: var(--primary-color); }
-.bg-primary-color { background-color: var(--primary-color); }
 
 /* Component Styles */
 .video-container {
@@ -322,18 +295,6 @@ html, body, #app { overflow: hidden; width: 100vw; height: 100vh; margin: 0; pad
 }
 
 /* Animations */
-@keyframes bg-breathe {
-  0%, 100% { background-size: 100% 100%; }
-  50% { background-size: 120% 120%; }
-}
-.animate-bg-breathe { animation: bg-breathe 15s ease-in-out infinite; }
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-15px); }
-}
-.animate-float { animation: float 6s ease-in-out infinite; }
-
 @keyframes neon-pulse {
   0%, 10%, 100% { box-shadow: 0 0 10px rgba(139, 0, 0, 0.2), 0 0 20px rgba(139, 0, 0, 0.1); }
   5% { box-shadow: 0 0 20px rgba(139, 0, 0, 0.6), 0 0 40px rgba(139, 0, 0, 0.4); }
