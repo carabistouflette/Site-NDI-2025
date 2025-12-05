@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, reactive } from 'vue';
 import videoUrl from '@/assets/mercredi_addams.mp4';
 
 const videoRef = ref<HTMLVideoElement | null>(null);
@@ -13,45 +13,38 @@ const startButtonRef = ref<HTMLElement | null>(null);
 const muteButtonRef = ref<HTMLElement | null>(null);
 
 // Fake Cursor State
-const fakeCursorX = ref(window.innerWidth / 2); // Start centered to avoid corner jump
+const fakeCursorX = ref(window.innerWidth / 2);
 const fakeCursorY = ref(window.innerHeight / 2);
 
-// Floating Slider State
-const sliderX = ref(200); // Default non-zero
-const sliderY = ref(200); // Default non-zero
-const velocityX = ref(2);
-const velocityY = ref(2);
-const sliderWidth = 256;
-const sliderHeight = 48;
-
-// Rotation State
-const rotation = ref(0);
-const rotationVelocity = ref(1);
-const lastRotationTime = ref(0);
-const lastSpeedChangeTime = ref(0);
-
-const darknessStyle = computed(() => {
-  // 1. Dynamic Flashlight (The Hand)
-  const flashlight = `radial-gradient(circle 2000px at ${fakeCursorX.value}px ${fakeCursorY.value}px, transparent 0%, black 20%)`;
-
-  // 2. Static Lights (UI Elements)
-  const titleLight = `radial-gradient(ellipse 400px 100px at 50% 3%, transparent 0%, transparent 40%, black 80%)`;
-  const videoLight = `radial-gradient(ellipse 300px 35% at 50% 45%, transparent 0%, transparent 50%, black 90%)`;
-  const muteButtonLight = `radial-gradient(circle 150px at 50% 85%, transparent 0%, transparent 30%, black 70%)`;
-  const footerLight = `radial-gradient(ellipse 350px 50px at 50% 97%, transparent 0%, transparent 30%, black 60%)`;
-
-  const combinedMask = `${flashlight}, ${titleLight}, ${videoLight}, ${muteButtonLight}, ${footerLight}`;
-
-  return {
-    backgroundColor: 'rgba(0,0,0,0.98)',
-    maskImage: combinedMask,
-    webkitMaskImage: combinedMask,
-    maskComposite: 'intersect',
-    webkitMaskComposite: 'source-in'
-  };
+// Unified Slider State
+const slider = reactive({
+  x: 200,
+  y: 200,
+  vx: 2,
+  vy: 2,
+  rotation: 0,
+  vRotation: 1,
+  width: 256,
+  height: 48,
+  lastChaosTime: 0
 });
 
-// Update fake cursor position on global mouse move
+// --- Physics Helpers ---
+const applyChaos = (currentVel: number, maxSpeed: number) => {
+    return (Math.random() - 0.5) * 2 * maxSpeed;
+};
+
+const updatePhysics = (pos: number, vel: number, maxBound: number) => {
+  let nextPos = pos + vel;
+  let nextVel = vel;
+  if (nextPos <= 0 || nextPos >= maxBound) {
+    nextVel *= -1;
+    nextPos = Math.max(0, Math.min(nextPos, maxBound));
+  }
+  return { pos: nextPos, vel: nextVel };
+};
+
+// --- Logic ---
 const updateFakeCursor = (e: MouseEvent) => {
   fakeCursorX.value = window.innerWidth - e.clientX;
   fakeCursorY.value = window.innerHeight - e.clientY;
@@ -63,13 +56,11 @@ const updateFakeCursor = (e: MouseEvent) => {
 
 const updateSliderFromFakeX = (x: number) => {
   if (!sliderRef.value) return;
-
   const rect = sliderRef.value.getBoundingClientRect();
   const newPosition = ((x - rect.left) / rect.width) * 100;
-
   sliderPosition.value = Math.max(0, Math.min(100, newPosition));
   updateVolume(sliderPosition.value / 100);
-};
+}
 
 const startExperience = () => {
   hasStarted.value = true;
@@ -141,33 +132,28 @@ const endDrag = () => {
 const startFloatingLoop = () => {
   const animate = (currentTime: DOMHighResTimeStamp) => {
     if (hasStarted.value) {
-        sliderX.value += velocityX.value;
-        sliderY.value += velocityY.value;
-        rotation.value += rotationVelocity.value;
-
-        // Random changes
-        if (currentTime - lastRotationTime.value > (Math.random() * 2000 + 1000)) {
-             rotationVelocity.value = (Math.random() - 0.5) * 10;
-             lastRotationTime.value = currentTime;
-        }
-        if (currentTime - lastSpeedChangeTime.value > (Math.random() * 1500 + 500)) {
-             velocityX.value = (Math.random() - 0.5) * 16;
-             velocityY.value = (Math.random() - 0.5) * 16;
-             lastSpeedChangeTime.value = currentTime;
+        // Chaos
+        if (currentTime - slider.lastChaosTime > (Math.random() * 1500 + 500)) {
+             slider.vRotation = applyChaos(slider.vRotation, 5);
+             slider.vx = applyChaos(slider.vx, 8);
+             slider.vy = applyChaos(slider.vy, 8);
+             slider.lastChaosTime = currentTime;
         }
 
-        // Bounce
-        const maxX = window.innerWidth - (sliderRef.value?.clientWidth || sliderWidth);
-        const maxY = window.innerHeight - (sliderRef.value?.clientHeight || sliderHeight);
+        // Rotation
+        slider.rotation += slider.vRotation;
 
-        if (sliderX.value <= 0 || sliderX.value >= maxX) {
-            velocityX.value *= -1;
-            sliderX.value = Math.max(0, Math.min(sliderX.value, maxX));
-        }
-        if (sliderY.value <= 0 || sliderY.value >= maxY) {
-            velocityY.value *= -1;
-             sliderY.value = Math.max(0, Math.min(sliderY.value, maxY));
-        }
+        // Physics X
+        const maxX = window.innerWidth - (sliderRef.value?.clientWidth || slider.width);
+        const resX = updatePhysics(slider.x, slider.vx, maxX);
+        slider.x = resX.pos;
+        slider.vx = resX.vel;
+
+        // Physics Y
+        const maxY = window.innerHeight - (sliderRef.value?.clientHeight || slider.height);
+        const resY = updatePhysics(slider.y, slider.vy, maxY);
+        slider.y = resY.pos;
+        slider.vy = resY.vel;
 
         if (isDragging.value) {
             updateSliderFromFakeX(fakeCursorX.value);
@@ -182,11 +168,10 @@ onMounted(() => {
   window.addEventListener('mousemove', updateFakeCursor);
   window.addEventListener('mousedown', handleGlobalMouseDown);
 
-  // Randomize start
-  velocityX.value = (Math.random() > 0.5 ? 1 : -1) * 3;
-  velocityY.value = (Math.random() > 0.5 ? 1 : -1) * 3;
-  sliderX.value = Math.random() * (window.innerWidth - sliderWidth);
-  sliderY.value = Math.random() * (window.innerHeight - sliderHeight);
+  slider.vx = (Math.random() > 0.5 ? 1 : -1) * 3;
+  slider.vy = (Math.random() > 0.5 ? 1 : -1) * 3;
+  slider.x = Math.random() * (window.innerWidth - slider.width);
+  slider.y = Math.random() * (window.innerHeight - slider.height);
 
   if (videoRef.value) {
     videoRef.value.volume = volume.value;
@@ -203,25 +188,17 @@ onUnmounted(() => {
 });
 
 const toggleMute = () => {
-  if (videoRef.value) {
-    videoRef.value.muted = !videoRef.value.muted;
-  }
+  if (videoRef.value) videoRef.value.muted = !videoRef.value.muted;
 };
 </script>
 
 <template>
-  <div class="fixed inset-0 flex flex-col items-center justify-between bg-gray-900 text-white p-4 overflow-hidden select-none">
-
-    <!-- DARKNESS OVERLAY -->
-    <div
-      v-if="hasStarted"
-      class="fixed inset-0 pointer-events-none z-[9000]"
-      :style="darknessStyle"
-    ></div>
+  <!-- Main Container with Deep Gradient Background -->
+  <div class="fixed inset-0 flex flex-col items-center justify-between bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-gray-900 via-[#0a0a0a] to-black text-white p-4 overflow-hidden select-none font-serif">
 
     <!-- FAKE CURSOR -->
-    <div
-      class="fixed pointer-events-none z-[20000] text-4xl filter drop-shadow-lg transition-none will-change-transform"
+    <div 
+      class="fixed pointer-events-none z-[20000] text-5xl filter drop-shadow-[0_0_10px_rgba(255,255,255,0.3)] transition-none will-change-transform"
       :style="{
         left: '0px',
         top: '0px',
@@ -231,21 +208,26 @@ const toggleMute = () => {
       🖐️
     </div>
 
-    <h1 class="text-3xl font-bold mb-4 text-primary-color uppercase tracking-widest z-10">Attrapez le Volume</h1>
+    <!-- TITLE -->
+    <h1 class="text-4xl md:text-6xl font-bold mb-4 text-primary-color uppercase tracking-[0.2em] z-10 drop-shadow-[0_0_10px_rgba(139,0,0,0.5)] mt-8">
+      Attrapez le Volume
+    </h1>
 
-    <!-- Start Overlay -->
-    <div v-if="!hasStarted" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/90 backdrop-blur-sm">
+    <!-- START OVERLAY -->
+    <div v-if="!hasStarted" class="fixed inset-0 z-[10000] flex items-center justify-center bg-black/80 backdrop-blur-sm">
       <button
         ref="startButtonRef"
         @click="startExperience"
-        class="px-8 py-4 bg-white text-black text-xl font-bold rounded border-2 border-black hover:bg-primary-color hover:text-white hover:border-primary-color transition-colors duration-300 animate-bounce"
+        class="group relative px-10 py-5 bg-transparent text-primary-color text-2xl font-bold rounded-sm border-2 border-primary-color overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_var(--primary-color)] hover:text-white animate-pulse"
       >
-        COMMENCER LA CHASSE
+        <span class="relative z-10">COMMENCER LA CHASSE</span>
+        <!-- Blood fill effect on hover -->
+        <div class="absolute inset-0 bg-primary-color transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300 ease-out"></div>
       </button>
     </div>
 
-    <!-- Video Container -->
-    <div class="relative inline-block mb-8 rounded-lg overflow-hidden shadow-lg border-0 border-primary-color z-10 video-container">
+    <!-- VIDEO CONTAINER -->
+    <div class="relative inline-block mb-8 rounded-lg overflow-hidden z-10 video-container ring-1 ring-primary-color/30">
       <video
         ref="videoRef"
         :src="videoUrl"
@@ -253,54 +235,61 @@ const toggleMute = () => {
         autoplay
         playsinline
         muted
-        class="h-[60vh] w-auto object-contain pointer-events-none block"
+        class="h-[55vh] md:h-[60vh] w-auto object-contain pointer-events-none block opacity-90 mix-blend-lighten"
         :volume="volume"
       ></video>
-      <div class="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none" v-if="videoRef && videoRef.muted">
-        <p class="text-white text-xl animate-pulse">MUTED</p>
+      <div class="absolute inset-0 bg-black/20 flex items-center justify-center pointer-events-none" v-if="videoRef && videoRef.muted">
+        <p class="text-white text-2xl font-bold animate-pulse border-4 border-white p-4 rotate-12 mix-blend-overlay">MUTED</p>
       </div>
+      <!-- CRT Scanline overlay effect -->
+      <div class="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] z-20 bg-[length:100%_4px,6px_100%] pointer-events-none"></div>
     </div>
 
-    <div class="w-full max-w-md flex items-center justify-center space-x-6 mb-8 z-10">
-      <!-- Mute Button -->
+    <!-- MUTE BUTTON -->
+    <div class="w-full max-w-md flex items-center justify-center space-x-6 mb-12 z-10">
       <button
         ref="muteButtonRef"
         @click="toggleMute"
-        class="w-16 h-16 flex items-center justify-center rounded-full bg-gray-800 border-2 border-gray-600 hover:border-primary-color transition-all duration-200 cursor-none z-20"
+        class="w-20 h-20 flex items-center justify-center rounded-full bg-black/50 backdrop-blur-md border border-gray-700 hover:border-primary-color hover:bg-primary-color/20 hover:shadow-[0_0_20px_var(--primary-color)] transition-all duration-300 cursor-none z-20 group"
       >
-        <span class="text-2xl pointer-events-none">{{ videoRef?.muted ? '🤐' : '🔊' }}</span>
+        <span class="text-3xl pointer-events-none group-hover:scale-125 transition-transform">{{ videoRef?.muted ? '🤐' : '🔊' }}</span>
       </button>
     </div>
 
-    <!-- FLOATING SLIDER -->
+    <!-- FLOATING SLIDER (BLOOD VIAL STYLE) -->
     <div
         ref="sliderRef"
-        class="fixed top-0 left-0 h-12 w-64 bg-gray-800 rounded-md border-2 border-primary-color overflow-hidden cursor-none shadow-2xl"
-        :class="hasStarted ? 'z-50' : 'z-[10001]'"
+        class="fixed top-0 left-0 h-14 w-72 bg-black/60 backdrop-blur-md rounded-full border border-primary-color/50 overflow-hidden cursor-none shadow-[0_0_25px_rgba(139,0,0,0.4)] z-[50]"
         :style="{
-            transform: `translate(${sliderX}px, ${sliderY}px) rotate(${rotation}deg)`
+            transform: `translate(${slider.x}px, ${slider.y}px) rotate(${slider.rotation}deg)`
         }"
       >
-        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] pointer-events-none"></div>
-        <!-- Volume Level -->
+        <!-- Glass Reflection -->
+        <div class="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none z-20"></div>
+        
+        <!-- Liquid Background -->
+        <div class="absolute inset-0 bg-gray-900/80 pointer-events-none"></div>
+        
+        <!-- Blood Fill -->
         <div
-          class="absolute h-full bg-gradient-to-r from-red-900 to-primary-color pointer-events-none transition-none"
+          class="absolute h-full bg-gradient-to-r from-[#4a0000] via-primary-color to-[#ff0000] pointer-events-none transition-none z-10"
           :style="{ width: `${sliderPosition}%` }"
         ></div>
-        <!-- Knob -->
+        
+        <!-- Knob / Bubble -->
         <div
-          class="absolute w-4 h-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)] transform -translate-x-1/2 pointer-events-none"
+          class="absolute w-1 h-full bg-white/50 shadow-[0_0_10px_white] transform -translate-x-1/2 pointer-events-none z-30 mix-blend-overlay"
           :style="{ left: `${sliderPosition}%` }"
         ></div>
 
         <!-- Text on slider -->
-        <div class="absolute inset-0 flex items-center justify-center text-xs font-bold text-white mix-blend-difference pointer-events-none">
-            VOLUME
+        <div class="absolute inset-0 flex items-center justify-center text-sm font-bold text-white/80 tracking-widest pointer-events-none z-40 mix-blend-difference">
+            {{ Math.round(sliderPosition) }}%
         </div>
     </div>
 
-    <div class="text-center z-10 pointer-events-none">
-         <p class="text-gray-500 text-sm">Attrapez la barre... si vous pouvez.</p>
+    <div class="text-center z-10 pointer-events-none pb-4">
+         <p class="text-gray-500 text-xs uppercase tracking-widest opacity-60">Patience est mère de sûreté...</p>
     </div>
 
   </div>
@@ -318,21 +307,25 @@ html, body, #app {
   height: 100vh;
   margin: 0;
   padding: 0;
+  background-color: #050505;
 }
 
-/* Theme Colors */
+/* Theme Variables */
 :root {
-  --primary-color: #8B0000; /* Crimson Red */
+  --primary-color: #8B0000; /* Crimson */
 }
 
+/* Utility classes mapping to variables */
 .text-primary-color { color: var(--primary-color); }
 .border-primary-color { border-color: var(--primary-color); }
 .bg-primary-color { background-color: var(--primary-color); }
-.hover\:bg-primary-color:hover { background-color: var(--primary-color); }
-.hover\:border-primary-color:hover { border-color: var(--primary-color); }
-.to-primary-color { --tw-gradient-to: var(--primary-color); }
 
+/* Neon Glow for Video */
 .video-container {
-  box-shadow: 0 0 15px var(--primary-color), 0 0 30px var(--primary-color), 0 0 45px var(--primary-color);
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.3), 0 0 30px rgba(139, 0, 0, 0.2), 0 0 50px rgba(139, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+.video-container:hover {
+  box-shadow: 0 0 20px rgba(139, 0, 0, 0.6), 0 0 40px rgba(139, 0, 0, 0.4), 0 0 60px rgba(139, 0, 0, 0.2);
 }
 </style>
