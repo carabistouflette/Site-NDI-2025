@@ -32,14 +32,14 @@ deploy_backend() {
     cd server
     
     # Check if app exists
-    if ! fly status -a ndi-2025-backend &> /dev/null; then
+    if ! fly status -a site-ndi-2025-backend &> /dev/null; then
         echo "Creating new backend app..."
         fly launch --config fly.toml --no-deploy
         
         echo ""
         echo "⚠️  Please set your secrets:"
-        echo "fly secrets set OPENROUTER_API_KEY=your-key-here -a ndi-2025-backend"
-        echo "fly secrets set FRONTEND_URL=https://ndi-2025-frontend.fly.dev -a ndi-2025-backend"
+        echo "fly secrets set OPENROUTER_API_KEY=your-key-here -a site-ndi-2025-backend"
+        echo "fly secrets set FRONTEND_URL=https://site-ndi-2025.fly.dev -a site-ndi-2025-backend"
         read -p "Press enter when you've set the secrets..."
     fi
     
@@ -56,7 +56,7 @@ deploy_frontend() {
     echo "🎨 Deploying Frontend..."
     
     # Check if app exists
-    if ! fly status -a ndi-2025-frontend &> /dev/null; then
+    if ! fly status -a site-ndi-2025 &> /dev/null; then
         echo "Creating new frontend app..."
         fly launch --config fly.toml --no-deploy
     fi
@@ -102,12 +102,12 @@ echo ""
 echo "🎉 Deployment complete!"
 echo ""
 echo "📊 Check status:"
-echo "  Backend:  fly status -a ndi-2025-backend"
-echo "  Frontend: fly status -a ndi-2025-frontend"
+echo "  Backend:  fly status -a site-ndi-2025-backend"
+echo "  Frontend: fly status -a site-ndi-2025"
 echo ""
 echo "📝 View logs:"
-echo "  Backend:  fly logs -a ndi-2025-backend"
-echo "  Frontend: fly logs -a ndi-2025-frontend"
+echo "  Backend:  fly logs -a site-ndi-2025-backend"
+echo "  Frontend: fly logs -a site-ndi-2025"
 echo ""
 echo "🌐 Open app:"
-echo "  fly open -a ndi-2025-frontend"
+echo "  fly open -a site-ndi-2025"
