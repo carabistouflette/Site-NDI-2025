@@ -114,8 +114,8 @@
               <br><br>
               Comprenez comment la <span class="tech-highlight">quantification</span> réduit la précision pour gagner en vitesse et en énergie, sans perdre l'intelligence.
             </p>
-            <button class="lab-btn">
-              <span class="btn-icon">⚙️</span> OPTIMISER LE MODÈLE
+            <button class="lab-btn" @click="$router.push('/games/llm')">
+              <span class="btn-icon">⚙️</span> LANCER LA SIMULATION
             </button>
           </div>
         </div>
@@ -156,7 +156,7 @@
             <p class="highlight-red">CALMEZ-LE SI VOUS L'OSEZ.</p>
           </div>
 
-          <button class="chaos-btn">
+          <button class="chaos-btn" @click="$router.push('/games/volume')">
             DÉGAINER LE KATANA
           </button>
         </div>
