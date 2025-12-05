@@ -29,7 +29,10 @@ This will create the app on Fly.io. Now set the required secrets:
 
 ```bash
 fly secrets set OPENROUTER_API_KEY=your-openrouter-api-key-here
+fly secrets set FRONTEND_URL=https://ndi-2025-frontend.fly.dev
 ```
+
+**Note:** Update the `FRONTEND_URL` with your actual frontend URL after deploying it.
 
 Deploy the backend:
 
@@ -150,6 +153,7 @@ This minimizes costs while maintaining availability.
 ### Backend (.env in server/)
 - `PORT` - Server port (default: 3001)
 - `OPENROUTER_API_KEY` - Your OpenRouter API key
+- `FRONTEND_URL` - Frontend URL for CORS and OpenRouter (e.g., https://ndi-2025-frontend.fly.dev)
 
 ### Frontend (build-time)
 - `VITE_API_URL` - Backend API URL (set in fly.toml)

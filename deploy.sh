@@ -37,9 +37,10 @@ deploy_backend() {
         fly launch --config fly.toml --no-deploy
         
         echo ""
-        echo "⚠️  Please set your OpenRouter API key:"
+        echo "⚠️  Please set your secrets:"
         echo "fly secrets set OPENROUTER_API_KEY=your-key-here -a ndi-2025-backend"
-        read -p "Press enter when you've set the API key..."
+        echo "fly secrets set FRONTEND_URL=https://ndi-2025-frontend.fly.dev -a ndi-2025-backend"
+        read -p "Press enter when you've set the secrets..."
     fi
     
     echo "Deploying backend..."

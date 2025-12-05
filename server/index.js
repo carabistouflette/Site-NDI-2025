@@ -21,18 +21,24 @@ const corsOptions = {
       return callback(null, true);
     }
     
-    // Allow Fly.io frontend domain
-    if (origin.includes('ndi-2025-frontend.fly.dev')) {
+    // Allow any Fly.io domain (both frontend and backend)
+    if (origin.includes('.fly.dev')) {
       return callback(null, true);
     }
     
     // Reject other origins
     callback(new Error('Not allowed by CORS'));
   },
-  credentials: true
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  exposedHeaders: ['Content-Length', 'X-Request-Id']
 };
 
 app.use(cors(corsOptions));
+
+// Handle preflight requests explicitly
+app.options('*', cors(corsOptions));
 
 const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,
@@ -49,8 +55,8 @@ const client = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY,
   defaultHeaders: {
-    "HTTP-Referer": "http://localhost:3000", // Optionnel : Remplace par l'URL de ton site
-    "X-Title": "Site NDI 2025", // Optionnel : Nom de ton appli
+    "HTTP-Referer": process.env.FRONTEND_URL || "https://ndi-2025-frontend.fly.dev",
+    "X-Title": "Site NDI 2025",
   }
 });
 
