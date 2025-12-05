@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import videoUrl from '@/assets/mercredi_addams.mp4';
 
 const videoRef = ref<HTMLVideoElement | null>(null);
@@ -21,7 +21,7 @@ interface VolumeItem {
 const items = ref<VolumeItem[]>([]);
 const ITEM_WIDTH = 160; // Width of one card in px
 const ITEM_GAP = 16; // Gap between cards
-const VISIBLE_ITEMS = 50; // Number of items to generate per spin
+const VISIBLE_ITEMS = 80; // Increased to prevent empty space on right
 
 // Config for probabilities
 const generateItem = (id: number, forceType?: 'common' | 'rare' | 'legendary'): VolumeItem => {
@@ -93,38 +93,55 @@ const spin = () => {
   // Force a reflow/wait a tick so the reset applies
   setTimeout(() => {
     // TARGET: Index 46 (The common trash item)
-    // We want to land randomly within item 46, but biased towards the left side (close to the previous Gold item 45)
     const targetIndex = 46;
 
-    // Calculate visual center of the screen
-    const screenCenter = window.innerWidth / 2;
-    // Calculate where the target item is in the strip relative to 0
-    // Center of target item = (Index * (W + Gap)) + (W / 2)
-    const itemFullWidth = ITEM_WIDTH + ITEM_GAP;
-    const targetCenterInStrip = (targetIndex * itemFullWidth) + (ITEM_WIDTH / 2);
+    // Calculate Center Target
+    // Item 0 Center is at: Margin(8) + HalfWidth(80) = 88px from start
+    // Item N Center is at: 88 + N * (160 + 16)
+    const itemPitch = ITEM_WIDTH + ITEM_GAP; // 176
+    const startOffset = (ITEM_WIDTH / 2) + (ITEM_GAP / 2); // 88
 
-    // Random offset inside the item (to land "just a bit" inside)
-    // A small random jitter. If we want to be cruel, we land near the border of the previous item.
-    // -ITEM_WIDTH/2 + 5px means "Just barely entered the item"
-    const randomJitter = (Math.random() * (ITEM_WIDTH - 20)) - (ITEM_WIDTH / 2) + 10;
+            const targetCenterPosition = startOffset + (targetIndex * itemPitch);
 
-    // Final calculation: We want (TargetCenter + Jitter) to be at ScreenCenter.
-    // So we move the strip to the left (negative).
-    const finalOffset = -(targetCenterInStrip + randomJitter - screenCenter);
 
-    // Animate
-    transitionDuration.value = 6; // 6 seconds spin
-    sliderOffset.value = finalOffset;
 
-    // Resolve
+            // Add randomness (+/- 60px) to land anywhere on the card
+
+            const randomJitter = (Math.random() * 120) - 60;
+
+
+
+            // Correct calculation: shift LEFT by the distance to the target
+
+            const exactOffset = -(targetCenterPosition + randomJitter);
+
+
+
+            // Animate
+
+            transitionDuration.value = 6;    sliderOffset.value = exactOffset;
+
+    // Resolve based on VISUAL position
     setTimeout(() => {
       isSpinning.value = false;
-      const wonItem = items.value[targetIndex];
+
+      // Inverse calculation to find which item is actually under the center
+      // Pos = -Offset
+      // Index = (Pos - 88) / 176
+      const currentPos = -sliderOffset.value;
+      let actualIndex = Math.round((currentPos - startOffset) / itemPitch);
+
+      // Bounds check
+      if (actualIndex < 0) actualIndex = 0;
+      if (actualIndex >= items.value.length) actualIndex = items.value.length - 1;
+
+      const wonItem = items.value[actualIndex];
       volume.value = wonItem.value / 100;
       if (videoRef.value) videoRef.value.volume = volume.value;
 
-      // Cruel message
-      statusMessage.value = `Dommage ! Vous avez raté le ${items.value[45].value}% de peu... Volume réglé à ${wonItem.value}%`;
+      // Troll Message
+      const missedItem = items.value[actualIndex - 1]; // The one just before (usually better)
+      statusMessage.value = `Dommage ! Vous avez raté le ${missedItem ? missedItem.value : '???'}% de peu... Volume réglé à ${wonItem.value}%`;
     }, 6000);
   }, 50);
 };
@@ -175,9 +192,9 @@ const getRarityColor = (type: string) => {
       <div class="relative w-full h-64 bg-black/80 border-y-4 border-gray-800 backdrop-blur-sm mb-12 overflow-hidden shadow-[0_0_50px_black] flex items-center">
 
         <!-- CENTER LINE (CURSOR) -->
-        <div class="absolute left-1/2 top-0 bottom-0 w-1 bg-yellow-400 z-30 transform -translate-x-1/2 shadow-[0_0_15px_yellow]"></div>
-        <div class="absolute left-1/2 top-4 transform -translate-x-1/2 text-yellow-400 z-30 text-xs uppercase font-bold tracking-widest">▼</div>
-        <div class="absolute left-1/2 bottom-4 transform -translate-x-1/2 text-yellow-400 z-30 text-xs uppercase font-bold tracking-widest">▲</div>
+        <div class="absolute left-1/6 top-0 bottom-0 w-1 bg-yellow-400 z-30 transform -translate-x-1/2 shadow-[0_0_15px_yellow]"></div>
+        <div class="absolute left-1/6 top-4 transform -translate-x-1/2 text-yellow-400 z-30 text-xs uppercase font-bold tracking-widest">▼</div>
+        <div class="absolute left-1/6 bottom-4 transform -translate-x-1/2 text-yellow-400 z-30 text-xs uppercase font-bold tracking-widest">▲</div>
 
         <!-- SLIDING STRIP -->
         <div
@@ -190,7 +207,7 @@ const getRarityColor = (type: string) => {
           <div
             v-for="item in items"
             :key="item.id"
-            class="flex-shrink-0 flex flex-col items-center justify-center w-[160px] h-40 mx-2 border-b-4 border-r-2 bg-gradient-to-b from-transparent to-black rounded-sm transition-transform"
+            class="flex-shrink-0 flex flex-col items-center justify-center w-[160px] h-40 mx-2 border-b-4 border-r-2 border-r-white/10 bg-gradient-to-b from-transparent to-black rounded-sm transition-transform"
             :class="getRarityColor(item.type)"
           >
             <div class="text-3xl font-bold mb-2">{{ item.value }}%</div>
