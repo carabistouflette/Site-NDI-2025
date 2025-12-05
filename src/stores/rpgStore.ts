@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { useRouter } from 'vue-router'; // Import useRouter inside the action if needed, or pass it
+import { config } from '@/config/env';
 
 export const useRpgStore = defineStore('rpg', {
   state: () => ({
@@ -87,12 +88,12 @@ export const useRpgStore = defineStore('rpg', {
       if (target === 'all' || target === 'left') {
         this.loading.left = true;
         const leftMsgIndex = this.chatHistory.left.push({ role: 'assistant', content: '' }) - 1;
-        this._streamResponse('http://localhost:3001/api/chat', { model: this.models.left, messages: messagesLeft }, this.chatHistory.left, leftMsgIndex, 'left');
+        this._streamResponse(`${config.apiUrl}/api/chat`, { model: this.models.left, messages: messagesLeft }, this.chatHistory.left, leftMsgIndex, 'left');
       }
       if (target === 'all' || target === 'right') {
         this.loading.right = true;
         const rightMsgIndex = this.chatHistory.right.push({ role: 'assistant', content: '' }) - 1;
-        this._streamResponse('http://localhost:3001/api/chat', { model: this.models.right, messages: messagesRight }, this.chatHistory.right, rightMsgIndex, 'right');
+        this._streamResponse(`${config.apiUrl}/api/chat`, { model: this.models.right, messages: messagesRight }, this.chatHistory.right, rightMsgIndex, 'right');
       }
     },
 
@@ -341,7 +342,7 @@ Tu peux plaisanter pour détendre l’atmosphère, mais réagir avec sensibilit�
       const messages = [{ role: 'user', content: prompt }];
 
       try {
-        const response = await fetch('http://localhost:3001/api/chat', {
+        const response = await fetch(`${config.apiUrl}/api/chat`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
