@@ -5,6 +5,7 @@ import './assets/styles/animations.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
+import Tres from '@tresjs/core'
 
 import App from './App.vue'
 import router from './router'
@@ -60,6 +61,7 @@ const app = createApp(App)
 app.use(createPinia())
 app.use(router)
 app.use(naive)
+app.use(Tres)
 
 // Configuration du thème
 app.provide('theme', nirdTheme)

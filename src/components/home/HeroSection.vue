@@ -20,7 +20,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const heroRef = ref<HTMLElement | null>(null)
 const canvasRef = ref<HTMLCanvasElement | null>(null)
 let ctx: CanvasRenderingContext2D | null = null
@@ -143,12 +145,31 @@ const handleMouseLeave = () => {
   mouse.y = -1000
 }
 
+const handleClick = (e: MouseEvent) => {
+  if (!heroRef.value || particles.length === 0) return
+  const rect = heroRef.value.getBoundingClientRect()
+  const clickX = e.clientX - rect.left
+  const clickY = e.clientY - rect.top
+
+  // The first particle is always the snake
+  const snake = particles[0]
+  const dx = clickX - snake.x
+  const dy = clickY - snake.y
+  const distance = Math.sqrt(dx * dx + dy * dy)
+
+  // Hitbox generous (50px)
+  if (distance < 50) {
+    router.push({ name: 'snake' })
+  }
+}
+
 onMounted(() => {
   init()
   animate()
   if (heroRef.value) {
     heroRef.value.addEventListener('mousemove', handleMouseMove)
     heroRef.value.addEventListener('mouseleave', handleMouseLeave)
+    heroRef.value.addEventListener('click', handleClick)
   }
 })
 
@@ -158,6 +179,7 @@ onUnmounted(() => {
   if (heroRef.value) {
     heroRef.value.removeEventListener('mousemove', handleMouseMove)
     heroRef.value.removeEventListener('mouseleave', handleMouseLeave)
+    heroRef.value.removeEventListener('click', handleClick)
   }
 })
 </script>

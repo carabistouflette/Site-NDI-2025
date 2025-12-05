@@ -59,6 +59,12 @@ const router = createRouter({
       name: 'volume-game',
       component: () => import('@/views/VolumeGameView.vue'),
       meta: { title: 'Samurai Volume - Challenge' }
+    },
+    {
+      path: '/snake',
+      name: 'snake',
+      component: () => import('@/components/SnekSnek.vue'),
+      meta: { title: 'Snake 3D - Secret Game' }
     }
   ],
   scrollBehavior(to, from, savedPosition) {
