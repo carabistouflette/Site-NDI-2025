@@ -1,27 +1,26 @@
 <script setup lang="ts">
 import { ref, shallowRef, onMounted, onUnmounted, computed } from 'vue';
 import ThePossessedVolumeSlider from './components/ThePossessedVolumeSlider.vue';
+import TheCaseOpeningSlider from './components/TheCaseOpeningSlider.vue';
 import bloodUrl from '@/assets/blood.svg';
 
 // Define the available challenges
 const challenges = [
-  {
-    id: 'possessed',
-    title: 'Le Slider Possédé',
+  { 
+    id: 'possessed', 
+    title: 'Le Slider Possédé', 
     description: 'Une barre de volume hantée par une entité malveillante. Curseur inversé, gravité aléatoire.',
     component: ThePossessedVolumeSlider,
     difficulty: 'DIABOLIQUE'
   },
-  // Future challenges
-  {
-    id: 'coming_soon',
-    title: 'Bientôt...',
-    description: 'D\'autres tortures sont en préparation.',
-    component: null,
-    difficulty: '???'
+  { 
+    id: 'lootbox', 
+    title: 'Volume Lootbox', 
+    description: 'Ouvrez des caisses pour espérer obtenir un volume légendaire. Attention à votre argent.',
+    component: TheCaseOpeningSlider,
+    difficulty: 'PAY-TO-WIN'
   }
 ];
-
 const currentChallenge = shallowRef<any>(null);
 const backButtonRef = ref<HTMLElement | null>(null);
 const isHoveringBack = ref(false);
