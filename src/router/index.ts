@@ -68,17 +68,18 @@ const router = createRouter({
     },
     {
       path: '/challenge',
+      name: 'menu',
+      component: MenuView,
+      meta: { disableMainCss: true }
+    },
+    {
+      path: '/challenge/:id',
+      name: 'challenge',
       component: ChallengeLayout,
       meta: { disableMainCss: true },
       children: [
         {
           path: '',
-          name: 'menu',
-          component: MenuView
-        },
-        {
-          path: ':id',
-          name: 'challenge',
           component: ChallengeView
         }
       ]
