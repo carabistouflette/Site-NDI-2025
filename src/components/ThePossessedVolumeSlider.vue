@@ -282,7 +282,6 @@ onUnmounted(() => {
 
 <style>
 /* COMPONENT-SPECIFIC CURSOR HIDING */
-* { cursor: none !important; }
 
 /* Component Styles */
 .video-container {
