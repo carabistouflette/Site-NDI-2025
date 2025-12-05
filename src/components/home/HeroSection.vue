@@ -30,17 +30,19 @@ let animationFrameId: number
 let particles: Particle[] = []
 
 // Configuration
-const PARTICLE_COUNT = 70
+const PARTICLE_COUNT = 40 // Réduit de 70 à 40 pour moins d'encombrement
 const MOUSE_RADIUS = 120
 const REPELL_FORCE = 15
 const RETURN_SPEED = 0.05
 const FRICTION = 0.90
+const SNAKE_HITBOX = 120 // Hitbox généreuse pour le serpent
 
 // Emojis
 const emojis = ['🌱', '🌿', '🌳', '♻️', '🌍', '💧', '💻', '💾', '🌐', '⚡', '👾']
 const SNAKE_EMOJI = '🐍'
 
 const mouse = { x: -1000, y: -1000 }
+let pulseTime = 0 // Pour l'animation de pulsation du serpent
 
 class Particle {
   x: number
@@ -53,6 +55,7 @@ class Particle {
   emoji: string
   opacity: number
   density: number
+  isSnake: boolean
 
   constructor(canvasWidth: number, canvasHeight: number, isSnake = false) {
     this.x = Math.random() * canvasWidth
@@ -61,9 +64,12 @@ class Particle {
     this.baseY = this.y
     this.vx = 0
     this.vy = 0
-    this.size = Math.random() * 10 + 14
+    this.isSnake = isSnake
+    // Le serpent est beaucoup plus grand (40-50px au lieu de 14-24px)
+    this.size = isSnake ? (Math.random() * 10 + 40) : (Math.random() * 10 + 14)
     this.emoji = isSnake ? SNAKE_EMOJI : (emojis[Math.floor(Math.random() * emojis.length)] || SNAKE_EMOJI)
-    this.opacity = Math.random() * 0.5 + 0.3
+    // Le serpent est plus opaque pour être plus visible
+    this.opacity = isSnake ? 1.0 : (Math.random() * 0.5 + 0.3)
     this.density = (Math.random() * 30) + 1
   }
 
@@ -98,10 +104,27 @@ class Particle {
   }
 
   draw(context: CanvasRenderingContext2D) {
-    context.font = `${this.size}px Arial`
-    context.globalAlpha = this.opacity
+    // Effet de pulsation pour le serpent
+    let displaySize = this.size
+    let displayOpacity = this.opacity
+
+    if (this.isSnake) {
+      const pulse = Math.sin(pulseTime * 3) * 0.15 + 1 // Pulsation entre 0.85 et 1.15
+      displaySize = this.size * pulse
+      displayOpacity = 1.0
+
+      // Ajouter un glow autour du serpent
+      context.shadowColor = '#00ff00'
+      context.shadowBlur = 20
+    }
+
+    context.font = `${displaySize}px Arial`
+    context.globalAlpha = displayOpacity
     context.fillStyle = '#ffffff'
     context.fillText(this.emoji, this.x, this.y)
+
+    // Reset shadow
+    context.shadowBlur = 0
     context.globalAlpha = 1
   }
 }
@@ -125,6 +148,7 @@ const init = () => {
 
 const animate = () => {
   if (!ctx || !canvasRef.value) return
+  pulseTime += 0.016 // Incrémenter pour l'animation de pulsation (~60fps)
   ctx.clearRect(0, 0, canvasRef.value.width, canvasRef.value.height)
   particles.forEach(particle => {
     particle.update(canvasRef.value!.width, canvasRef.value!.height)
@@ -138,6 +162,19 @@ const handleMouseMove = (e: MouseEvent) => {
   const rect = heroRef.value.getBoundingClientRect()
   mouse.x = e.clientX - rect.left
   mouse.y = e.clientY - rect.top
+
+  // Changer le curseur si on survole le serpent
+  const snake = particles[0]
+  if (snake) {
+    const dx = mouse.x - snake.x
+    const dy = mouse.y - snake.y
+    const distance = Math.sqrt(dx * dx + dy * dy)
+    if (distance < SNAKE_HITBOX) {
+      heroRef.value.style.cursor = 'pointer'
+    } else {
+      heroRef.value.style.cursor = 'default'
+    }
+  }
 }
 
 const handleMouseLeave = () => {
@@ -158,8 +195,8 @@ const handleClick = (e: MouseEvent) => {
   const dy = clickY - snake.y
   const distance = Math.sqrt(dx * dx + dy * dy)
 
-  // Hitbox generous (50px)
-  if (distance < 50) {
+  // Hitbox très généreuse (120px) pour faciliter le clic
+  if (distance < SNAKE_HITBOX) {
     router.push({ name: 'snake' })
   }
 }
