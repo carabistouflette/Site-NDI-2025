@@ -64,7 +64,10 @@ const router = createRouter({
       path: '/snake',
       name: 'snake',
       component: () => import('@/components/SnekSnek.vue'),
-      meta: { title: 'Snake 3D - Secret Game' }
+      meta: {
+        title: 'Snake 3D - Secret Game',
+        hideHeader: true
+      }
     }
   ],
   scrollBehavior(to, from, savedPosition) {
