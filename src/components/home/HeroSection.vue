@@ -2,7 +2,7 @@
   <section class="hero" ref="heroRef">
     <canvas ref="canvasRef" class="hero__canvas"></canvas>
 
-    <div class="hero__mist"></div>
+
 
     <div class="hero__content">
       <div class="hero__text">
@@ -153,6 +153,7 @@ const handleClick = (e: MouseEvent) => {
 
   // The first particle is always the snake
   const snake = particles[0]
+  if (!snake) return
   const dx = clickX - snake.x
   const dy = clickY - snake.y
   const distance = Math.sqrt(dx * dx + dy * dy)
@@ -205,18 +206,7 @@ onUnmounted(() => {
   z-index: 1;
 }
 
-.hero__mist {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 2;
-  background: radial-gradient(circle at center, transparent 0%, #000000 95%),
-    linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, transparent 20%, transparent 80%, #000000 100%);
-  pointer-events: none;
-  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.9);
-}
+
 
 .hero__content {
   position: relative;
